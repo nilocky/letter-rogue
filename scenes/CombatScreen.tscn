@@ -1,0 +1,64 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
+
+[node name="CombatScreen" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopPanel" type="VBoxContainer" parent="."]
+anchors_preset = 0
+margin_right = 400.0
+margin_bottom = 120.0
+
+[node name="MonsterNameLabel" type="Label" parent="TopPanel"]
+text = ""
+
+[node name="BossModLabel" type="Label" parent="TopPanel"]
+text = ""
+
+[node name="WordLabel" type="Label" parent="TopPanel"]
+text = ""
+
+[node name="MonsterHPBar" type="ProgressBar" parent="TopPanel"]
+size_flags_horizontal = 3
+
+[node name="WordContainer" type="HBoxContainer" parent="."]
+anchors_preset = 8
+anchor_top = 0.5
+anchor_bottom = 0.5
+alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="."]
+anchors_preset = 2
+anchor_left = 1.0
+anchor_right = 1.0
+margin_right = -200.0
+margin_left = -200.0
+
+[node name="MoneyLabel" type="Label" parent="."]
+anchors_preset = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
+
+[node name="HandContainer" type="HBoxContainer" parent="."]
+anchors_preset = 8
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -100.0
+alignment = 1
+
+[node name="ConfirmButton" type="Button" parent="."]
+anchors_preset = 8
+anchor_top = 1.0
+anchor_bottom = 1.0
+text = "Confirm"
+
+[node name="PlayerHPBar" type="ProgressBar" parent="."]
+anchors_preset = 4
+anchor_left = 0.5
+anchor_right = 0.5
+margin_top = -30.0
+margin_left = -100.0
+margin_right = 100.0

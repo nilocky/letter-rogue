@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/screens/ShopScreen.gd" id="1_abcdef"]
+
+[node name="ShopScreen" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+margin_bottom = 40.0
+
+[node name="MoneyLabel" type="Label" parent="TopBar"]
+text = "$0"
+
+[node name="RerollButton" type="Button" parent="TopBar"]
+text = "Reroll ($3)"
+
+[node name="Content" type="HBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 40.0
+
+[node name="InventoryGrid" type="GridContainer" parent="Content"]
+size_flags_horizontal = 3
+columns = 3
+
+[node name="BagGrid" type="GridContainer" parent="Content"]
+size_flags_horizontal = 3
+columns = 3
+
+[node name="FightButton" type="Button" parent="."]
+anchors_preset = 8
+anchor_top = 1.0
+anchor_bottom = 1.0
+text = "Fight!"
