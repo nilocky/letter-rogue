@@ -62,17 +62,26 @@ func reroll() -> bool:
 	return true
 
 func _calculate_price(cap: Dictionary) -> int:
+	var base = 3
 	match cap["rarity"]:
-		"Normal":
-			return 3
-		"Rare":
-			return 6
-		"Epic":
-			return 12
-		"Legendary":
-			return 20
-		_:
-			return 3
+		"Normal": base = 3
+		"Rare": base = 6
+		"Epic": base = 12
+		"Legendary": base = 20
+	if cap.has("finish") and cap["finish"] != "":
+		var finish_data = _get_finish_data(cap["finish"])
+		if finish_data:
+			base += finish_data.get("price_mod", 0)
+	return base
+
+func _get_finish_data(finish_id: String) -> Dictionary:
+	var json_str = FileAccess.get_file_as_string("res://data/key_caps.json")
+	if json_str == "": return {}
+	var data = JSON.parse_string(json_str)
+	for f in data.get("finishes", []):
+		if f["id"] == finish_id:
+			return f
+	return {}
 
 func _pick_from_pool(pool: Array, rarity: String) -> Dictionary:
 	var candidates = []

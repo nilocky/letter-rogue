@@ -22,5 +22,12 @@
     { "letter": "#", "ability_id": "shield", "rarity": "Rare", "ability_strength": 1, "is_symbol": true },
     { "letter": "Q", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 4, "is_symbol": false },
     { "letter": "J", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 3, "is_symbol": false }
+  ],
+  "finishes": [
+    { "id": "foil", "name": "Foil", "effect": "+3 flat score", "score_bonus": 3, "price_mod": 2, "weight": 5 },
+    { "id": "holographic", "name": "Holographic", "effect": "+1 per letter score", "score_per_letter": 1, "price_mod": 3, "weight": 4 },
+    { "id": "polychrome", "name": "Polychrome", "effect": "1.5x score multiplier", "score_mult": 1.5, "price_mod": 5, "weight": 3 },
+    { "id": "double_shot", "name": "Double-shot", "effect": "Matches 2 letter slots", "extra_slots": 1, "price_mod": 4, "weight": 3 },
+    { "id": "neon", "name": "Neon", "effect": "Adjacent caps get +1 score", "adjacent_bonus": 1, "price_mod": 3, "weight": 4 }
   ]
 }

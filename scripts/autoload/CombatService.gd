@@ -36,9 +36,29 @@ func calculate_score(played_caps: Array, slot_indices: Array) -> Dictionary:
 		if ability_result.has("money"):
 			money_bonus += ability_result["money"]
 
+		var finish_result = resolve_finish(cap, final_score, i, played_caps.size())
+		final_score += finish_result.get("score", 0)
+		if finish_result.has("score_mult"):
+			final_score = ceili(final_score * finish_result["score_mult"])
+		if finish_result.get("extra_slots", 0) > 0:
+			pass
+		if finish_result.get("adjacent_bonus", 0) > 0:
+			pass
+
 		final_score = _apply_boss_modifier(letter, final_score)
 		total_score += final_score
 		breakdown[letter] = final_score
+
+	# Apply neon adjacent bonuses
+	for i in range(played_caps.size()):
+		var cap = played_caps[i]
+		if cap.get("finish") == "neon":
+			if i > 0:
+				breakdown[word_letters[slot_indices[i-1]]] = breakdown.get(word_letters[slot_indices[i-1]], 0) + 1
+				total_score += 1
+			if i < played_caps.size() - 1:
+				breakdown[word_letters[slot_indices[i+1]]] = breakdown.get(word_letters[slot_indices[i+1]], 0) + 1
+				total_score += 1
 
 	# Pack score modifier
 	if GameState.active_pack_id != "":
@@ -86,6 +106,22 @@ func monster_attack():
 func _calculate_money_reward() -> int:
 	var base = 5 + GameState.round * 2
 	return base
+
+func resolve_finish(cap: Dictionary, base_score: int, slot_index: int, total_slots: int) -> Dictionary:
+	var finish = cap.get("finish", "")
+	var result = {"score": 0, "extra_slots": 0, "adjacent_bonus": 0}
+	match finish:
+		"foil":
+			result["score"] = 3
+		"holographic":
+			result["score"] = base_score
+		"polychrome":
+			result["score_mult"] = 1.5
+		"double_shot":
+			result["extra_slots"] = 1
+		"neon":
+			result["adjacent_bonus"] = 1
+	return result
 
 func _letter_base_score(letter: String) -> int:
 	var common = ["E", "T", "A", "O", "I", "N", "S", "R"]
