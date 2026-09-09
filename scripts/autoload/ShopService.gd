@@ -45,6 +45,8 @@ func sell_cap(index: int) -> bool:
 	if index < 0 or index >= GameState.bag.size():
 		return false
 	var cap = GameState.bag[index]
+	if cap.get("condition") == "eternal":
+		return false
 	var price = ceili((cap.get("price", 5)) * SELL_RATIO)
 	if price < 1:
 		price = 1

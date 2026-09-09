@@ -27,6 +27,14 @@ func reset():
 	shield = 0
 	extra_draw = 0
 
+func process_rental_costs() -> int:
+	var cost = 0
+	for cap in bag:
+		if cap.get("condition") == "rental":
+			cost += 1
+	money -= cost
+	return cost
+
 func load_starter_bag(caps: Array):
 	bag = caps.duplicate()
 	bag.shuffle()

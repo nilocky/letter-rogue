@@ -39,6 +39,12 @@ func play_caps(slot_map: Dictionary) -> Dictionary:
 	return played
 
 func _shuffle_discard_into_bag():
+	var to_remove = []
+	for cap in GameState.discard:
+		if cap.get("_break", false):
+			to_remove.append(cap)
+	for cap in to_remove:
+		GameState.discard.erase(cap)
 	GameState.bag.append_array(GameState.discard)
 	GameState.discard.clear()
 	GameState.bag.shuffle()

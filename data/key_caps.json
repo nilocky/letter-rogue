@@ -36,5 +36,13 @@
     { "id": "blue", "name": "Blue", "effect": "Draw +1 next turn", "extra_draw": 1 },
     { "id": "rainbow", "name": "Rainbow", "effect": "Matches any letter slot", "wild": true },
     { "id": "glow", "name": "Glow", "effect": "Returns to hand after play", "return_to_hand": true }
+  ],
+  "conditions": [
+    { "id": "glass", "name": "Glass", "effect": "2x score, 1-in-4 break", "score_mult": 2, "break_chance": 0.25 },
+    { "id": "steel", "name": "Steel", "effect": "+2 score while held in hand", "hand_score": 2 },
+    { "id": "gold_held", "name": "Gold", "effect": "+$3 at end of round if in hand", "end_round_money": 3 },
+    { "id": "lucky", "name": "Lucky", "effect": "1/5 chance +10 score, 1/15 chance +$10", "score_chance": 0.2, "score_bonus": 10, "money_chance": 0.067, "money_bonus": 10 },
+    { "id": "eternal", "name": "Eternal", "effect": "Cannot be sold", "no_sell": true },
+    { "id": "rental", "name": "Rental", "effect": "Costs $1/round", "round_cost": 1 }
   ]
 }

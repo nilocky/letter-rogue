@@ -61,6 +61,7 @@ func _switch_to_shop():
 	current_state = State.SHOP
 	current_screen = shop_scene.instantiate()
 	add_child(current_screen)
+	GameState.process_rental_costs()
 	ShopService.generate_inventory()
 
 func _on_fight_pressed():

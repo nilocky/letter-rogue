@@ -58,6 +58,18 @@ func calculate_score(played_caps: Array, slot_indices: Array) -> Dictionary:
 		if cap.get("sticker") == "rainbow":
 			pass
 
+		# Condition: Glass — 2x score, 1-in-4 break
+		if cap.get("condition") == "glass":
+			final_score *= 2
+			if randf() < 0.25:
+				cap["_break"] = true
+		# Condition: Lucky
+		if cap.get("condition") == "lucky":
+			if randf() < 0.2:
+				final_score += 10
+			if randf() < 0.067:
+				money_bonus += 10
+
 		final_score = _apply_boss_modifier(letter, final_score)
 		total_score += final_score
 		breakdown[letter] = final_score
@@ -99,7 +111,21 @@ func apply_monster_damage(score: int):
 	else:
 		EventBus.monster_damaged.emit(GameState.current_monster["hp"], GameState.current_monster["max_hp"])
 
+func resolve_held_conditions():
+	var hand_score = 0
+	var gold_held = false
+	for cap in GameState.hand:
+		if cap.get("condition") == "steel":
+			hand_score += 2
+		if cap.get("condition") == "gold_held":
+			gold_held = true
+	if hand_score > 0:
+		GameState.current_monster["hp"] -= hand_score
+	if gold_held:
+		GameState.money += 3
+
 func monster_attack():
+	resolve_held_conditions()
 	var base_damage = GameState.current_monster.get("attack_pattern", 2)
 	var damage = base_damage
 
