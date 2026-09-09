@@ -24,6 +24,16 @@ func generate_inventory():
 		if candidate:
 			var entry = candidate.duplicate()
 			entry["price"] = _calculate_price(entry)
+			# Apply random modifiers
+			var finish_id = _roll_modifier("finishes")
+			if finish_id != "":
+				entry["finish"] = finish_id
+			var sticker_id = _roll_modifier("stickers")
+			if sticker_id != "":
+				entry["sticker"] = sticker_id
+			var condition_id = _roll_modifier("conditions")
+			if condition_id != "":
+				entry["condition"] = condition_id
 			inventory.append(entry)
 
 	GameState.shop_inventory = inventory
@@ -95,3 +105,14 @@ func _pick_from_pool(pool: Array, rarity: String) -> Dictionary:
 	if candidates.size() == 0:
 		return pool[randi() % pool.size()].duplicate()
 	return candidates[randi() % candidates.size()].duplicate()
+
+func _roll_modifier(pool_key: String) -> String:
+	var json_str = FileAccess.get_file_as_string("res://data/key_caps.json")
+	if json_str == "": return ""
+	var data = JSON.parse_string(json_str)
+	var pool = data.get(pool_key, [])
+	if pool.size() == 0: return ""
+	# 40% chance to get any modifier from this pool
+	if randf() > 0.4:
+		return ""
+	return pool[randi() % pool.size()]["id"]
