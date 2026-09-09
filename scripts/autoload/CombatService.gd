@@ -2,10 +2,12 @@ extends Node
 
 var current_word: String = ""
 var word_letters: Array = []
+var _boss_matched_letters: Array = []
 
 func start_combat(monster: Dictionary):
 	current_word = monster["word_pool"][randi() % monster["word_pool"].size()]
 	word_letters = []
+	_boss_matched_letters = []
 	for c in current_word:
 		word_letters.append(c)
 	EventBus.combat_word_generated.emit(current_word, monster["name"])
@@ -107,6 +109,17 @@ func _apply_boss_modifier(letter: String, score: int) -> int:
 		"consonant_lock":
 			if letter in ["A", "E", "I", "O", "U"]:
 				return 0
+			return score
+		"mirror_words":
+			return score
+		"no_repeats":
+			if not _boss_matched_letters.has(letter):
+				_boss_matched_letters.append(letter)
+				return score
+			return 0
+		"silence":
+			return score
+		"tight_grip":
 			return score
 		_:
 			return score
