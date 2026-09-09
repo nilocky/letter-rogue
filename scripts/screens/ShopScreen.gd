@@ -10,7 +10,17 @@ var KeyCapScene = preload("res://scenes/components/KeyCapElement.tscn")
 
 func _ready():
 	EventBus.shop_inventory_generated.connect(_on_inventory_generated)
+	_adjust_layout()
 	_refresh_ui()
+
+func _adjust_layout():
+	var viewport_size = get_viewport_rect().size
+	if viewport_size.x < viewport_size.y:
+		inventory_grid.columns = 3
+		bag_grid.columns = 3
+	else:
+		inventory_grid.columns = 5
+		bag_grid.columns = 5
 
 func _on_inventory_generated(inventory: Array):
 	_refresh_ui()
