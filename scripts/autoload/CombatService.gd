@@ -24,7 +24,9 @@ func calculate_score(played_caps: Array, slot_indices: Array) -> Dictionary:
 		var letter_score = _letter_base_score(letter)
 
 		var ctx = {"letter": letter, "base_score": letter_score}
-		var ability_result = KeyCapService.resolve_ability(cap, ctx)
+		var ability_result = {}
+		if GameState.current_monster.get("boss_modifier", "") != "silence":
+			ability_result = KeyCapService.resolve_ability(cap, ctx)
 
 		var final_score = letter_score
 		if ability_result.has("score"):
@@ -113,16 +115,11 @@ func apply_monster_damage(score: int):
 
 func resolve_held_conditions():
 	var hand_score = 0
-	var gold_held = false
 	for cap in GameState.hand:
 		if cap.get("condition") == "steel":
 			hand_score += 2
-		if cap.get("condition") == "gold_held":
-			gold_held = true
 	if hand_score > 0:
 		GameState.current_monster["hp"] -= hand_score
-	if gold_held:
-		GameState.money += 3
 
 func monster_attack():
 	resolve_held_conditions()

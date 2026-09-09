@@ -74,14 +74,19 @@ func _on_confirm_pressed():
 		return
 	var slot_indices = []
 	var played = []
+	var slot_map = {}
 	for i in range(word_slots.size()):
 		if word_slots[i].is_occupied():
+			var cap = selected_caps[i]
 			slot_indices.append(i)
-			played.append(selected_caps[i])
+			played.append(cap)
+			slot_map[word_label.text[i]] = cap
+	KeyCapService.play_caps(slot_map)
 	var result = CombatService.calculate_score(played, slot_indices)
 	CombatService.apply_monster_damage(result["score"])
 	if result["money_bonus"] > 0:
 		GameState.money += result["money_bonus"]
+	selected_caps.clear()
 
 func _on_score_calculated(score: int, breakdown: Dictionary):
 	score_label.text = "Score: " + str(score)
@@ -94,6 +99,7 @@ func _on_monster_damaged(hp: int, max_hp: int):
 func _on_player_hit(damage: int, hp: int):
 	player_hp_bar.value = hp
 	money_label.text = "$" + str(GameState.money)
+	KeyCapService.draw_hand()
 
 func _on_round_won(money_earned: int):
 	score_label.text = "ROUND WON! +$" + str(money_earned)

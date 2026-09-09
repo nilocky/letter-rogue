@@ -33,6 +33,7 @@ func process_rental_costs() -> int:
 		if cap.get("condition") == "rental":
 			cost += 1
 	money -= cost
+	money = maxi(money, 0)
 	return cost
 
 func load_starter_bag(caps: Array):
