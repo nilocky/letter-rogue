@@ -24,11 +24,18 @@ func draw_hand():
 
 func play_caps(slot_map: Dictionary) -> Dictionary:
 	var played = []
+	var returned = []
 	for letter in slot_map.keys():
 		var cap = slot_map[letter]
 		GameState.hand.erase(cap)
-		GameState.discard.append(cap)
+		if cap.get("sticker") == "glow":
+			returned.append(cap)
+		else:
+			GameState.discard.append(cap)
 		played.append(cap)
+	# Glow caps go back to hand
+	for cap in returned:
+		GameState.hand.append(cap)
 	return played
 
 func _shuffle_discard_into_bag():

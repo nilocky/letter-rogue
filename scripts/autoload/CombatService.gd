@@ -45,6 +45,19 @@ func calculate_score(played_caps: Array, slot_indices: Array) -> Dictionary:
 		if finish_result.get("adjacent_bonus", 0) > 0:
 			pass
 
+		# Sticker: Gold
+		if cap.get("sticker") == "gold":
+			money_bonus += 2
+		# Sticker: Red (retrigger)
+		if cap.get("sticker") == "red":
+			final_score *= 2
+		# Sticker: Blue
+		if cap.get("sticker") == "blue":
+			GameState.extra_draw += 1
+		# Sticker: Rainbow — mark for UI, already counted as match
+		if cap.get("sticker") == "rainbow":
+			pass
+
 		final_score = _apply_boss_modifier(letter, final_score)
 		total_score += final_score
 		breakdown[letter] = final_score

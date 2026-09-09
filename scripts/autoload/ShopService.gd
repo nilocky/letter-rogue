@@ -72,6 +72,8 @@ func _calculate_price(cap: Dictionary) -> int:
 		var finish_data = _get_finish_data(cap["finish"])
 		if finish_data:
 			base += finish_data.get("price_mod", 0)
+	if cap.has("sticker") and cap["sticker"] != "":
+		base += 2
 	return base
 
 func _get_finish_data(finish_id: String) -> Dictionary:

@@ -29,5 +29,12 @@
     { "id": "polychrome", "name": "Polychrome", "effect": "1.5x score multiplier", "score_mult": 1.5, "price_mod": 5, "weight": 3 },
     { "id": "double_shot", "name": "Double-shot", "effect": "Matches 2 letter slots", "extra_slots": 1, "price_mod": 4, "weight": 3 },
     { "id": "neon", "name": "Neon", "effect": "Adjacent caps get +1 score", "adjacent_bonus": 1, "price_mod": 3, "weight": 4 }
+  ],
+  "stickers": [
+    { "id": "gold", "name": "Gold", "effect": "+$2 when played", "money_on_play": 2 },
+    { "id": "red", "name": "Red", "effect": "Retrigger — score this cap twice", "retrigger": true },
+    { "id": "blue", "name": "Blue", "effect": "Draw +1 next turn", "extra_draw": 1 },
+    { "id": "rainbow", "name": "Rainbow", "effect": "Matches any letter slot", "wild": true },
+    { "id": "glow", "name": "Glow", "effect": "Returns to hand after play", "return_to_hand": true }
   ]
 }
