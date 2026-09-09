@@ -34,7 +34,7 @@ func calculate_score(played_caps: Array, slot_indices: Array) -> Dictionary:
 		if ability_result.has("money"):
 			money_bonus += ability_result["money"]
 
-		_apply_boss_modifier(letter, final_score)
+		final_score = _apply_boss_modifier(letter, final_score)
 		total_score += final_score
 		breakdown[letter] = final_score
 
