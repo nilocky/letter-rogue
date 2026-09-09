@@ -18,6 +18,7 @@ func _ready():
 	_switch_to_menu()
 
 func _switch_to_menu():
+	GameState.reset()
 	_clear_screen()
 	current_state = State.MENU
 	current_screen = menu_scene.instantiate()
