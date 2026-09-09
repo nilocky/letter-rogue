@@ -37,7 +37,7 @@ func _on_word_generated(word: String, monster_name: String):
 	for c in word_label.text:
 		var slot = WordSlotScene.instantiate()
 		slot.setup(c)
-		slot.connect("gui_input", Callable(self, "_on_slot_clicked").bind(word_slots.size()))
+		# slot click handling via _on_cap_clicked on hand elements
 		word_container.add_child(slot)
 		word_slots.append(slot)
 
