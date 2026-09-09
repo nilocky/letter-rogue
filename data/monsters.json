@@ -1,0 +1,38 @@
+{
+  "normal": [
+    {
+      "name": "Goblin",
+      "hp": 10, "max_hp": 10,
+      "word_pool": ["HAT", "DOG", "CAT", "SUN", "BIG"],
+      "attack_pattern": 2,
+      "is_boss": false,
+      "boss_modifier": null
+    },
+    {
+      "name": "Skeleton",
+      "hp": 15, "max_hp": 15,
+      "word_pool": ["BONE", "SKULL", "DARK", "COLD"],
+      "attack_pattern": 3,
+      "is_boss": false,
+      "boss_modifier": null
+    },
+    {
+      "name": "Slime",
+      "hp": 8, "max_hp": 8,
+      "word_pool": ["GOO", "MELT", "DROP", "OOZE"],
+      "attack_pattern": 1,
+      "is_boss": false,
+      "boss_modifier": null
+    }
+  ],
+  "bosses": [
+    {
+      "name": "Vowel Witch",
+      "hp": 20, "max_hp": 20,
+      "word_pool": ["SILENCE", "WHISPER", "VOID", "GHOST"],
+      "attack_pattern": 4,
+      "is_boss": true,
+      "boss_modifier": "vowel_lock"
+    }
+  ]
+}

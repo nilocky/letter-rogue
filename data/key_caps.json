@@ -1,0 +1,26 @@
+{
+  "starter_bag": [
+    { "letter": "E", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
+    { "letter": "T", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
+    { "letter": "A", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
+    { "letter": "O", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
+    { "letter": "I", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
+    { "letter": "N", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
+    { "letter": "S", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
+    { "letter": "R", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false }
+  ],
+  "shop_pool": [
+    { "letter": "E", "ability_id": "double_score", "rarity": "Rare", "ability_strength": 2, "is_symbol": false },
+    { "letter": "X", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 3, "is_symbol": false },
+    { "letter": "Z", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 5, "is_symbol": false },
+    { "letter": "$", "ability_id": "money_bonus", "rarity": "Rare", "ability_strength": 10, "is_symbol": true },
+    { "letter": "*", "ability_id": "wild", "rarity": "Epic", "ability_strength": 1, "is_symbol": true },
+    { "letter": "!", "ability_id": "bonus_damage", "rarity": "Rare", "ability_strength": 3, "is_symbol": true },
+    { "letter": "%", "ability_id": "heal", "rarity": "Rare", "ability_strength": 1, "is_symbol": true },
+    { "letter": "@", "ability_id": "extra_draw", "rarity": "Epic", "ability_strength": 1, "is_symbol": true },
+    { "letter": "+", "ability_id": "double_score", "rarity": "Normal", "ability_strength": 2, "is_symbol": true },
+    { "letter": "#", "ability_id": "shield", "rarity": "Rare", "ability_strength": 1, "is_symbol": true },
+    { "letter": "Q", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 4, "is_symbol": false },
+    { "letter": "J", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 3, "is_symbol": false }
+  ]
+}
