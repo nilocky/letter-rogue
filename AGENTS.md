@@ -29,6 +29,14 @@ Notes:
 - Signal naming: Use past-tense descriptive verbs (e.g., `word_committed`, `round_won`, `turn_ended`).
 - Do not add comments explaining basic language syntax; keep code concise and domain-focused.
 
+## Editing scenes in the Godot 2D editor
+
+`GameRoot.tscn` is **empty by design** — it is a runtime-only `Node` state machine that dynamically instantiates screens from `scripts/game_root.gd`. Opening it in the 2D editor shows nothing; do not treat that as corruption.
+
+- Edit each screen **standalone** by double-clicking its scene file: `scenes/MainMenuScreen.tscn`, `scenes/CombatScreen.tscn`, `scenes/ShopScreen.tscn`, `scenes/GameOverScreen.tscn`, and components under `scenes/components/`.
+- Every screen root is a `Control` with full-rect anchors, so it fills the 768x1376 viewport in the editor and edits/manipulates normally.
+- Verify a scene is healthy headlessly with the `_verify.gd` harness below instead of relying on what the editor shows.
+
 ## Headless verification (temp `_verify.gd` + `_verify.tscn`)
 
 These pitfalls caused repeated hangs/no-output runs — internalize them:
