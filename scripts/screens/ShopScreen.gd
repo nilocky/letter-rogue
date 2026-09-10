@@ -10,6 +10,8 @@ extends Control
 @onready var sell_dialog: ConfirmationDialog = %SellDialog
 
 const KeyCapScene := preload("res://scenes/components/KeyCapElement.tscn")
+const PX_FONT := preload("res://assets/fonts/Kenney Pixel.ttf")
+const M57_FONT := preload("res://assets/fonts/m5x7.ttf")
 
 var _pending_purchase: Dictionary = {}
 var _pending_sale: Dictionary = {}
@@ -20,6 +22,8 @@ func _ready() -> void:
 	fight_button.pressed.connect(_on_fight_pressed)
 	buy_dialog.confirmed.connect(_on_buy_confirmed)
 	sell_dialog.confirmed.connect(_on_sell_confirmed)
+	buy_dialog.add_theme_font_override("font", M57_FONT)
+	sell_dialog.add_theme_font_override("font", M57_FONT)
 	EventBus.shop_inventory_generated.connect(_on_inventory_generated)
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
 	_build_upgrade_buttons()
@@ -51,15 +55,16 @@ func _refresh_ui() -> void:
 func _make_tile(handler: Callable, price: int) -> Control:
 	var elem: Control = KeyCapScene.instantiate()
 	elem.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	elem.custom_minimum_size = Vector2(56, 56)
+	elem.custom_minimum_size = Vector2(88, 88)
 	var price_label := Label.new()
 	price_label.text = "$%d" % price
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	price_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	price_label.add_theme_font_size_override("font_size", 10)
+	price_label.add_theme_font_override("font", M57_FONT)
+	price_label.add_theme_font_size_override("font_size", 24)
 	price_label.add_theme_color_override("font_color", Color(1, 0.9, 0.5))
 	price_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	price_label.offset_top = -12.0
+	price_label.offset_top = -22.0
 	price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	elem.add_child(price_label)
 	elem.clicked.connect(handler)
@@ -193,17 +198,20 @@ func _build_upgrade_buttons() -> void:
 		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var name_lbl := Label.new()
 		name_lbl.text = "%s (owned %d)" % [str(u["name"]), ShopService.owned_level(u["id"])]
-		name_lbl.add_theme_font_size_override("font_size", 13)
+		name_lbl.add_theme_font_override("font", M57_FONT)
+		name_lbl.add_theme_font_size_override("font_size", 24)
 		name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var desc_lbl := Label.new()
 		desc_lbl.text = str(u["desc"])
-		desc_lbl.add_theme_font_size_override("font_size", 11)
+		desc_lbl.add_theme_font_override("font", M57_FONT)
+		desc_lbl.add_theme_font_size_override("font_size", 24)
 		desc_lbl.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8))
 		desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		info.add_child(name_lbl)
 		info.add_child(desc_lbl)
 		var buy_btn := Button.new()
 		buy_btn.text = "$%d" % ShopService.upgrade_cost(u["id"])
+		buy_btn.add_theme_font_override("font", PX_FONT)
 		var uid: String = str(u["id"])
 		buy_btn.pressed.connect(func() -> void:
 			if ShopService.purchase_upgrade(uid):

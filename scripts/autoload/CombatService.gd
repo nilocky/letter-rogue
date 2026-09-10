@@ -98,6 +98,8 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 ## Commit a word: deal damage, collect money, roll lucky/glass/blue side
 ## effects, then advance the turn. Emits win/lose/game_over as needed.
 func commit_word(slots: Array) -> void:
+	if not validate_word(slots).get("ok", false):
+		return
 	var res := calculate_word(slots, true)
 	var word := ""
 	for s in slots:

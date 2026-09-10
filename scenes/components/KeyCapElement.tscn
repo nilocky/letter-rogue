@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/KeyCapElement.gd" id="1_abcdef"]
+[ext_resource type="FontFile" uid="uid://obxbtq4a4566" path="res://assets/fonts/monogram.ttf" id="2_mono"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
 content_margin_left = 3.0
@@ -13,6 +14,18 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(1, 1, 1, 0.55)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mark"]
+bg_color = Color(1, 0.75, 0.2, 0.12)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.75, 0.2, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
@@ -39,13 +52,23 @@ anchor_bottom = 1.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
 mouse_filter = 2
 
+[node name="MarkFrame" type="Panel" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_mark")
+mouse_filter = 2
+
 [node name="Label" type="Label" parent="."]
 unique_name_in_owner = true
 mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("2_mono")
+theme_override_font_sizes/font_size = 42
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "A"
@@ -57,7 +80,7 @@ anchors_preset = 7
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 24
 horizontal_alignment = 2
 vertical_alignment = 1
 text = ""
@@ -67,10 +90,10 @@ unique_name_in_owner = true
 mouse_filter = 2
 anchors_preset = 6
 anchor_right = 1.0
-anchor_bottom = 0.3
-theme_override_font_sizes/font_size = 8
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 52
 horizontal_alignment = 2
-vertical_alignment = 0
+vertical_alignment = 1
 text = ""
 modulate = Color(1, 1, 0, 1)
 
@@ -81,7 +104,7 @@ anchors_preset = 8
 anchor_top = 0.7
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 24
 horizontal_alignment = 2
 vertical_alignment = 1
 text = ""
@@ -92,7 +115,7 @@ unique_name_in_owner = true
 mouse_filter = 2
 anchors_preset = 1
 anchor_bottom = 0.3
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 24
 horizontal_alignment = 0
 vertical_alignment = 0
 text = ""
@@ -104,8 +127,8 @@ mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -12.0
-theme_override_font_sizes/font_size = 9
+offset_top = -20.0
+theme_override_font_sizes/font_size = 24
 horizontal_alignment = 1
 vertical_alignment = 1
 text = ""

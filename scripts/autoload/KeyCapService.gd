@@ -22,8 +22,8 @@ func hand_size() -> int:
 
 
 ## Replace the tiles at `indices` with new random tiles from the bag.
-## Costs 1 redraw token per swapped tile. Returns false (no change) on
-## invalid indices or insufficient tokens.
+## Costs 1 redraw token per redraw action (any number of tiles). Returns
+## false (no change) on invalid indices or no tokens left.
 func redraw_tiles(indices: Array) -> bool:
 	if indices.is_empty():
 		return false
@@ -31,7 +31,7 @@ func redraw_tiles(indices: Array) -> bool:
 	for i in idx:
 		if typeof(i) != TYPE_INT or i < 0 or i >= GameState.hand.size():
 			return false
-	if idx.size() > GameState.redraws_left:
+	if GameState.redraws_left < 1:
 		return false
 	idx.sort()
 	idx.reverse()
@@ -58,7 +58,7 @@ func redraw_tiles(indices: Array) -> bool:
 				break
 			GameState.hand.append(cap)
 			drawn += 1
-	GameState.redraws_left -= idx.size()
+	GameState.redraws_left -= 1
 	EventBus.redraws_changed.emit(GameState.redraws_left)
 	EventBus.hand_drawn.emit(GameState.hand)
 	return true

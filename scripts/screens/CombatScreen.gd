@@ -26,6 +26,8 @@ var _hand_elements: Array = []  # parallel to GameState.hand, tile controls
 var _animating: bool = false  # score animation in flight; blocks further input
 
 const KeyCapElementScene := preload("res://scenes/components/KeyCapElement.tscn")
+const KB_FONT := preload("res://assets/fonts/Kenney Blocks.ttf")
+const MONO_FONT := preload("res://assets/fonts/monogram.ttf")
 
 
 func _ready() -> void:
@@ -90,7 +92,7 @@ func _refresh_hand() -> void:
 	_hand_elements.clear()
 	for i in range(GameState.hand.size()):
 		var el: Control = KeyCapElementScene.instantiate()
-		el.custom_minimum_size = Vector2(64, 64)
+		el.custom_minimum_size = Vector2(88, 88)
 		hand_container.add_child(el)
 		el.setup(GameState.hand[i])
 		el.clicked.connect(_on_hand_clicked.bind(i))
@@ -105,6 +107,7 @@ func _refresh_hand_states() -> void:
 		var el: Control = _hand_elements[i]
 		el.set_used(pos > 0)
 		el.set_word_index(pos)
+		el.set_redraw_marked(_redraw_mode and i in _pending_redraw)
 
 
 func _slot_pos_of_hand(idx: int) -> int:
@@ -182,8 +185,8 @@ func _on_redraw_toggle() -> void:
 
 
 func _redraw_button_ui() -> void:
-	redraw_button.text = "Redraw (%d marked)" % _pending_redraw.size() if _redraw_mode else "Redraw mode"
-	confirm_button.disabled = _redraw_mode
+	redraw_button.text = "Cancel redraw" if _redraw_mode else "Redraw mode"
+	_refresh_word()
 
 
 func _refresh_word() -> void:
@@ -194,7 +197,7 @@ func _refresh_word() -> void:
 		var s: Dictionary = _slots[i]
 		word += str(s["letter"])
 		var el: Control = KeyCapElementScene.instantiate()
-		el.custom_minimum_size = Vector2(44, 44)
+		el.custom_minimum_size = Vector2(72, 72)
 		word_strip.add_child(el)
 		el.setup(s["cap"])
 		el.override_letter(str(s["letter"]))
@@ -202,6 +205,12 @@ func _refresh_word() -> void:
 		el.clicked.connect(_on_slot_clicked.bind(i))
 		el.drag_drop.connect(_on_word_drop)
 	_refresh_hand_states()
+	if _redraw_mode:
+		hint_label.text = "Mark tiles to swap (costs 1 redraw)"
+		confirm_button.text = "Confirm swap"
+		confirm_button.disabled = _pending_redraw.is_empty() or GameState.redraws_left < 1
+		return
+	confirm_button.text = "Confirm"
 	var valid: Dictionary = CombatService.validate_word(_slots) if _slots.size() >= 3 else {"ok": false}
 	if valid.get("ok", false):
 		var res: Dictionary = CombatService.calculate_word(_slots)
@@ -244,14 +253,59 @@ func _reason_text(reason: String) -> String:
 
 
 func _on_confirm_pressed() -> void:
-	if _animating or confirm_button.disabled:
+	if _animating or GameState.turns_left <= 0:
 		return
-	if GameState.turns_left <= 0:
+	if _redraw_mode:
+		if _pending_redraw.is_empty() or GameState.redraws_left < 1:
+			return
+		_do_redraw()
+		return
+	if confirm_button.disabled:
 		return
 	var valid: Dictionary = CombatService.validate_word(_slots)
 	if not valid.get("ok", false):
 		return
 	_play_score_animation()
+
+
+func _do_redraw() -> void:
+	var indices := _pending_redraw.duplicate()
+	_animating = true
+	_set_controls_enabled(false)
+	var marked: Array = []
+	for i in indices:
+		if i < _hand_elements.size():
+			marked.append(_hand_elements[i])
+	var tw := create_tween()
+	tw.set_parallel(true)
+	for el: Control in marked:
+		tw.tween_property(el, "position", el.position + Vector2(0, 60), 0.2)
+		tw.tween_property(el, "modulate:a", 0.0, 0.2)
+	await tw.finished
+	if not KeyCapService.redraw_tiles(indices):
+		for el: Control in marked:
+			el.position -= Vector2(0, 60)
+			el.modulate.a = 1.0
+		_animating = false
+		_set_controls_enabled(true)
+		return
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var incoming: Array = []
+	for i in indices:
+		if i < _hand_elements.size():
+			incoming.append(_hand_elements[i])
+	var tw2 := create_tween()
+	tw2.set_parallel(true)
+	for el: Control in incoming:
+		var target := el.position
+		tw2.tween_property(el, "position", target, 0.25) \
+			.from(target + Vector2(0, 60)) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw2.tween_property(el, "modulate:a", 1.0, 0.25).from(0.0)
+	await tw2.finished
+	_animating = false
+	_set_controls_enabled(true)
 
 
 func _play_score_animation() -> void:
@@ -287,16 +341,17 @@ func _spawn_score_label(tile: Control, pts: float) -> void:
 		return
 	var lbl := Label.new()
 	lbl.text = _fmt_pts(pts)
-	lbl.add_theme_font_size_override("font_size", 16)
+	lbl.add_theme_font_override("font", KB_FONT)
+	lbl.add_theme_font_size_override("font_size", 24)
 	lbl.add_theme_color_override("font_color", Color(1, 0.9, 0.3, 1))
 	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-	lbl.add_theme_constant_override("outline_size", 4)
+	lbl.add_theme_constant_override("outline_size", 6)
 	lbl.z_index = 100
-	lbl.position = tile.global_position + Vector2(0, -22)
+	lbl.position = tile.global_position + Vector2(0, -32)
 	add_child(lbl)
 	var ft := lbl.create_tween()
 	ft.set_parallel(true)
-	ft.tween_property(lbl, "global_position", lbl.global_position + Vector2(0, -24), 0.5) \
+	ft.tween_property(lbl, "global_position", lbl.global_position + Vector2(0, -32), 0.5) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	ft.tween_property(lbl, "modulate:a", 0.0, 0.5)
 	ft.chain().tween_callback(lbl.queue_free)
@@ -328,7 +383,7 @@ func _clear_word() -> void:
 
 func _open_picker(cap: Dictionary) -> void:
 	_build_picker_grid(cap)
-	wildcard_popup.popup_centered(Vector2i(280, 240))
+	wildcard_popup.popup_centered(Vector2i(520, 460))
 
 
 func _build_picker_grid(cap: Dictionary) -> void:
@@ -337,7 +392,8 @@ func _build_picker_grid(cap: Dictionary) -> void:
 	for c in _letters_for_wild(cap):
 		var b := Button.new()
 		b.text = str(c)
-		b.custom_minimum_size = Vector2(28, 32)
+		b.add_theme_font_override("font", MONO_FONT)
+		b.custom_minimum_size = Vector2(52, 60)
 		b.pressed.connect(_on_wild_letter.bind(str(c)))
 		picker_grid.add_child(b)
 

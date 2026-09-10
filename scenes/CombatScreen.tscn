@@ -1,12 +1,20 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
+[ext_resource type="FontFile" uid="uid://obxbtq4a4566" path="res://assets/fonts/monogram.ttf" id="2_mono"]
+[ext_resource type="FontFile" uid="uid://cgtimhoo6o683" path="res://assets/fonts/Kenney Blocks.ttf" id="3_kb"]
+[ext_resource type="FontFile" uid="uid://j7xvbouxwbf5" path="res://assets/fonts/m5x7.ttf" id="4_m57"]
+[ext_resource type="FontFile" uid="uid://doyyuryme11xx" path="res://assets/fonts/Kenney Pixel.ttf" id="5_px"]
+
+[sub_resource type="Theme" id="Theme_combat"]
+default_font_size = 52
 
 [node name="CombatScreen" type="Control"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_abcdef")
+theme = SubResource("Theme_combat")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
@@ -22,29 +30,35 @@ size_flags_horizontal = 3
 
 [node name="MonsterLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/MonsterBox"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("4_m57")
 
 [node name="HpLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/MonsterBox"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("4_m57")
 
 [node name="TurnsLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("5_px")
 text = "Turns: 0"
 
 [node name="RedrawsLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("4_m57")
 text = "Redraws: 0"
 
 [node name="MoneyLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("4_m57")
 text = "$0"
 
 [node name="WordStrip" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 alignment = 1
-theme_override_constants/separation = 4
+theme_override_constants/separation = 6
 
 [node name="HintLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("2_mono")
 horizontal_alignment = 1
 
 [node name="Controls" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
@@ -53,22 +67,27 @@ alignment = 1
 [node name="ConfirmButton" type="Button" parent="MarginContainer/VBoxContainer/Controls"]
 unique_name_in_owner = true
 disabled = true
+theme_override_fonts/font = ExtResource("5_px")
 text = "Confirm"
 
 [node name="BackspaceButton" type="Button" parent="MarginContainer/VBoxContainer/Controls"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("5_px")
 text = "Backspace"
 
 [node name="RedrawButton" type="Button" parent="MarginContainer/VBoxContainer/Controls"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("5_px")
 text = "Redraw mode"
 
 [node name="SkipButton" type="Button" parent="MarginContainer/VBoxContainer/Controls"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("5_px")
 text = "Skip Turn"
 
 [node name="HandEmptyWarning" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("4_m57")
 horizontal_alignment = 1
 text = "Hand empty"
 
@@ -77,7 +96,7 @@ unique_name_in_owner = true
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="WildcardPopup" type="PopupPanel" parent="."]
 unique_name_in_owner = true
@@ -99,15 +118,16 @@ theme_override_constants/margin_bottom = 12
 theme_override_constants/separation = 8
 
 [node name="Scroll" type="ScrollContainer" parent="WildcardPopup/Margin/VBox"]
-custom_minimum_size = Vector2(240, 160)
+custom_minimum_size = Vector2(420, 320)
 
 [node name="PickerGrid" type="GridContainer" parent="WildcardPopup/Margin/VBox/Scroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
 columns = 7
-theme_override_constants/h_separation = 4
-theme_override_constants/v_separation = 4
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 
 [node name="PickerCancelButton" type="Button" parent="WildcardPopup/Margin/VBox"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("5_px")
 text = "Cancel"

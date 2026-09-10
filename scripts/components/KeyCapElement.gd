@@ -3,6 +3,8 @@ extends Control
 signal clicked
 signal drag_drop(from: int, to: int)
 
+const MONO_FONT := preload("res://assets/fonts/monogram.ttf")
+
 @onready var label = %Label
 @onready var ability_label = %AbilityLabel
 @onready var rarity_bg = %RarityBg
@@ -10,6 +12,7 @@ signal drag_drop(from: int, to: int)
 @onready var sticker_label = %StickerLabel
 @onready var condition_label = %ConditionLabel
 @onready var index_label = %IndexLabel
+@onready var mark_frame: Panel = %MarkFrame
 
 var cap_data: Dictionary = {}
 var selected := false
@@ -57,6 +60,10 @@ func set_used(used: bool) -> void:
 	modulate = Color(0.5, 0.5, 0.5, 0.75) if used else Color.WHITE
 
 
+func set_redraw_marked(marked: bool) -> void:
+	mark_frame.visible = marked
+
+
 func _modifier_abbr(id: String) -> String:
 	match id:
 		"foil": return "FL"
@@ -86,6 +93,7 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 		return null
 	var preview := Label.new()
 	preview.text = label.text
+	preview.add_theme_font_override("font", MONO_FONT)
 	preview.add_theme_font_size_override("font_size", 24)
 	set_drag_preview(preview)
 	return {"slot": drag_index}

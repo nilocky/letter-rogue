@@ -1,6 +1,12 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/ShopScreen.gd" id="1_abcdef"]
+[ext_resource type="FontFile" uid="uid://cgtimhoo6o683" path="res://assets/fonts/Kenney Blocks.ttf" id="3_kb"]
+[ext_resource type="FontFile" uid="uid://j7xvbouxwbf5" path="res://assets/fonts/m5x7.ttf" id="4_m57"]
+[ext_resource type="FontFile" uid="uid://doyyuryme11xx" path="res://assets/fonts/Kenney Pixel.ttf" id="5_px"]
+
+[sub_resource type="Theme" id="Theme_shop"]
+default_font_size = 42
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 10.0
@@ -18,49 +24,54 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_abcdef")
+theme = SubResource("Theme_shop")
 
 [node name="TopBar" type="HBoxContainer" parent="."]
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 
 [node name="TitleLabel" type="Label" parent="TopBar"]
 text = "Shop"
-theme_override_font_sizes/font_size = 22
+theme_override_fonts/font = ExtResource("5_px")
+theme_override_font_sizes/font_size = 52
 size_flags_horizontal = 3
 
 [node name="MoneyLabel" type="Label" parent="TopBar"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("4_m57")
 text = "$10"
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 36
 
 [node name="RerollButton" type="Button" parent="TopBar"]
 unique_name_in_owner = true
+theme_override_fonts/font = ExtResource("5_px")
 text = "Reroll ($3)"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 44.0
-offset_bottom = -44.0
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
+offset_top = 72.0
+offset_bottom = -72.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
 
 [node name="Columns" type="HBoxContainer" parent="MarginContainer"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 
 [node name="ShopColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch_ratio = 1.4
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
 
 [node name="ForSaleLabel" type="Label" parent="MarginContainer/Columns/ShopColumn"]
 text = "For Sale"
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("5_px")
+theme_override_font_sizes/font_size = 42
 theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
 
 [node name="ShopPanel" type="PanelContainer" parent="MarginContainer/Columns/ShopColumn"]
@@ -76,18 +87,19 @@ size_flags_vertical = 3
 unique_name_in_owner = true
 size_flags_horizontal = 3
 columns = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
 
 [node name="BagColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch_ratio = 1.3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
 
 [node name="BagLabel" type="Label" parent="MarginContainer/Columns/BagColumn"]
 text = "Your Bag"
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("5_px")
+theme_override_font_sizes/font_size = 42
 theme_override_colors/font_color = Color(0.5, 0.85, 1, 1)
 
 [node name="BagPanel" type="PanelContainer" parent="MarginContainer/Columns/BagColumn"]
@@ -103,18 +115,19 @@ size_flags_vertical = 3
 unique_name_in_owner = true
 size_flags_horizontal = 3
 columns = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
 
 [node name="UpgradeColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch_ratio = 1.0
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
 
 [node name="UpgradeLabel" type="Label" parent="MarginContainer/Columns/UpgradeColumn"]
 text = "Upgrades"
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("5_px")
+theme_override_font_sizes/font_size = 42
 theme_override_colors/font_color = Color(0.6, 1, 0.6, 1)
 
 [node name="UpgradePanel" type="PanelContainer" parent="MarginContainer/Columns/UpgradeColumn"]
@@ -129,17 +142,18 @@ size_flags_vertical = 3
 [node name="UpgradeBox" type="VBoxContainer" parent="MarginContainer/Columns/UpgradeColumn/UpgradePanel/UpgradeScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 14
 
 [node name="FightButton" type="Button" parent="."]
 unique_name_in_owner = true
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -40.0
-offset_bottom = -8.0
+offset_top = -76.0
+offset_bottom = -12.0
 offset_left = 8.0
 offset_right = -8.0
+theme_override_fonts/font = ExtResource("5_px")
 text = "Fight!"
 
 [node name="BuyDialog" type="ConfirmationDialog" parent="."]
