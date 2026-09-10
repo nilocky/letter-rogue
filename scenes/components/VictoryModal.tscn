@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/VictoryModal.gd" id="1_script"]
+
+[node name="VictoryModal" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Overlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+mouse_filter = 1
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.08
+anchor_top = 0.12
+anchor_right = 0.92
+anchor_bottom = 0.88
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+unique_name_in_owner = true
+theme_type_variation = &"HeaderLabel"
+horizontal_alignment = 1
+text = "ROUND WON"
+
+[node name="Receipt" type="VBoxContainer" parent="Panel/VBox"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="TotalLabel" type="Label" parent="Panel/VBox"]
+unique_name_in_owner = true
+theme_type_variation = &"HeaderLabel"
+horizontal_alignment = 1
+text = "TOTAL CASH: +$0"
+
+[node name="ContinueButton" type="Button" parent="Panel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 140)
+text = "CONTINUE TO SHOP"

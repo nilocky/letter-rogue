@@ -12,6 +12,7 @@ func _ready() -> void:
 	_test_eventbus_signals()
 	await _test_game_root_signals()
 	_test_bag_modal()
+	_test_victory_modal()
 	if _failures == 0:
 		print("VERIFY OK")
 		get_tree().quit(0)
@@ -79,6 +80,17 @@ func _test_game_root_signals() -> void:
 	_check(game_root.has_method("_on_shop_requested"), "game_root has _on_shop_requested")
 	_check(game_root.has_method("_on_game_complete"), "game_root has _on_game_complete")
 	game_root.queue_free()
+	await get_tree().process_frame
+
+
+func _test_victory_modal() -> void:
+	var scene: PackedScene = load("res://scenes/components/VictoryModal.tscn")
+	_check(scene != null, "VictoryModal scene loads")
+	var modal: Control = scene.instantiate()
+	add_child(modal)
+	await get_tree().process_frame
+	_check(modal.has_method("open"), "VictoryModal has open()")
+	modal.queue_free()
 	await get_tree().process_frame
 
 
