@@ -1,41 +1,71 @@
 extends Node
+## Runtime state for the whole run. Data only; behaviour lives in services.
 
-var hp: int = 20
-var max_hp: int = 20
+signal state_changed
+
+const BASE_TURNS := 3
+const BASE_REDRAWS := 3
+const BASE_DRAW := 5
+
 var money: int = 10
-var round: int = 1
+var round_number: int = 1
 var bag: Array = []
 var hand: Array = []
-var discard: Array = []
 var current_monster: Dictionary = {}
 var shop_inventory: Array = []
 var active_pack_id: String = ""
-var shield: int = 0
-var extra_draw: int = 0
 
-func reset():
-	hp = 20
-	max_hp = 20
+var turns_left: int = 0
+var redraws_left: int = 0
+
+var upgrade_draw: int = 0
+var upgrade_turns: int = 0
+var upgrade_redraws: int = 0
+var next_draw_bonus: int = 0
+var pack_start_money_granted: bool = false
+
+
+func reset() -> void:
 	money = 10
-	round = 1
+	round_number = 1
 	bag = []
 	hand = []
-	discard = []
 	current_monster = {}
 	shop_inventory = []
 	active_pack_id = ""
-	shield = 0
-	extra_draw = 0
+	turns_left = 0
+	redraws_left = 0
+	upgrade_draw = 0
+	upgrade_turns = 0
+	upgrade_redraws = 0
+	next_draw_bonus = 0
+	pack_start_money_granted = false
 
-func process_rental_costs() -> int:
-	var cost = 0
-	for cap in bag:
-		if cap.get("condition") == "rental":
-			cost += 1
-	money -= cost
-	money = maxi(money, 0)
-	return cost
 
-func load_starter_bag(caps: Array):
-	bag = caps.duplicate()
-	bag.shuffle()
+func round_turn_budget() -> int:
+	return BASE_TURNS + upgrade_turns
+
+
+func round_redraw_budget() -> int:
+	return BASE_REDRAWS + upgrade_redraws
+
+
+func draw_size() -> int:
+	var base := BASE_DRAW
+	if active_pack_id != "":
+		var pack := PackService.pack_by_id(active_pack_id)
+		if not pack.is_empty():
+			if int(pack.get("base_draw", 0)) > 0:
+				base = int(pack["base_draw"])
+			else:
+				base = BASE_DRAW + int(pack.get("draw_modifier", 0))
+	return maxi(base + upgrade_draw + next_draw_bonus, 3)
+
+
+func monster_hp_scaled() -> int:
+	var base := int(current_monster.get("hp", 10))
+	return int(round(float(base) * (1.0 + float(round_number - 1) * 0.15)))
+
+
+func round_reward() -> int:
+	return 5 + round_number * 2
