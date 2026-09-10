@@ -13,13 +13,15 @@ extends Control
 @onready var backspace_button: Button = %BackspaceButton
 @onready var redraw_button: Button = %RedrawButton
 @onready var skip_button: Button = %SkipButton
-@onready var letter_picker: HBoxContainer = %LetterPicker
+@onready var wildcard_popup: PopupPanel = %WildcardPopup
+@onready var picker_grid: GridContainer = %PickerGrid
+@onready var picker_cancel_button: Button = %PickerCancelButton
 @onready var hand_empty_warning: Label = %HandEmptyWarning
 
 var _slots: Array = []  # {"cap": Dictionary, "letter": String} in word order
 var _pending_redraw: Array = []  # hand indices to swap
 var _redraw_mode: bool = false
-var _wildcard_pending: Dictionary = {}  # {"cap":..., "index": int} awaiting letter
+var _wildcard_pending: Dictionary = {}  # {"cap":..., "hand_idx":..., "slot":...} awaiting letter
 var _hand_elements: Array = []  # parallel to GameState.hand, tile controls
 
 const KeyCapElementScene := preload("res://scenes/components/KeyCapElement.tscn")
@@ -36,8 +38,7 @@ func _ready() -> void:
 	backspace_button.pressed.connect(_on_backspace_pressed)
 	redraw_button.pressed.connect(_on_redraw_toggle)
 	skip_button.pressed.connect(_on_skip_pressed)
-	letter_picker.visible = false
-	_build_letter_picker()
+	picker_cancel_button.pressed.connect(_on_picker_cancel)
 
 
 func show_round() -> void:
@@ -124,8 +125,8 @@ func _on_hand_clicked(idx: int) -> void:
 		return
 	var cap: Dictionary = GameState.hand[idx]
 	if bool(cap.get("is_symbol", false)):
-		_wildcard_pending = {"cap": cap, "index": idx, "hand_idx": idx}
-		_show_letter_picker(cap)
+		_wildcard_pending = {"cap": cap, "hand_idx": idx, "slot": -1}
+		_open_picker(cap)
 		return
 	if _slot_uses_hand_index(idx):
 		_remove_slot_by_hand_index(idx)
@@ -211,9 +212,15 @@ func _refresh_word() -> void:
 
 
 func _on_slot_clicked(i: int) -> void:
-	if i < _slots.size():
-		_slots.remove_at(i)
-		_refresh_word()
+	if i >= _slots.size():
+		return
+	var s: Dictionary = _slots[i]
+	if bool(s.get("cap", {}).get("is_symbol", false)):
+		_wildcard_pending = {"cap": s["cap"], "hand_idx": int(s.get("hand_idx", -1)), "slot": i}
+		_open_picker(s["cap"])
+		return
+	_slots.remove_at(i)
+	_refresh_word()
 
 
 func _on_word_drop(from: int, to: int) -> void:
@@ -254,52 +261,51 @@ func _clear_word() -> void:
 	_refresh_word()
 
 
-func _build_letter_picker() -> void:
-	var letters: Array = _letters_for_wild("")
-	for c in letters:
+func _open_picker(cap: Dictionary) -> void:
+	_build_picker_grid(cap)
+	wildcard_popup.popup_centered(Vector2i(280, 240))
+
+
+func _build_picker_grid(cap: Dictionary) -> void:
+	for child in picker_grid.get_children():
+		child.queue_free()
+	for c in _letters_for_wild(cap):
 		var b := Button.new()
 		b.text = str(c)
-		b.custom_minimum_size = Vector2(36, 36)
+		b.custom_minimum_size = Vector2(28, 32)
 		b.pressed.connect(_on_wild_letter.bind(str(c)))
-		letter_picker.add_child(b)
+		picker_grid.add_child(b)
 
 
 func _on_wild_letter(letter: String) -> void:
 	if _wildcard_pending.is_empty():
 		return
-	var hidx: int = int(_wildcard_pending.get("hand_idx", -1))
-	_add_slot(_wildcard_pending["cap"], letter, hidx)
+	var slot: int = int(_wildcard_pending.get("slot", -1))
+	if slot >= 0:
+		_slots[slot]["letter"] = letter
+		_refresh_word()
+	else:
+		_add_slot(_wildcard_pending["cap"], letter, int(_wildcard_pending.get("hand_idx", -1)))
 	_wildcard_pending = {}
-	letter_picker.visible = false
+	wildcard_popup.hide()
 
 
-func _letters_for_wild(_cap: Variant) -> Array:
-	# populated on demand per wildcard type
-	var ab: String = str(_wildcard_pending.get("cap", {}).get("ability_id", ""))
-	if ab == "vowel_wild":
-		return ["A", "E", "I", "O", "U"].duplicate()
-	if ab == "consonant_wild":
-		var cons: Array = []
-		for c in "BCDFGHJKLMNPQRSTVWXYZ":
-			cons.append(c)
-		return cons
-	var allc: Array = []
-	for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-		allc.append(c)
-	return allc
+func _on_picker_cancel() -> void:
+	_wildcard_pending = {}
+	wildcard_popup.hide()
 
 
-func _show_letter_picker(cap: Dictionary) -> void:
-	for child in letter_picker.get_children():
-		child.queue_free()
-	var letters: Array = _letters_for_wild(cap)
-	for c in letters:
-		var b := Button.new()
-		b.text = str(c)
-		b.custom_minimum_size = Vector2(36, 36)
-		var hidx: int = int(_wildcard_pending.get("hand_idx", -1))
-		b.pressed.connect(func() -> void:
-			_add_slot(_wildcard_pending["cap"], str(c), hidx)
-			letter_picker.visible = false)
-		letter_picker.add_child(b)
-	letter_picker.visible = true
+func _letters_for_wild(cap: Dictionary) -> Array:
+	match str(cap.get("ability_id", "")):
+		"vowel_wild":
+			return ["A", "E", "I", "O", "U"]
+		"consonant_wild":
+			var cons: Array = []
+			for c in "BCDFGHJKLMNPQRSTVWXYZ":
+				cons.append(c)
+			return cons
+		_:
+			var allc: Array = []
+			for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+				allc.append(c)
+			return allc
