@@ -28,6 +28,17 @@ func _switch_to_menu() -> void:
 	_show(MENU_SCENE)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if OS.is_debug_build() and event is InputEventKey and event.pressed and event.keycode == KEY_F1:
+		GameState.reset()
+		GameState.active_pack_id = "mx_red"
+		GameState.money = 50
+		GameState.bag = _load_starter_bag()
+		ShopService.new_shop()
+		current_state = State.SHOP
+		_show(SHOP_SCENE)
+
+
 func _on_run_started() -> void:
 	var pack_id: String = GameState.active_pack_id
 	GameState.reset()
