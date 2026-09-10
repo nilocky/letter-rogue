@@ -32,18 +32,21 @@ func _refresh_ui() -> void:
 	for c in inventory_grid.get_children():
 		c.queue_free()
 	for i in range(GameState.shop_inventory.size()):
-		inventory_grid.add_child(_make_tile(GameState.shop_inventory[i], _on_shop_item_clicked.bind(i)))
+		var elem: Control = _make_tile(_on_shop_item_clicked.bind(i))
+		inventory_grid.add_child(elem)
+		elem.setup(GameState.shop_inventory[i])
 	for c in bag_grid.get_children():
 		c.queue_free()
 	for i in range(GameState.bag.size()):
-		bag_grid.add_child(_make_tile(GameState.bag[i], _on_bag_item_clicked.bind(i)))
+		var elem: Control = _make_tile(_on_bag_item_clicked.bind(i))
+		bag_grid.add_child(elem)
+		elem.setup(GameState.bag[i])
 
 
-func _make_tile(cap: Dictionary, handler: Callable) -> Control:
+func _make_tile(handler: Callable) -> Control:
 	var elem: Control = KeyCapScene.instantiate()
 	elem.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	elem.custom_minimum_size = Vector2(64, 48)
-	elem.setup(cap)
 	elem.clicked.connect(handler)
 	return elem
 
