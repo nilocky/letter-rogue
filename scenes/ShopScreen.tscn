@@ -22,34 +22,57 @@ text = "Reroll ($3)"
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 40.0
-margin_bottom = -40.0
+offset_top = 40.0
+offset_bottom = -40.0
 
-[node name="Content" type="VBoxContainer" parent="MarginContainer"]
-
-[node name="ForSaleLabel" type="Label" parent="MarginContainer/Content"]
-text = "For Sale"
-
-[node name="InventoryGrid" type="GridContainer" parent="MarginContainer/Content"]
-unique_name_in_owner = true
+[node name="Columns" type="HBoxContainer" parent="MarginContainer"]
 size_flags_horizontal = 3
-columns = 2
-
-[node name="BagLabel" type="Label" parent="MarginContainer/Content"]
-text = "Your Bag"
-
-[node name="BagGrid" type="GridContainer" parent="MarginContainer/Content"]
-unique_name_in_owner = true
-size_flags_horizontal = 3
-columns = 2
-
-[node name="UpgradeLabel" type="Label" parent="MarginContainer/Content"]
-text = "Upgrades"
-
-[node name="UpgradeScroll" type="ScrollContainer" parent="MarginContainer/Content"]
 size_flags_vertical = 3
 
-[node name="UpgradeBox" type="VBoxContainer" parent="MarginContainer/Content/UpgradeScroll"]
+[node name="ShopColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ForSaleLabel" type="Label" parent="MarginContainer/Columns/ShopColumn"]
+text = "For Sale"
+
+[node name="InventoryScroll" type="ScrollContainer" parent="MarginContainer/Columns/ShopColumn"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="InventoryGrid" type="GridContainer" parent="MarginContainer/Columns/ShopColumn/InventoryScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+columns = 1
+
+[node name="BagColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BagLabel" type="Label" parent="MarginContainer/Columns/BagColumn"]
+text = "Your Bag"
+
+[node name="BagScroll" type="ScrollContainer" parent="MarginContainer/Columns/BagColumn"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BagGrid" type="GridContainer" parent="MarginContainer/Columns/BagColumn/BagScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+columns = 1
+
+[node name="UpgradeColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="UpgradeLabel" type="Label" parent="MarginContainer/Columns/UpgradeColumn"]
+text = "Upgrades"
+
+[node name="UpgradeScroll" type="ScrollContainer" parent="MarginContainer/Columns/UpgradeColumn"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="UpgradeBox" type="VBoxContainer" parent="MarginContainer/Columns/UpgradeColumn/UpgradeScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
 

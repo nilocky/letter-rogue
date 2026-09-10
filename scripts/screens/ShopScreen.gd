@@ -30,6 +30,7 @@ func _refresh_ui():
 	for i in range(GameState.shop_inventory.size()):
 		var cap = GameState.shop_inventory[i]
 		var elem = KeyCapScene.instantiate()
+		elem.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var price_label = Label.new()
 		price_label.text = "$" + str(cap["price"])
 		elem.add_child(price_label)
@@ -41,6 +42,7 @@ func _refresh_ui():
 	for i in range(GameState.bag.size()):
 		var cap = GameState.bag[i]
 		var elem = KeyCapScene.instantiate()
+		elem.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		bag_grid.add_child(elem)
 		elem.setup(cap)
 		elem.clicked.connect(_on_bag_item_clicked.bind(i))
@@ -72,7 +74,9 @@ func _build_upgrade_buttons():
 		child.queue_free()
 	for u in ShopService.upgrade_defs():
 		var row = HBoxContainer.new()
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var info = VBoxContainer.new()
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var name_lbl = Label.new()
 		name_lbl.text = "%s (owned %d)" % [str(u["name"]), ShopService.owned_level(u["id"])]
 		var desc_lbl = Label.new()
