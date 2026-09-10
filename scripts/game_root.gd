@@ -1,99 +1,99 @@
 extends Node
+## Top-level state machine: menu -> combat <-> shop -> game over.
 
 enum State { MENU, PACK_SELECT, COMBAT, SHOP, GAME_OVER }
 
-var current_state = State.MENU
-var current_screen = null
+var current_state: State = State.MENU
+var current_screen: Node = null
 
-var menu_scene = preload("res://scenes/MainMenuScreen.tscn")
-var combat_scene = preload("res://scenes/CombatScreen.tscn")
-var shop_scene = preload("res://scenes/ShopScreen.tscn")
-var game_over_scene = preload("res://scenes/GameOverScreen.tscn")
+const MENU_SCENE := preload("res://scenes/MainMenuScreen.tscn")
+const COMBAT_SCENE := preload("res://scenes/CombatScreen.tscn")
+const SHOP_SCENE := preload("res://scenes/ShopScreen.tscn")
+const GAME_OVER_SCENE := preload("res://scenes/GameOverScreen.tscn")
 
-func _ready():
+var _monsters_cache: Dictionary = {}
+
+
+func _ready() -> void:
 	EventBus.run_started.connect(_on_run_started)
-	EventBus.round_won.connect(_on_round_won)
 	EventBus.fight_pressed.connect(_on_fight_pressed)
+	EventBus.round_won.connect(_on_round_won)
 	EventBus.game_over.connect(_on_game_over)
 	_switch_to_menu()
 
-func _switch_to_menu():
+
+func _switch_to_menu() -> void:
 	GameState.reset()
-	_clear_screen()
 	current_state = State.MENU
-	current_screen = menu_scene.instantiate()
-	add_child(current_screen)
+	_show(MENU_SCENE)
 
-func _on_run_started():
+
+func _on_run_started() -> void:
+	var pack_id: String = GameState.active_pack_id
 	GameState.reset()
-	var caps_json = FileAccess.get_file_as_string("res://data/key_caps.json")
-	var data = JSON.parse_string(caps_json)
-	GameState.load_starter_bag(data["starter_bag"])
+	GameState.active_pack_id = pack_id
+	var pack: Dictionary = PackService.pack_by_id(pack_id)
+	if not pack.is_empty() and not GameState.pack_start_money_granted:
+		GameState.money += int(pack.get("start_money", 0))
+		GameState.pack_start_money_granted = true
+	GameState.bag = _load_starter_bag()
+	_fight_or_boss()
 
-	var monsters_json = FileAccess.get_file_as_string("res://data/monsters.json")
-	var monsters_data = JSON.parse_string(monsters_json)
-	var monster = monsters_data["normal"][0].duplicate()
-	var scale = 1.0 + (GameState.round - 1) * 0.15
-	monster["max_hp"] = ceili(monster["max_hp"] * scale)
-	monster["hp"] = monster["max_hp"]
-	GameState.current_monster = monster
 
-	_switch_to_combat()
+func _on_fight_pressed() -> void:
+	_fight_or_boss()
 
-func _switch_to_combat():
-	_clear_screen()
+
+func _fight_or_boss() -> void:
+	var boss_round: bool = GameState.round_number % 3 == 0
+	var list: Array = _monster_list_for("bosses" if boss_round else "normal")
+	if list.is_empty():
+		return
+	var entry: Dictionary = list[randi() % list.size()].duplicate(true)
+	entry["hp_remaining"] = _scaled_hp(entry, GameState.round_number)
+	GameState.current_monster = entry
 	current_state = State.COMBAT
-	current_screen = combat_scene.instantiate()
-	add_child(current_screen)
-	CombatService.start_combat(GameState.current_monster)
+	_show(COMBAT_SCENE)
+	CombatService.start_round()
 
-func _on_round_won(money_earned: int):
-	for cap in GameState.hand:
-		if cap.get("condition") == "gold_held":
-			GameState.money += 3
-			break
-	GameState.round += 1
-	if GameState.round % 3 == 0:
-		var monsters_json = FileAccess.get_file_as_string("res://data/monsters.json")
-		var data = JSON.parse_string(monsters_json)
-		var boss = data["bosses"][0].duplicate()
-		var scale = 1.0 + (GameState.round - 1) * 0.15
-		boss["max_hp"] = ceili(boss["max_hp"] * scale)
-		boss["hp"] = boss["max_hp"]
-		GameState.current_monster = boss
-		_switch_to_combat()
-	else:
-		_switch_to_shop()
 
-func _switch_to_shop():
-	_clear_screen()
+func _on_round_won(_money_earned: int) -> void:
+	GameState.round_number += 1
+	ShopService.new_shop()
 	current_state = State.SHOP
-	current_screen = shop_scene.instantiate()
-	GameState.process_rental_costs()
-	add_child(current_screen)
-	ShopService.generate_inventory()
+	_show(SHOP_SCENE)
 
-func _on_fight_pressed():
-	_load_next_normal_monster()
-	_switch_to_combat()
 
-func _load_next_normal_monster():
-	var monsters_json = FileAccess.get_file_as_string("res://data/monsters.json")
-	var data = JSON.parse_string(monsters_json)
-	var pool = data["normal"]
-	var monster = pool[randi() % pool.size()].duplicate()
-	var scale = 1.0 + (GameState.round - 1) * 0.15
-	monster["max_hp"] = ceili(monster["max_hp"] * scale)
-	monster["hp"] = monster["max_hp"]
-	GameState.current_monster = monster
-
-func _on_game_over():
-	_clear_screen()
+func _on_game_over(reached_round: int) -> void:
 	current_state = State.GAME_OVER
-	current_screen = game_over_scene.instantiate()
-	add_child(current_screen)
+	_show(GAME_OVER_SCENE)
+	if current_screen.has_method("show_game_over"):
+		current_screen.show_game_over(reached_round)
 
-func _clear_screen():
+
+func _show(scene: PackedScene) -> void:
 	if current_screen:
 		current_screen.queue_free()
-		current_screen = null
+	current_screen = scene.instantiate()
+	add_child(current_screen)
+
+
+func _load_starter_bag() -> Array:
+	var text := FileAccess.get_file_as_string("res://data/key_caps.json")
+	var data: Variant = JSON.parse_string(text)
+	if typeof(data) != TYPE_DICTIONARY:
+		return []
+	return (data.get("starter_bag", []) as Array).duplicate(true)
+
+
+func _monster_list_for(pool: String) -> Array:
+	if _monsters_cache.is_empty():
+		var text := FileAccess.get_file_as_string("res://data/monsters.json")
+		var data: Variant = JSON.parse_string(text)
+		if typeof(data) == TYPE_DICTIONARY:
+			_monsters_cache = data
+	return _monsters_cache.get(pool, [])
+
+
+func _scaled_hp(entry: Dictionary, round_number: int) -> int:
+	return int(round(float(entry.get("hp", 10)) * (1.0 + float(round_number - 1) * 0.15)))
