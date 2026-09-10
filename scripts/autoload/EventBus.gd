@@ -1,18 +1,21 @@
 extends Node
 
-signal combat_word_generated(word: String, monster_name: String)
+signal run_started
+signal pack_selected(pack_id: String)
+signal fight_pressed
+
 signal hand_drawn(hand: Array)
-signal caps_played(played_caps: Array, slots: Array)
-signal score_calculated(score: int, breakdown: Dictionary)
+signal turn_started(turns_left: int, redraws_left: int)
+signal turns_changed(turns_left: int)
+signal redraws_changed(redraws_left: int)
+signal word_committed(word: String, damage: int, tiles_used: int)
 signal monster_damaged(remaining_hp: int, max_hp: int)
-signal player_hit(damage: int, remaining_hp: int)
 signal round_won(money_earned: int)
 signal round_lost
-signal game_over
+signal game_over(reached_round: int)
+
 signal shop_inventory_generated(inventory: Array)
 signal cap_purchased(cap: Dictionary)
 signal cap_sold(cap: Dictionary)
 signal shop_rerolled
-signal pack_selected(pack_id: String)
-signal fight_pressed
-signal run_started
+signal upgrade_purchased(upgrade_id: String, level: int)
