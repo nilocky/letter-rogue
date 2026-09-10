@@ -125,7 +125,7 @@ func _on_hand_clicked(idx: int) -> void:
 			_pending_redraw.erase(idx)
 		else:
 			_pending_redraw.append(idx)
-		_refresh_hand_states()
+		_redraw_button_ui()
 		return
 	var cap: Dictionary = GameState.hand[idx]
 	if bool(cap.get("is_symbol", false)):
@@ -175,6 +175,7 @@ func _redraw_button_ui() -> void:
 	if _redraw_mode:
 		redraw_button.text = "Cancel"
 		play_button.text = "Confirm swap"
+		play_button.disabled = true
 	else:
 		redraw_button.text = "REDRAW (%d)" % GameState.redraws_left
 	redraw_button.disabled = _redraw_mode and (_pending_redraw.is_empty() or GameState.redraws_left < 1)
