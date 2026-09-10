@@ -1,207 +1,160 @@
 extends Node
+## Round and turn loop. Round = N turns (budget); each turn spells one word.
 
-var current_word: String = ""
-var word_letters: Array = []
-var _boss_matched_letters: Array = []
+const COMMON_LETTERS := "ETAOINRS"
+const UNCOMMON_LETTERS := "HLDCUMFPGWYB"
+const VOWELS := "AEIOU"
 
-func start_combat(monster: Dictionary):
-	current_word = monster["word_pool"][randi() % monster["word_pool"].size()]
-	word_letters = []
-	_boss_matched_letters = []
-	for c in current_word:
-		word_letters.append(c)
-	EventBus.combat_word_generated.emit(current_word, monster["name"])
+const REWARD_BASE := 5
+
+
+func start_round() -> void:
+	GameState.turns_left = GameState.round_turn_budget()
+	GameState.redraws_left = GameState.round_redraw_budget()
+	GameState.next_draw_bonus = 0
+	GameState.current_monster["hp_remaining"] = GameState.monster_hp_scaled()
+	EventBus.turn_started.emit(GameState.turns_left, GameState.redraws_left)
 	KeyCapService.draw_hand()
 
-func calculate_score(played_caps: Array, slot_indices: Array) -> Dictionary:
-	var total_score = 0
-	var money_bonus = 0
-	var breakdown = {}
 
-	for i in range(played_caps.size()):
-		var cap = played_caps[i]
-		var letter = word_letters[slot_indices[i]]
-		var letter_score = _letter_base_score(letter)
+## Validate a word built from `slots` (each {"cap": Dictionary, "letter": String}).
+func validate_word(slots: Array) -> Dictionary:
+	if slots.size() < 3:
+		return {"ok": false, "reason": "too_short"}
+	var word := ""
+	var letters: Array = []
+	for s in slots:
+		word += str(s["letter"])
+		letters.append(str(s["letter"]))
+	if not WordService.is_word(word):
+		return {"ok": false, "reason": "not_word"}
+	var modifier: String = str(GameState.current_monster.get("boss_modifier", ""))
+	if modifier == "no_repeats":
+		var seen: Dictionary = {}
+		for letter in letters:
+			if seen.has(letter):
+				return {"ok": false, "reason": "repeat_letter"}
+			seen[letter] = true
+	return {"ok": true, "word": word}
 
-		var ctx = {"letter": letter, "base_score": letter_score}
-		var ability_result = {}
-		if GameState.current_monster.get("boss_modifier", "") != "silence":
-			ability_result = KeyCapService.resolve_ability(cap, ctx)
 
-		var final_score = letter_score
-		if ability_result.has("score"):
-			final_score += ability_result["score"]
-		if ability_result.has("score_multiplier"):
-			final_score *= ability_result["score_multiplier"]
-		if ability_result.has("bonus_damage"):
-			final_score += ability_result["bonus_damage"]
-		if ability_result.has("money"):
-			money_bonus += ability_result["money"]
+## Deterministic damage/money for a word. Does NOT mutate GameState.
+func calculate_word(slots: Array) -> Dictionary:
+	var disabled: bool = str(GameState.current_monster.get("boss_modifier", "")) == "silence"
+	var pack := PackService.pack_by_id(GameState.active_pack_id)
+	var per_tile: int = int(pack.get("score_modifier", 0)) if not pack.is_empty() else 0
 
-		var finish_result = resolve_finish(cap, final_score, i, played_caps.size())
-		final_score += finish_result.get("score", 0)
-		if finish_result.has("score_mult"):
-			final_score = ceili(final_score * finish_result["score_mult"])
-		if finish_result.get("extra_slots", 0) > 0:
-			pass
-		if finish_result.get("adjacent_bonus", 0) > 0:
-			pass
+	var total := 0.0
+	var flat := 0
+	var money := 0
+	for s in slots:
+		var cap: Dictionary = s["cap"]
+		var letter: String = str(s["letter"])
+		var is_vowel: bool = VOWELS.contains(letter)
+		var contribution := 0.0
+		if not bool(cap.get("is_symbol", false)):
+			contribution = float(_letter_base_score(str(cap["letter"])))
+		if not disabled:
+			contribution += float(per_tile)
+			var ability := KeyCapService.resolve_ability(cap)
+			contribution += float(ability.get("score", 0))
+			contribution *= float(ability.get("score_multiplier", 1.0))
+			money += int(ability.get("money", 0))
+			flat += int(ability.get("bonus", 0))
+			match str(cap.get("finish", "")):
+				"foil":
+					contribution += 3.0
+				"holographic":
+					contribution += 1.0
+				"polychrome":
+					contribution *= 1.5
+			if str(cap.get("sticker", "")) == "red":
+				contribution *= 2.0
+			elif str(cap.get("sticker", "")) == "gold":
+				money += 2
+			if str(cap.get("condition", "")) == "glass":
+				contribution *= 2.0
+		var modifier: String = str(GameState.current_monster.get("boss_modifier", ""))
+		if modifier == "vowel_lock" and not is_vowel:
+			contribution = 0.0
+		elif modifier == "consonant_lock" and is_vowel:
+			contribution = 0.0
+		total += contribution
+	var damage: int = int(round(total * WordService.length_multiplier(slots.size()))) + flat
+	return {"damage": damage, "money": money}
 
-		# Sticker: Gold
-		if cap.get("sticker") == "gold":
-			money_bonus += 2
-		# Sticker: Red (retrigger)
-		if cap.get("sticker") == "red":
-			final_score *= 2
-		# Sticker: Blue
-		if cap.get("sticker") == "blue":
-			GameState.extra_draw += 1
-		# Sticker: Rainbow — mark for UI, already counted as match
-		if cap.get("sticker") == "rainbow":
-			pass
 
-		# Condition: Glass — 2x score, 1-in-4 break
-		if cap.get("condition") == "glass":
-			final_score *= 2
+## Commit a word: deal damage, collect money, roll lucky/glass/blue side
+## effects, then advance the turn. Emits win/lose/game_over as needed.
+func commit_word(slots: Array) -> void:
+	var res := calculate_word(slots)
+	var word := ""
+	for s in slots:
+		word += str(s["letter"])
+	EventBus.word_committed.emit(word, res["damage"], slots.size())
+
+	var lucky_extra_damage := 0
+	var money_gain: int = res["money"]
+	for s in slots:
+		var cap: Dictionary = s["cap"]
+		var disabled: bool = str(GameState.current_monster.get("boss_modifier", "")) == "silence"
+		if disabled:
+			continue
+		if str(cap.get("sticker", "")) == "blue":
+			GameState.next_draw_bonus += 1
+		if str(cap.get("condition", "")) == "glass":
 			if randf() < 0.25:
-				cap["_break"] = true
-		# Condition: Lucky
-		if cap.get("condition") == "lucky":
+				GameState.bag.erase(cap)
+		elif str(cap.get("condition", "")) == "lucky":
 			if randf() < 0.2:
-				final_score += 10
-			if randf() < 0.067:
-				money_bonus += 10
+				lucky_extra_damage += 10
+			if randf() < 0.0667:
+				money_gain += 10
 
-		final_score = _apply_boss_modifier(letter, final_score)
-		total_score += final_score
-		breakdown[letter] = final_score
+	_apply_monster_damage(int(res["damage"]) + lucky_extra_damage, money_gain)
 
-	# Apply neon adjacent bonuses
-	for i in range(played_caps.size()):
-		var cap = played_caps[i]
-		if cap.get("finish") == "neon":
-			if i > 0:
-				breakdown[word_letters[slot_indices[i-1]]] = breakdown.get(word_letters[slot_indices[i-1]], 0) + 1
-				total_score += 1
-			if i < played_caps.size() - 1:
-				breakdown[word_letters[slot_indices[i+1]]] = breakdown.get(word_letters[slot_indices[i+1]], 0) + 1
-				total_score += 1
 
-	# Pack score modifier
-	if GameState.active_pack_id != "":
-		var pack = _get_active_pack()
-		if pack and pack.get("score_modifier", 0) != 0:
-			total_score += pack["score_modifier"] * played_caps.size()
+func skip_turn() -> void:
+	EventBus.word_committed.emit("", 0, 0)
+	_end_turn()
 
-	# Check full-word clear
-	if slot_indices.size() == word_letters.size():
-		var pack = _get_active_pack()
-		if pack and pack.get("heal_on_full_clear", false):
-			var heal = ceili(GameState.max_hp * 0.05)
-			GameState.hp = mini(GameState.hp + heal, GameState.max_hp)
-
-	EventBus.score_calculated.emit(total_score, breakdown)
-	return {"score": total_score, "money_bonus": money_bonus}
-
-func apply_monster_damage(score: int):
-	GameState.current_monster["hp"] -= score
-	if GameState.current_monster["hp"] <= 0:
-		GameState.current_monster["hp"] = 0
-		var money_earned = _calculate_money_reward()
-		GameState.money += money_earned
-		EventBus.round_won.emit(money_earned)
-	else:
-		EventBus.monster_damaged.emit(GameState.current_monster["hp"], GameState.current_monster["max_hp"])
-
-func resolve_held_conditions():
-	var hand_score = 0
-	for cap in GameState.hand:
-		if cap.get("condition") == "steel":
-			hand_score += 2
-	if hand_score > 0:
-		GameState.current_monster["hp"] -= hand_score
-
-func monster_attack():
-	resolve_held_conditions()
-	var base_damage = GameState.current_monster.get("attack_pattern", 2)
-	var damage = base_damage
-
-	if GameState.shield > 0:
-		var blocked = mini(GameState.shield, damage)
-		damage -= blocked
-		GameState.shield -= blocked
-
-	GameState.hp -= damage
-	if GameState.hp <= 0:
-		GameState.hp = 0
-		EventBus.round_lost.emit()
-		EventBus.game_over.emit()
-	else:
-		EventBus.player_hit.emit(damage, GameState.hp)
-
-func _calculate_money_reward() -> int:
-	var base = 5 + GameState.round * 2
-	return base
-
-func resolve_finish(cap: Dictionary, base_score: int, slot_index: int, total_slots: int) -> Dictionary:
-	var finish = cap.get("finish", "")
-	var result = {"score": 0, "extra_slots": 0, "adjacent_bonus": 0}
-	match finish:
-		"foil":
-			result["score"] = 3
-		"holographic":
-			result["score"] = base_score
-		"polychrome":
-			result["score_mult"] = 1.5
-		"double_shot":
-			result["extra_slots"] = 1
-		"neon":
-			result["adjacent_bonus"] = 1
-	return result
 
 func _letter_base_score(letter: String) -> int:
-	var common = ["E", "T", "A", "O", "I", "N", "S", "R"]
-	var uncommon = ["H", "L", "D", "C", "U", "M", "F", "P", "G", "W", "Y", "B"]
-	var rare = ["V", "K", "X", "J", "Q", "Z"]
-	if letter in common:
+	if COMMON_LETTERS.contains(letter):
 		return 1
-	elif letter in uncommon:
+	if UNCOMMON_LETTERS.contains(letter):
 		return 2
-	elif letter in rare:
-		return 4
-	return 1
+	return 4  # V K X J Q Z
 
-func _apply_boss_modifier(letter: String, score: int) -> int:
-	var mod = GameState.current_monster.get("boss_modifier", "")
-	match mod:
-		"vowel_lock":
-			if letter in ["A", "E", "I", "O", "U"]:
-				return score
-			return 0
-		"consonant_lock":
-			if letter in ["A", "E", "I", "O", "U"]:
-				return 0
-			return score
-		"mirror_words":
-			return score
-		"no_repeats":
-			if not _boss_matched_letters.has(letter):
-				_boss_matched_letters.append(letter)
-				return score
-			return 0
-		"silence":
-			return score
-		"tight_grip":
-			return score
-		_:
-			return score
 
-func _get_active_pack() -> Dictionary:
-	var packs_json = FileAccess.get_file_as_string("res://data/packs.json")
-	if packs_json == "":
-		return {}
-	var data = JSON.parse_string(packs_json)
-	for p in data["packs"]:
-		if p["id"] == GameState.active_pack_id:
-			return p
-	return {}
+func _apply_monster_damage(damage: int, money_gain: int) -> void:
+	var remaining: int = int(GameState.current_monster.get("hp_remaining", GameState.monster_hp_scaled()))
+	remaining -= damage
+	GameState.current_monster["hp_remaining"] = remaining
+	if money_gain > 0:
+		GameState.money += money_gain
+	if remaining <= 0:
+		var reward: int = GameState.round_reward()
+		GameState.money += reward
+		GameState.turns_left = 0
+		EventBus.monster_damaged.emit(0, GameState.monster_hp_scaled())
+		EventBus.round_won.emit(reward)
+	else:
+		EventBus.monster_damaged.emit(remaining, GameState.monster_hp_scaled())
+		_end_turn()
+
+
+func _monster_hp_remaining() -> int:
+	return int(GameState.current_monster.get("hp_remaining", GameState.monster_hp_scaled()))
+
+
+func _end_turn() -> void:
+	GameState.turns_left -= 1
+	EventBus.turns_changed.emit(GameState.turns_left)
+	if GameState.turns_left <= 0:
+		# Emit only game_over; round_lost is not emitted (GameRoot handles
+		# game_over, emitting both caused a double game-over transition).
+		EventBus.game_over.emit(GameState.round_number)
+	else:
+		EventBus.turn_started.emit(GameState.turns_left, GameState.redraws_left)
+		KeyCapService.draw_hand()
