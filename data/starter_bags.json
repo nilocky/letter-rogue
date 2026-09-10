@@ -1,0 +1,68 @@
+{
+  "starter_bags": [
+    {
+      "id": "standard",
+      "name": "Standard Bag",
+      "desc": "Balanced English letter distribution.",
+      "start_money": 0,
+      "tiles": [
+        {"letter": "E", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "T", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "A", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "O", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "I", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "N", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "S", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "R", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false}
+      ]
+    },
+    {
+      "id": "vowel",
+      "name": "Vowel Explorer",
+      "desc": "Extra vowels plus one Vowel Wildcard (~).",
+      "start_money": 0,
+      "tiles": [
+        {"letter": "E", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "E", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "A", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "A", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "I", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "O", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "U", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "~", "ability_id": "vowel_wild", "rarity": "Rare", "ability_strength": 0, "is_symbol": true}
+      ]
+    },
+    {
+      "id": "consonant",
+      "name": "Consonant Heavy",
+      "desc": "High-risk, high-power tier letters V K X J Q Z.",
+      "start_money": 0,
+      "tiles": [
+        {"letter": "T", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "N", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "S", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "R", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "V", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "K", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "X", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "J", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "Q", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "Z", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false}
+      ]
+    },
+    {
+      "id": "minimalist",
+      "name": "Minimalist",
+      "desc": "Fewer tiles, harder early game, bonus starting cash.",
+      "start_money": 15,
+      "tiles": [
+        {"letter": "E", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "T", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "A", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "O", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "I", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "R", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false}
+      ]
+    }
+  ]
+}

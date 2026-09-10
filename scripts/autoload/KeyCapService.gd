@@ -80,3 +80,36 @@ func resolve_ability(cap: Dictionary) -> Dictionary:
 			return {"bonus": int(cap.get("ability_strength", 1))}
 		_:
 			return {}
+
+
+var _starter_bags_cache: Array = []
+
+
+func get_starter_bags() -> Array:
+	if _starter_bags_cache.is_empty():
+		var text := FileAccess.get_file_as_string("res://data/starter_bags.json")
+		var data: Variant = JSON.parse_string(text)
+		if typeof(data) == TYPE_DICTIONARY:
+			_starter_bags_cache = data.get("starter_bags", []) as Array
+	return _starter_bags_cache
+
+
+func _bag_by_id(bag_id: String) -> Dictionary:
+	for bag: Dictionary in get_starter_bags():
+		if str(bag.get("id", "")) == bag_id:
+			return bag
+	return {}
+
+
+func load_starter_bag(bag_id: String) -> Array:
+	var bag: Dictionary = _bag_by_id(bag_id)
+	if bag.is_empty():
+		bag = _bag_by_id("standard")
+	if bag.is_empty():
+		return []
+	return (bag.get("tiles", []) as Array).duplicate(true)
+
+
+func starter_bag_money(bag_id: String) -> int:
+	var bag: Dictionary = _bag_by_id(bag_id)
+	return int(bag.get("start_money", 0))
