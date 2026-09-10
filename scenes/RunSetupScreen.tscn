@@ -1,0 +1,115 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/screens/RunSetupScreen.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_main_menu.jpg" id="2_bg"]
+
+[node name="RunSetupScreen" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 96
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 80
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeArea"]
+theme_override_constants/separation = 24
+
+[node name="HeaderRow" type="HBoxContainer" parent="SafeArea/VBoxContainer"]
+theme_override_constants/separation = 24
+
+[node name="BackButton" type="Button" parent="SafeArea/VBoxContainer/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+text = "<"
+
+[node name="HeaderLabel" type="Label" parent="SafeArea/VBoxContainer/HeaderRow"]
+theme_type_variation = &"HeaderLabel"
+text = "CONFIGURE RUN"
+vertical_alignment = 1
+size_flags_horizontal = 3
+
+[node name="PackSection" type="PanelContainer" parent="SafeArea/VBoxContainer"]
+size_flags_horizontal = 3
+
+[node name="PackBox" type="VBoxContainer" parent="SafeArea/VBoxContainer/PackSection"]
+theme_override_constants/separation = 16
+
+[node name="PackAccent" type="ColorRect" parent="SafeArea/VBoxContainer/PackSection/PackBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 16)
+color = Color(0.85, 0.15, 0.15, 1)
+
+[node name="PackName" type="Label" parent="SafeArea/VBoxContainer/PackSection/PackBox"]
+unique_name_in_owner = true
+theme_type_variation = &"BodyLabel"
+text = "MX Red"
+
+[node name="PackDesc" type="Label" parent="SafeArea/VBoxContainer/PackSection/PackBox"]
+unique_name_in_owner = true
+theme_type_variation = &"BodyLabel"
+text = ""
+autowrap_mode = 3
+
+[node name="PackPager" type="HBoxContainer" parent="SafeArea/VBoxContainer/PackSection/PackBox"]
+alignment = 1
+
+[node name="PrevPackButton" type="Button" parent="SafeArea/VBoxContainer/PackSection/PackBox/PackPager"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+text = "<"
+
+[node name="PackDots" type="Label" parent="SafeArea/VBoxContainer/PackSection/PackBox/PackPager"]
+unique_name_in_owner = true
+theme_type_variation = &"BadgeLabel"
+horizontal_alignment = 1
+vertical_alignment = 1
+size_flags_horizontal = 3
+text = "1 / 5"
+
+[node name="NextPackButton" type="Button" parent="SafeArea/VBoxContainer/PackSection/PackBox/PackPager"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+text = ">"
+
+[node name="BagSection" type="VBoxContainer" parent="SafeArea/VBoxContainer"]
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="BagTitle" type="Label" parent="SafeArea/VBoxContainer/BagSection"]
+theme_type_variation = &"BodyLabel"
+text = "STARTER BAG"
+
+[node name="BagButtons" type="GridContainer" parent="SafeArea/VBoxContainer/BagSection"]
+unique_name_in_owner = true
+columns = 2
+
+[node name="BagPreview" type="HBoxContainer" parent="SafeArea/VBoxContainer/BagSection"]
+unique_name_in_owner = true
+theme_override_constants/separation = 8
+
+[node name="StartButton" type="Button" parent="SafeArea/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 140)
+text = "START RUN"

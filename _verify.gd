@@ -8,6 +8,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_test_starter_bags()
 	_test_setup_new_run()
+	await _test_run_setup_screen()
 	if _failures == 0:
 		print("VERIFY OK")
 		get_tree().quit(0)
@@ -54,3 +55,22 @@ func _test_setup_new_run() -> void:
 	_check(GameState.draw_size() == 6, "mx_speed draw size is 6")
 	GameState.setup_new_run("mx_black", "standard")
 	_check(GameState.draw_size() == 4, "mx_black draw size is 4")
+
+
+func _test_run_setup_screen() -> void:
+	var scene: PackedScene = load("res://scenes/RunSetupScreen.tscn")
+	_check(scene != null, "RunSetupScreen scene loads")
+	if scene == null:
+		return
+	var screen: Control = scene.instantiate()
+	add_child(screen)
+	await get_tree().process_frame
+	_check(screen.get_node("%StartButton") != null, "start button exists")
+	_check(screen.get_node("%BagButtons").get_child_count() == 4, "4 bag buttons built")
+	_check(screen.get_node("%BagPreview").get_child_count() > 0, "bag preview populated")
+	var start_btn: Button = screen.get_node("%StartButton")
+	_check(start_btn.custom_minimum_size.y >= 140.0, "start button >= 140 tall")
+	var back_btn: Button = screen.get_node("%BackButton")
+	_check(back_btn.custom_minimum_size.x >= 120.0, "back button >= 120 wide")
+	screen.queue_free()
+	await get_tree().process_frame
