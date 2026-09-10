@@ -1,6 +1,7 @@
 extends Control
 
 signal clicked
+signal drag_drop(from: int, to: int)
 
 @onready var label = %Label
 @onready var ability_label = %AbilityLabel
@@ -12,6 +13,7 @@ signal clicked
 
 var cap_data: Dictionary = {}
 var selected := false
+var drag_index: int = -1  # >= 0 enables drag-and-drop for word-strip tiles
 
 func setup(data: Dictionary):
 	cap_data = data
@@ -76,8 +78,25 @@ func _modifier_abbr(id: String) -> String:
 		_: return ""
 
 func _gui_input(event: InputEvent):
-	if event is InputEventMouseButton and event.pressed:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		clicked.emit()
+
+func _get_drag_data(at_position: Vector2) -> Variant:
+	if drag_index < 0:
+		return null
+	var preview := Label.new()
+	preview.text = label.text
+	preview.add_theme_font_size_override("font_size", 24)
+	set_drag_preview(preview)
+	return {"slot": drag_index}
+
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	return drag_index >= 0 and typeof(data) == TYPE_DICTIONARY
+
+func _drop_data(at_position: Vector2, data: Variant) -> void:
+	var from: int = int(data.get("slot", -1))
+	if from != drag_index:
+		drag_drop.emit(from, drag_index)
 
 func set_selected(s: bool):
 	selected = s

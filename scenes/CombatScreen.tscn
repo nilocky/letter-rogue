@@ -80,6 +80,6 @@ text = "Hand empty"
 [node name="HandContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 size_flags_horizontal = 4
-size_flags_vertical = 3
+size_flags_vertical = 4
 alignment = 1
 theme_override_constants/separation = 6

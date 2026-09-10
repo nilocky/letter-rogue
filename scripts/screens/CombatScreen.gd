@@ -88,7 +88,7 @@ func _refresh_hand() -> void:
 	_hand_elements.clear()
 	for i in range(GameState.hand.size()):
 		var el: Control = KeyCapElementScene.instantiate()
-		el.custom_minimum_size = Vector2(56, 56)
+		el.custom_minimum_size = Vector2(64, 64)
 		hand_container.add_child(el)
 		el.setup(GameState.hand[i])
 		el.clicked.connect(_on_hand_clicked.bind(i))
@@ -128,9 +128,18 @@ func _on_hand_clicked(idx: int) -> void:
 		_show_letter_picker(cap)
 		return
 	if _slot_uses_hand_index(idx):
+		_remove_slot_by_hand_index(idx)
 		return
 	# Pass the hand index so the same physical tile can't be reused.
 	_add_slot(cap, str(cap["letter"]), idx)
+
+
+func _remove_slot_by_hand_index(idx: int) -> void:
+	for i in range(_slots.size()):
+		if int(_slots[i].get("hand_idx", -1)) == idx:
+			_slots.remove_at(i)
+			_refresh_word()
+			return
 
 
 func _slot_uses_hand_index(idx: int) -> bool:
@@ -187,7 +196,9 @@ func _refresh_word() -> void:
 		word_strip.add_child(el)
 		el.setup(s["cap"])
 		el.override_letter(str(s["letter"]))
+		el.drag_index = i
 		el.clicked.connect(_on_slot_clicked.bind(i))
+		el.drag_drop.connect(_on_word_drop)
 	_refresh_hand_states()
 	var valid: Dictionary = CombatService.validate_word(_slots) if _slots.size() >= 3 else {"ok": false}
 	if valid.get("ok", false):
@@ -200,11 +211,17 @@ func _refresh_word() -> void:
 
 
 func _on_slot_clicked(i: int) -> void:
-	if i >= _slots.size() - 1:
+	if i < _slots.size():
+		_slots.remove_at(i)
+		_refresh_word()
+
+
+func _on_word_drop(from: int, to: int) -> void:
+	if from < 0 or from >= _slots.size() or to < 0 or to >= _slots.size():
 		return
-	var tmp: Dictionary = _slots[i]
-	_slots[i] = _slots[i + 1]
-	_slots[i + 1] = tmp
+	var moving: Dictionary = _slots[from]
+	_slots.remove_at(from)
+	_slots.insert(to, moving)
 	_refresh_word()
 
 
