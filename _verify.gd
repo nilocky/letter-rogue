@@ -9,6 +9,7 @@ func _ready() -> void:
 	_test_starter_bags()
 	_test_setup_new_run()
 	await _test_run_setup_screen()
+	await _test_game_root()
 	if _failures == 0:
 		print("VERIFY OK")
 		get_tree().quit(0)
@@ -73,4 +74,34 @@ func _test_run_setup_screen() -> void:
 	var back_btn: Button = screen.get_node("%BackButton")
 	_check(back_btn.custom_minimum_size.x >= 120.0, "back button >= 120 wide")
 	screen.queue_free()
+	await get_tree().process_frame
+
+
+func _test_game_root() -> void:
+	var scene: PackedScene = load("res://scenes/GameRoot.tscn")
+	var game_root: Variant = scene.instantiate()
+	add_child(game_root)
+	await get_tree().process_frame
+	_check(game_root.current_state == game_root.State.MENU, "game root starts in MENU")
+	var states: Dictionary = game_root.State
+	_check(states.has("RUN_SETUP"), "RUN_SETUP state exists")
+	if not states.has("RUN_SETUP"):
+		game_root.queue_free()
+		await get_tree().process_frame
+		return
+	EventBus.run_setup_requested.emit()
+	await get_tree().process_frame
+	_check(game_root.current_state == game_root.State.RUN_SETUP, "request -> RUN_SETUP")
+	EventBus.run_setup_cancelled.emit()
+	await get_tree().process_frame
+	_check(game_root.current_state == game_root.State.MENU, "cancel -> MENU")
+	EventBus.run_setup_requested.emit()
+	await get_tree().process_frame
+	EventBus.run_started.emit("mx_speed", "vowel")
+	await get_tree().process_frame
+	_check(game_root.current_state == game_root.State.COMBAT, "start -> COMBAT")
+	_check(GameState.active_pack_id == "mx_speed", "pack applied via event")
+	_check(GameState.active_starter_bag_id == "vowel", "bag applied via event")
+	_check(GameState.draw_size() == 6, "mx_speed draw size 6")
+	game_root.queue_free()
 	await get_tree().process_frame
