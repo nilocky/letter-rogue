@@ -1,6 +1,8 @@
 extends Node
 
-signal run_started
+signal run_setup_requested
+signal run_setup_cancelled
+signal run_started(pack_id: String, starter_bag_id: String)
 signal pack_selected(pack_id: String)
 signal fight_pressed
 

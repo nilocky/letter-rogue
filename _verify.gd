@@ -7,6 +7,7 @@ func _ready() -> void:
 	get_window().size = Vector2i(1080, 1920)
 	await get_tree().process_frame
 	_test_starter_bags()
+	_test_setup_new_run()
 	if _failures == 0:
 		print("VERIFY OK")
 		get_tree().quit(0)
@@ -37,3 +38,19 @@ func _test_starter_bags() -> void:
 		KeyCapService.load_starter_bag("does_not_exist").size() == 8,
 		"unknown bag id falls back to standard"
 	)
+
+
+func _test_setup_new_run() -> void:
+	if not GameState.has_method("setup_new_run"):
+		_check(false, "GameState.setup_new_run missing")
+		return
+	GameState.setup_new_run("mx_brown", "minimalist")
+	_check(GameState.active_pack_id == "mx_brown", "pack id applied")
+	_check(GameState.active_starter_bag_id == "minimalist", "bag id applied")
+	_check(GameState.bag.size() == 6, "minimalist bag loaded")
+	_check(GameState.money == 30, "money is 10 base + 5 pack + 15 bag")
+	_check(GameState.draw_size() == 5, "mx_brown draw size is 5")
+	GameState.setup_new_run("mx_speed", "standard")
+	_check(GameState.draw_size() == 6, "mx_speed draw size is 6")
+	GameState.setup_new_run("mx_black", "standard")
+	_check(GameState.draw_size() == 4, "mx_black draw size is 4")

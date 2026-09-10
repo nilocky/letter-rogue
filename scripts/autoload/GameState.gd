@@ -14,6 +14,7 @@ var hand: Array = []
 var current_monster: Dictionary = {}
 var shop_inventory: Array = []
 var active_pack_id: String = ""
+var active_starter_bag_id: String = ""
 
 var turns_left: int = 0
 var redraws_left: int = 0
@@ -22,7 +23,6 @@ var upgrade_draw: int = 0
 var upgrade_turns: int = 0
 var upgrade_redraws: int = 0
 var next_draw_bonus: int = 0
-var pack_start_money_granted: bool = false
 
 
 func reset() -> void:
@@ -33,13 +33,13 @@ func reset() -> void:
 	current_monster = {}
 	shop_inventory = []
 	active_pack_id = ""
+	active_starter_bag_id = ""
 	turns_left = 0
 	redraws_left = 0
 	upgrade_draw = 0
 	upgrade_turns = 0
 	upgrade_redraws = 0
 	next_draw_bonus = 0
-	pack_start_money_granted = false
 
 
 func round_turn_budget() -> int:
@@ -69,3 +69,14 @@ func monster_hp_scaled() -> int:
 
 func round_reward() -> int:
 	return 5 + round_number * 2
+
+
+func setup_new_run(pack_id: String, starter_bag_id: String) -> void:
+	reset()
+	active_pack_id = pack_id
+	active_starter_bag_id = starter_bag_id
+	bag = KeyCapService.load_starter_bag(starter_bag_id)
+	var pack: Dictionary = PackService.pack_by_id(pack_id)
+	if not pack.is_empty():
+		money += int(pack.get("start_money", 0))
+	money += KeyCapService.starter_bag_money(starter_bag_id)
