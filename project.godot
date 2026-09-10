@@ -1,20 +1,45 @@
 ; Engine configuration file.
-; It's stored in a custom format, and you should not edit it manually.
-; But for project bootstrap, we can write it directly.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
-config/name="Letter Rouge"
+
+config/name="Letter Rogue"
 config/description="A Balatro-like deckbuilding roguelite where you match key cap letters to monster words"
 run/main_scene="res://scenes/GameRoot.tscn"
-config/features=PackedStringArray("4.3")
+config/features=PackedStringArray("4.7")
+
+[autoload]
+
+EventBus="*res://scripts/autoload/EventBus.gd"
+GameState="*res://scripts/autoload/GameState.gd"
+PackService="*res://scripts/autoload/PackService.gd"
+KeyCapService="*res://scripts/autoload/KeyCapService.gd"
+ShopService="*res://scripts/autoload/ShopService.gd"
+WordService="*res://scripts/autoload/WordService.gd"
+CombatService="*res://scripts/autoload/CombatService.gd"
+MCPRuntimeProbe="*uid://bsg12huaf1u5i"
 
 [display]
-window/size/viewport_width=1920
-window/size/viewport_height=1080
-window/size/window_width_override=1920
-window/size/window_height_override=1080
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
 
-[input_devices]
-pointing/emulate_touch_from_mouse=true
+window/size/viewport_width=500
+window/size/viewport_height=680
+window/size/window_width_override=500
+window/size/window_height_override=680
+window/stretch/mode="canvas_items"
+window/size/min_width=500
+window/size/min_height=680
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
