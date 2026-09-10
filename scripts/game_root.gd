@@ -20,7 +20,8 @@ func _ready() -> void:
 	EventBus.run_setup_cancelled.connect(_on_run_setup_cancelled)
 	EventBus.run_started.connect(_on_run_started)
 	EventBus.fight_pressed.connect(_on_fight_pressed)
-	EventBus.round_won.connect(_on_round_won)
+	EventBus.shop_requested.connect(_on_shop_requested)
+	EventBus.game_complete.connect(_on_game_complete)
 	EventBus.game_over.connect(_on_game_over)
 	_switch_to_menu()
 
@@ -74,11 +75,15 @@ func _fight_or_boss() -> void:
 	CombatService.start_round()
 
 
-func _on_round_won(_money_earned: int) -> void:
+func _on_shop_requested() -> void:
 	GameState.round_number += 1
 	ShopService.new_shop()
 	current_state = State.SHOP
 	_show(SHOP_SCENE)
+
+
+func _on_game_complete() -> void:
+	_switch_to_menu()
 
 
 func _on_game_over(reached_round: int) -> void:

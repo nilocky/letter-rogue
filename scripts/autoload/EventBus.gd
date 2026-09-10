@@ -3,7 +3,6 @@ extends Node
 signal run_setup_requested
 signal run_setup_cancelled
 signal run_started(pack_id: String, starter_bag_id: String)
-signal pack_selected(pack_id: String)
 signal fight_pressed
 
 signal hand_drawn(hand: Array)
@@ -12,9 +11,12 @@ signal turns_changed(turns_left: int)
 signal redraws_changed(redraws_left: int)
 signal word_committed(word: String, damage: int, tiles_used: int)
 signal monster_damaged(remaining_hp: int, max_hp: int)
-signal round_won(money_earned: int)
+signal round_won(summary: Dictionary)
 signal round_lost
 signal game_over(reached_round: int)
+
+signal shop_requested
+signal game_complete
 
 signal shop_inventory_generated(inventory: Array)
 signal cap_purchased(cap: Dictionary)

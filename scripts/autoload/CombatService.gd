@@ -140,15 +140,21 @@ func _apply_monster_damage(damage: int, money_gain: int) -> void:
 	var remaining: int = int(GameState.current_monster.get("hp_remaining", GameState.monster_hp_scaled()))
 	remaining -= damage
 	GameState.current_monster["hp_remaining"] = remaining
-	if money_gain > 0:
-		GameState.money += money_gain
 	if remaining <= 0:
 		var reward: int = GameState.round_reward()
-		GameState.money += reward
+		var leftover_turns: int = GameState.turns_left
 		GameState.turns_left = 0
 		EventBus.monster_damaged.emit(0, GameState.monster_hp_scaled())
-		EventBus.round_won.emit(reward)
+		EventBus.round_won.emit({
+			"is_boss": GameState.round_number % 3 == 0,
+			"base_reward": reward,
+			"leftover_turns": leftover_turns,
+			"ability_money": money_gain,
+			"total": reward + leftover_turns + money_gain,
+		})
 	else:
+		if money_gain > 0:
+			GameState.money += money_gain
 		EventBus.monster_damaged.emit(remaining, GameState.monster_hp_scaled())
 		_end_turn()
 
