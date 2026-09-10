@@ -1,48 +1,39 @@
 {
   "starter_bag": [
-    { "letter": "E", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
-    { "letter": "T", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
-    { "letter": "A", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
-    { "letter": "O", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
-    { "letter": "I", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
-    { "letter": "N", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
-    { "letter": "S", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false },
-    { "letter": "R", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false }
+    {"letter": "E", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "T", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "A", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "O", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "I", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "N", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "S", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "R", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false}
   ],
   "shop_pool": [
-    { "letter": "E", "ability_id": "double_score", "rarity": "Rare", "ability_strength": 2, "is_symbol": false },
-    { "letter": "X", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 3, "is_symbol": false },
-    { "letter": "Z", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 5, "is_symbol": false },
-    { "letter": "$", "ability_id": "money_bonus", "rarity": "Rare", "ability_strength": 10, "is_symbol": true },
-    { "letter": "*", "ability_id": "wild", "rarity": "Epic", "ability_strength": 1, "is_symbol": true },
-    { "letter": "!", "ability_id": "bonus_damage", "rarity": "Rare", "ability_strength": 3, "is_symbol": true },
-    { "letter": "%", "ability_id": "heal", "rarity": "Rare", "ability_strength": 1, "is_symbol": true },
-    { "letter": "@", "ability_id": "extra_draw", "rarity": "Epic", "ability_strength": 1, "is_symbol": true },
-    { "letter": "+", "ability_id": "double_score", "rarity": "Normal", "ability_strength": 2, "is_symbol": true },
-    { "letter": "#", "ability_id": "shield", "rarity": "Rare", "ability_strength": 1, "is_symbol": true },
-    { "letter": "Q", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 4, "is_symbol": false },
-    { "letter": "J", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 3, "is_symbol": false }
-  ],
-  "finishes": [
-    { "id": "foil", "name": "Foil", "effect": "+3 flat score", "score_bonus": 3, "price_mod": 2, "weight": 5 },
-    { "id": "holographic", "name": "Holographic", "effect": "+1 per letter score", "score_per_letter": 1, "price_mod": 3, "weight": 4 },
-    { "id": "polychrome", "name": "Polychrome", "effect": "1.5x score multiplier", "score_mult": 1.5, "price_mod": 5, "weight": 3 },
-    { "id": "double_shot", "name": "Double-shot", "effect": "Matches 2 letter slots", "extra_slots": 1, "price_mod": 4, "weight": 3 },
-    { "id": "neon", "name": "Neon", "effect": "Adjacent caps get +1 score", "adjacent_bonus": 1, "price_mod": 3, "weight": 4 }
-  ],
-  "stickers": [
-    { "id": "gold", "name": "Gold", "effect": "+$2 when played", "money_on_play": 2 },
-    { "id": "red", "name": "Red", "effect": "Retrigger — score this cap twice", "retrigger": true },
-    { "id": "blue", "name": "Blue", "effect": "Draw +1 next turn", "extra_draw": 1 },
-    { "id": "rainbow", "name": "Rainbow", "effect": "Matches any letter slot", "wild": true },
-    { "id": "glow", "name": "Glow", "effect": "Returns to hand after play", "return_to_hand": true }
-  ],
-  "conditions": [
-    { "id": "glass", "name": "Glass", "effect": "2x score, 1-in-4 break", "score_mult": 2, "break_chance": 0.25 },
-    { "id": "steel", "name": "Steel", "effect": "+2 score while held in hand", "hand_score": 2 },
-    { "id": "gold_held", "name": "Gold", "effect": "+$3 at end of round if in hand", "end_round_money": 3 },
-    { "id": "lucky", "name": "Lucky", "effect": "1/5 chance +10 score, 1/15 chance +$10", "score_chance": 0.2, "score_bonus": 10, "money_chance": 0.067, "money_bonus": 10 },
-    { "id": "eternal", "name": "Eternal", "effect": "Cannot be sold", "no_sell": true },
-    { "id": "rental", "name": "Rental", "effect": "Costs $1/round", "round_cost": 1 }
+    {"letter": "E", "ability_id": "double_score", "rarity": "Rare", "ability_strength": 2, "is_symbol": false},
+    {"letter": "X", "ability_id": "bonus_points", "rarity": "Rare", "ability_strength": 3, "is_symbol": false},
+    {"letter": "Z", "ability_id": "bonus_points", "rarity": "Rare", "ability_strength": 5, "is_symbol": false},
+    {"letter": "Q", "ability_id": "bonus_points", "rarity": "Rare", "ability_strength": 4, "is_symbol": false},
+    {"letter": "J", "ability_id": "bonus_damage", "rarity": "Rare", "ability_strength": 3, "is_symbol": false},
+    {"letter": "B", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "W", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "V", "ability_id": "money_bonus", "rarity": "Rare", "ability_strength": 2, "is_symbol": false},
+    {"letter": "K", "ability_id": "bonus_points", "rarity": "Rare", "ability_strength": 4, "is_symbol": false},
+    {"letter": "C", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "M", "ability_id": "double_score", "rarity": "Rare", "ability_strength": 2, "is_symbol": false},
+    {"letter": "P", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "F", "ability_id": "bonus_damage", "rarity": "Rare", "ability_strength": 2, "is_symbol": false},
+    {"letter": "G", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "Y", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "L", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "D", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "U", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "H", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+    {"letter": "*", "ability_id": "wild", "rarity": "Epic", "ability_strength": 0, "is_symbol": true},
+    {"letter": "~", "ability_id": "vowel_wild", "rarity": "Rare", "ability_strength": 0, "is_symbol": true},
+    {"letter": "#", "ability_id": "consonant_wild", "rarity": "Rare", "ability_strength": 0, "is_symbol": true},
+    {"letter": "X", "ability_id": "bonus_points", "rarity": "Legendary", "ability_strength": 2, "is_symbol": false, "finish": "foil", "sticker": "gold", "condition": "glass"},
+    {"letter": "S", "ability_id": "bonus_points", "rarity": "Legendary", "ability_strength": 1, "is_symbol": false, "finish": "polychrome", "sticker": "red"},
+    {"letter": "R", "ability_id": "double_score", "rarity": "Legendary", "ability_strength": 2, "is_symbol": false, "sticker": "blue"}
   ]
 }

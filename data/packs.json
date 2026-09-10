@@ -1,41 +1,9 @@
 {
   "packs": [
-    {
-      "id": "mx_red",
-      "name": "MX Red",
-      "description": "+1 draw per turn, no scoring bonus",
-      "draw_modifier": 1,
-      "score_modifier": 0
-    },
-    {
-      "id": "mx_blue",
-      "name": "MX Blue",
-      "description": "+2 score per matched letter",
-      "draw_modifier": 0,
-      "score_modifier": 2
-    },
-    {
-      "id": "mx_brown",
-      "name": "MX Brown",
-      "description": "+1 score per letter, 5% heal on full-word clear",
-      "draw_modifier": 0,
-      "score_modifier": 1,
-      "heal_on_full_clear": true
-    },
-    {
-      "id": "mx_black",
-      "name": "MX Black",
-      "description": "+3 score per letter, -1 draw per turn",
-      "draw_modifier": -1,
-      "score_modifier": 3
-    },
-    {
-      "id": "mx_speed",
-      "name": "MX Speed",
-      "description": "Draw 6 instead of 5 caps per turn",
-      "draw_modifier": 1,
-      "score_modifier": 0,
-      "base_draw": 6
-    }
+    {"id": "mx_red", "name": "MX Red", "desc": "+1 tile drawn per turn", "draw_modifier": 1, "score_modifier": 0, "base_draw": 0, "start_money": 0},
+    {"id": "mx_blue", "name": "MX Blue", "desc": "+2 power per tile used in a word", "draw_modifier": 0, "score_modifier": 2, "base_draw": 0, "start_money": 0},
+    {"id": "mx_brown", "name": "MX Brown", "desc": "+1 power per tile used; start with +$5", "draw_modifier": 0, "score_modifier": 1, "base_draw": 0, "start_money": 5},
+    {"id": "mx_black", "name": "MX Black", "desc": "+3 power per tile used, -1 tile drawn per turn", "draw_modifier": -1, "score_modifier": 3, "base_draw": 0, "start_money": 0},
+    {"id": "mx_speed", "name": "MX Speed", "desc": "Draw 6 tiles per turn", "draw_modifier": 0, "score_modifier": 0, "base_draw": 6, "start_money": 0}
   ]
 }
