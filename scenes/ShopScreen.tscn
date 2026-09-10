@@ -6,32 +6,60 @@
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource("1_abcdef")
 
 [node name="TopBar" type="HBoxContainer" parent="."]
-margin_bottom = 40.0
 
 [node name="MoneyLabel" type="Label" parent="TopBar"]
-text = "$0"
+unique_name_in_owner = true
+text = "$10"
 
 [node name="RerollButton" type="Button" parent="TopBar"]
+unique_name_in_owner = true
 text = "Reroll ($3)"
 
-[node name="Content" type="HBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 40.0
+margin_bottom = -40.0
 
-[node name="InventoryGrid" type="GridContainer" parent="Content"]
-size_flags_horizontal = 3
-columns = 3
+[node name="Content" type="VBoxContainer" parent="MarginContainer"]
 
-[node name="BagGrid" type="GridContainer" parent="Content"]
+[node name="ForSaleLabel" type="Label" parent="MarginContainer/Content"]
+text = "For Sale"
+
+[node name="InventoryGrid" type="GridContainer" parent="MarginContainer/Content"]
+unique_name_in_owner = true
 size_flags_horizontal = 3
-columns = 3
+columns = 2
+
+[node name="BagLabel" type="Label" parent="MarginContainer/Content"]
+text = "Your Bag"
+
+[node name="BagGrid" type="GridContainer" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+columns = 2
+
+[node name="UpgradeLabel" type="Label" parent="MarginContainer/Content"]
+text = "Upgrades"
+
+[node name="UpgradeScroll" type="ScrollContainer" parent="MarginContainer/Content"]
+size_flags_vertical = 3
+
+[node name="UpgradeBox" type="VBoxContainer" parent="MarginContainer/Content/UpgradeScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
 
 [node name="FightButton" type="Button" parent="."]
-anchors_preset = 8
-anchor_top = 1.0
+unique_name_in_owner = true
+anchors_preset = 12
+anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -40.0
+offset_bottom = -8.0
+offset_left = 8.0
+offset_right = -8.0
 text = "Fight!"

@@ -1,68 +1,102 @@
-# scripts/screens/ShopScreen.gd
 extends Control
 
-@onready var inventory_grid = $InventoryGrid
-@onready var bag_grid = $BagGrid
-@onready var money_label = $MoneyLabel
-@onready var reroll_button = $RerollButton
+@onready var inventory_grid = %InventoryGrid
+@onready var bag_grid = %BagGrid
+@onready var money_label = %MoneyLabel
+@onready var reroll_button = %RerollButton
+@onready var fight_button = %FightButton
+@onready var upgrade_box: VBoxContainer = %UpgradeBox
 
 var KeyCapScene = preload("res://scenes/components/KeyCapElement.tscn")
 
+
 func _ready():
+	reroll_button.pressed.connect(_on_reroll_pressed)
+	fight_button.pressed.connect(_on_fight_pressed)
 	EventBus.shop_inventory_generated.connect(_on_inventory_generated)
-	_adjust_layout()
+	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
+	_build_upgrade_buttons()
 	_refresh_ui()
 
-func _adjust_layout():
-	var viewport_size = get_viewport_rect().size
-	if viewport_size.x < viewport_size.y:
-		inventory_grid.columns = 3
-		bag_grid.columns = 3
-	else:
-		inventory_grid.columns = 5
-		bag_grid.columns = 5
 
-func _on_inventory_generated(inventory: Array):
+func _on_inventory_generated(_inventory: Array):
 	_refresh_ui()
+
 
 func _refresh_ui():
+	_refresh_money()
 	for c in inventory_grid.get_children():
 		c.queue_free()
-	for c in bag_grid.get_children():
-		c.queue_free()
-
-	money_label.text = "$" + str(GameState.money)
-
 	for i in range(GameState.shop_inventory.size()):
 		var cap = GameState.shop_inventory[i]
 		var elem = KeyCapScene.instantiate()
-		elem.setup(cap)
 		var price_label = Label.new()
 		price_label.text = "$" + str(cap["price"])
 		elem.add_child(price_label)
-		elem.connect("gui_input", Callable(self, "_on_shop_item_clicked").bind(i))
 		inventory_grid.add_child(elem)
-
+		elem.setup(cap)
+		elem.clicked.connect(_on_shop_item_clicked.bind(i))
+	for c in bag_grid.get_children():
+		c.queue_free()
 	for i in range(GameState.bag.size()):
 		var cap = GameState.bag[i]
 		var elem = KeyCapScene.instantiate()
-		elem.setup(cap)
-		elem.connect("gui_input", Callable(self, "_on_bag_item_clicked").bind(i))
 		bag_grid.add_child(elem)
+		elem.setup(cap)
+		elem.clicked.connect(_on_bag_item_clicked.bind(i))
 
-func _on_shop_item_clicked(index: int, event: InputEvent):
-	if event is InputEventMouseButton and event.pressed:
-		ShopService.buy_cap(index)
+
+func _on_shop_item_clicked(index: int):
+	if index < GameState.shop_inventory.size():
+		ShopService.buy_cap(GameState.shop_inventory[index])
 		_refresh_ui()
 
-func _on_bag_item_clicked(index: int, event: InputEvent):
-	if event is InputEventMouseButton and event.pressed:
-		ShopService.sell_cap(index)
+
+func _on_bag_item_clicked(index: int):
+	if index < GameState.bag.size():
+		ShopService.sell_cap(GameState.bag[index])
 		_refresh_ui()
+
 
 func _on_reroll_pressed():
 	ShopService.reroll()
 	_refresh_ui()
 
+
 func _on_fight_pressed():
 	EventBus.fight_pressed.emit()
+
+
+func _build_upgrade_buttons():
+	for child in upgrade_box.get_children():
+		child.queue_free()
+	for u in ShopService.upgrade_defs():
+		var row = HBoxContainer.new()
+		var info = VBoxContainer.new()
+		var name_lbl = Label.new()
+		name_lbl.text = "%s (owned %d)" % [str(u["name"]), ShopService.owned_level(u["id"])]
+		var desc_lbl = Label.new()
+		desc_lbl.text = str(u["desc"])
+		info.add_child(name_lbl)
+		info.add_child(desc_lbl)
+		var buy_btn = Button.new()
+		buy_btn.text = "$%d" % ShopService.upgrade_cost(u["id"])
+		var uid: String = str(u["id"])
+		buy_btn.pressed.connect(func():
+			if ShopService.purchase_upgrade(uid):
+				_build_upgrade_buttons()
+				_refresh_money()
+			else:
+				print("cannot afford upgrade")
+		)
+		row.add_child(info)
+		row.add_child(buy_btn)
+		upgrade_box.add_child(row)
+
+
+func _on_upgrade_purchased(_id: String, _level: int):
+	_build_upgrade_buttons()
+
+
+func _refresh_money():
+	money_label.text = "$%d" % GameState.money
