@@ -1,85 +1,82 @@
 extends Node
+## Draws a random hand from the bag each turn; targeted redraw swaps.
+## Also resolves a tile's ability into scoring effects.
 
-const BASE_DRAW = 5
-
-func draw_hand():
-	var draw_count = BASE_DRAW + GameState.extra_draw
-	if GameState.active_pack_id != "":
-		var pack = _get_active_pack()
-		if pack and pack.has("base_draw"):
-			draw_count = pack.base_draw + GameState.extra_draw
-		elif pack:
-			draw_count = (BASE_DRAW + pack.get("draw_modifier", 0)) + GameState.extra_draw
-
-	GameState.extra_draw = 0
+func draw_hand() -> void:
 	GameState.hand.clear()
-
-	for i in range(draw_count):
-		if GameState.bag.size() == 0:
-			_shuffle_discard_into_bag()
-		if GameState.bag.size() > 0:
-			GameState.hand.append(GameState.bag.pop_front())
-
+	# Consume the blue-sticker bonus AFTER computing the draw size.
+	var target: int = mini(GameState.draw_size(), GameState.bag.size())
+	GameState.next_draw_bonus = 0
+	if target == 0:
+		EventBus.hand_drawn.emit(GameState.hand)
+		return
+	var pool := range(GameState.bag.size())
+	pool.shuffle()
+	for i in range(target):
+		GameState.hand.append(GameState.bag[pool[i]])
 	EventBus.hand_drawn.emit(GameState.hand)
 
-func play_caps(slot_map: Dictionary) -> Dictionary:
-	var played = []
-	var returned = []
-	for letter in slot_map.keys():
-		var cap = slot_map[letter]
-		GameState.hand.erase(cap)
-		if cap.get("sticker") == "glow":
-			returned.append(cap)
-		else:
-			GameState.discard.append(cap)
-		played.append(cap)
-	# Glow caps go back to hand
+
+func hand_size() -> int:
+	return GameState.hand.size()
+
+
+## Replace the tiles at `indices` with new random tiles from the bag.
+## Costs 1 redraw token per swapped tile. Returns false (no change) on
+## invalid indices or insufficient tokens.
+func redraw_tiles(indices: Array) -> bool:
+	if indices.is_empty():
+		return false
+	var idx := indices.duplicate()
+	for i in idx:
+		if typeof(i) != TYPE_INT or i < 0 or i >= GameState.hand.size():
+			return false
+	if idx.size() > GameState.redraws_left:
+		return false
+	idx.sort()
+	idx.reverse()
+	var returned: Array = []
+	for i in idx:
+		returned.append(GameState.hand[i])
+		GameState.hand.remove_at(i)
+	# Remove the returned tiles from the bag so they cannot be drawn straight
+	# back, then redraw replacements, then return them to the bag.
 	for cap in returned:
-		GameState.hand.append(cap)
-	return played
+		GameState.bag.erase(cap)
+	var need: int = returned.size()
+	var avail: int = GameState.bag.size()
+	var pool := range(avail)
+	pool.shuffle()
+	var drawn: int = 0
+	for k in range(mini(need, avail)):
+		GameState.hand.append(GameState.bag[pool[k]])
+		drawn += 1
+	GameState.bag.append_array(returned)
+	if drawn < need:
+		for cap in returned:
+			if drawn >= need:
+				break
+			GameState.hand.append(cap)
+			drawn += 1
+	GameState.redraws_left -= idx.size()
+	EventBus.redraws_changed.emit(GameState.redraws_left)
+	EventBus.hand_drawn.emit(GameState.hand)
+	return true
 
-func _shuffle_discard_into_bag():
-	var to_remove = []
-	for cap in GameState.discard:
-		if cap.get("_break", false):
-			to_remove.append(cap)
-	for cap in to_remove:
-		GameState.discard.erase(cap)
-	GameState.bag.append_array(GameState.discard)
-	GameState.discard.clear()
-	GameState.bag.shuffle()
 
-func resolve_ability(cap: Dictionary, context: Dictionary) -> Dictionary:
-	match cap.ability_id:
+## Returns scoring effects contributed by a tile, keyed by effect name.
+## Only additive/multiplicative score effects live here; money/glass/lucky
+## side effects are applied during combat commit (see CombatService).
+func resolve_ability(cap: Dictionary) -> Dictionary:
+	var ability: String = str(cap.get("ability_id", ""))
+	match ability:
 		"bonus_points":
-			return {"score": cap.ability_strength}
+			return {"score": int(cap.get("ability_strength", 0))}
 		"double_score":
-			return {"score_multiplier": 2}
-		"wild":
-			return {"wild": true}
+			return {"score_multiplier": 2.0}
 		"money_bonus":
-			return {"money": cap.ability_strength}
+			return {"money": int(cap.get("ability_strength", 1))}
 		"bonus_damage":
-			return {"bonus_damage": cap.ability_strength}
-		"heal":
-			var heal_amount = cap.ability_strength
-			GameState.hp = mini(GameState.hp + heal_amount, GameState.max_hp)
-			return {"heal": heal_amount}
-		"extra_draw":
-			GameState.extra_draw += cap.ability_strength
-			return {"extra_draw": cap.ability_strength}
-		"shield":
-			GameState.shield += cap.ability_strength
-			return {"shield": cap.ability_strength}
+			return {"bonus": int(cap.get("ability_strength", 1))}
 		_:
 			return {}
-
-func _get_active_pack() -> Dictionary:
-	var packs_json = FileAccess.get_file_as_string("res://data/packs.json")
-	if packs_json == "":
-		return {}
-	var data = JSON.parse_string(packs_json)
-	for p in data["packs"]:
-		if p["id"] == GameState.active_pack_id:
-			return p
-	return {}
