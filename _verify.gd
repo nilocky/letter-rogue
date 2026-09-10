@@ -13,6 +13,7 @@ func _ready() -> void:
 	await _test_game_root_signals()
 	_test_bag_modal()
 	_test_victory_modal()
+	await _test_combat_screen()
 	if _failures == 0:
 		print("VERIFY OK")
 		get_tree().quit(0)
@@ -108,4 +109,21 @@ func _test_bag_modal() -> void:
 	if close_btn != null:
 		_check(close_btn.custom_minimum_size.y >= 120.0, "close button >= 120 tall")
 	modal.queue_free()
+	await get_tree().process_frame
+
+
+func _test_combat_screen() -> void:
+	var scene: PackedScene = load("res://scenes/CombatScreen.tscn")
+	_check(scene != null, "CombatScreen loads")
+	var screen: Control = scene.instantiate()
+	add_child(screen)
+	await get_tree().process_frame
+	_check(screen.get_node("%PlayButton") != null, "PlayButton exists")
+	_check(screen.get_node("%BagButton") != null, "BagButton exists")
+	_check(screen.get_node("%RedrawButton") != null, "RedrawButton exists")
+	_check(screen.get_node("%SkipButton") == null, "SkipButton removed")
+	_check(screen.get_node("%BackspaceButton") == null, "BackspaceButton removed")
+	var play_btn: Button = screen.get_node("%PlayButton")
+	_check(play_btn.custom_minimum_size.y >= 130.0, "PlayButton >= 130 tall")
+	screen.queue_free()
 	await get_tree().process_frame

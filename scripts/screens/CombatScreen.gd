@@ -1,33 +1,31 @@
 extends Control
-## Word-builder combat screen: spell one dictionary word per turn.
+
+const KeyCapElementScene := preload("res://scenes/components/KeyCapElement.tscn")
+const BAG_MODAL := preload("res://scenes/components/BagModal.tscn")
+const VICTORY_MODAL := preload("res://scenes/components/VictoryModal.tscn")
+const KB_FONT := preload("res://assets/fonts/Kenney Blocks.ttf")
 
 @onready var monster_label: Label = %MonsterLabel
 @onready var hp_label: Label = %HpLabel
 @onready var turns_label: Label = %TurnsLabel
-@onready var redraws_label: Label = %RedrawsLabel
 @onready var money_label: Label = %MoneyLabel
-@onready var word_strip: HBoxContainer = %WordStrip
+@onready var bag_button: Button = %BagButton
+@onready var word_strip = %WordStrip
 @onready var hint_label: Label = %HintLabel
-@onready var hand_container: HBoxContainer = %HandContainer
-@onready var confirm_button: Button = %ConfirmButton
-@onready var backspace_button: Button = %BackspaceButton
+@onready var hand_container = %HandContainer
 @onready var redraw_button: Button = %RedrawButton
-@onready var skip_button: Button = %SkipButton
+@onready var play_button: Button = %PlayButton
 @onready var wildcard_popup: PopupPanel = %WildcardPopup
 @onready var picker_grid: GridContainer = %PickerGrid
 @onready var picker_cancel_button: Button = %PickerCancelButton
 @onready var hand_empty_warning: Label = %HandEmptyWarning
 
-var _slots: Array = []  # {"cap": Dictionary, "letter": String} in word order
-var _pending_redraw: Array = []  # hand indices to swap
+var _slots: Array = []
+var _pending_redraw: Array = []
 var _redraw_mode: bool = false
-var _wildcard_pending: Dictionary = {}  # {"cap":..., "hand_idx":..., "slot":...} awaiting letter
-var _hand_elements: Array = []  # parallel to GameState.hand, tile controls
-var _animating: bool = false  # score animation in flight; blocks further input
-
-const KeyCapElementScene := preload("res://scenes/components/KeyCapElement.tscn")
-const KB_FONT := preload("res://assets/fonts/Kenney Blocks.ttf")
-const MONO_FONT := preload("res://assets/fonts/monogram.ttf")
+var _wildcard_pending: Dictionary = {}
+var _hand_elements: Array = []
+var _animating: bool = false
 
 
 func _ready() -> void:
@@ -36,11 +34,9 @@ func _ready() -> void:
 	EventBus.redraws_changed.connect(_on_redraws_changed)
 	EventBus.monster_damaged.connect(_on_monster_damaged)
 	EventBus.round_won.connect(_on_round_won)
-	# No round_lost subscription: CombatService emits only game_over (Task 6).
-	confirm_button.pressed.connect(_on_confirm_pressed)
-	backspace_button.pressed.connect(_on_backspace_pressed)
+	bag_button.pressed.connect(_on_bag_pressed)
 	redraw_button.pressed.connect(_on_redraw_toggle)
-	skip_button.pressed.connect(_on_skip_pressed)
+	play_button.pressed.connect(_on_play_pressed)
 	picker_cancel_button.pressed.connect(_on_picker_cancel)
 
 
@@ -58,8 +54,9 @@ func _refresh_header() -> void:
 	var remaining: int = int(monster.get("hp_remaining", total))
 	hp_label.text = "HP %d/%d" % [maxi(remaining, 0), total]
 	turns_label.text = "Turns: %d" % GameState.turns_left
-	redraws_label.text = "Redraws: %d" % GameState.redraws_left
 	money_label.text = "$%d" % GameState.money
+	var bag_total: int = GameState.bag.size() + GameState.hand.size()
+	bag_button.text = "BAG (%d/%d)" % [GameState.bag.size(), bag_total]
 
 
 func _on_hand_drawn(hand: Array) -> void:
@@ -74,16 +71,19 @@ func _on_turns_changed(turns: int) -> void:
 
 func _on_redraws_changed(redraws: int) -> void:
 	_refresh_header()
+	_redraw_button_ui()
 
 
 func _on_monster_damaged(remaining: int, max_hp: int) -> void:
 	hp_label.text = "HP %d/%d" % [maxi(remaining, 0), max_hp]
 
 
-func _on_round_won(_money_earned: int) -> void:
-	set_process_input(false)
+func _on_round_won(_summary: Dictionary) -> void:
 	_clear_word()
 	_refresh_header()
+	var modal: Control = VICTORY_MODAL.instantiate()
+	add_child(modal)
+	modal.open(_summary)
 
 
 func _refresh_hand() -> void:
@@ -92,7 +92,7 @@ func _refresh_hand() -> void:
 	_hand_elements.clear()
 	for i in range(GameState.hand.size()):
 		var el: Control = KeyCapElementScene.instantiate()
-		el.custom_minimum_size = Vector2(88, 88)
+		el.custom_minimum_size = Vector2(120, 120)
 		hand_container.add_child(el)
 		el.setup(GameState.hand[i])
 		el.clicked.connect(_on_hand_clicked.bind(i))
@@ -125,7 +125,7 @@ func _on_hand_clicked(idx: int) -> void:
 			_pending_redraw.erase(idx)
 		else:
 			_pending_redraw.append(idx)
-		_redraw_button_ui()
+		_refresh_hand_states()
 		return
 	var cap: Dictionary = GameState.hand[idx]
 	if bool(cap.get("is_symbol", false)):
@@ -135,7 +135,6 @@ func _on_hand_clicked(idx: int) -> void:
 	if _slot_uses_hand_index(idx):
 		_remove_slot_by_hand_index(idx)
 		return
-	# Pass the hand index so the same physical tile can't be reused.
 	_add_slot(cap, str(cap["letter"]), idx)
 
 
@@ -165,18 +164,6 @@ func _add_slot(cap: Dictionary, letter: String, hand_idx: int = -1) -> void:
 	_refresh_word()
 
 
-func _on_backspace_pressed() -> void:
-	if _slots.is_empty():
-		return
-	_slots.pop_back()
-	_refresh_word()
-
-
-func _on_skip_pressed() -> void:
-	if GameState.turns_left > 0:
-		CombatService.skip_turn()
-
-
 func _on_redraw_toggle() -> void:
 	_redraw_mode = not _redraw_mode
 	if not _redraw_mode:
@@ -185,8 +172,12 @@ func _on_redraw_toggle() -> void:
 
 
 func _redraw_button_ui() -> void:
-	redraw_button.text = "Cancel redraw" if _redraw_mode else "Redraw mode"
-	_refresh_word()
+	if _redraw_mode:
+		redraw_button.text = "Cancel"
+		play_button.text = "Confirm swap"
+	else:
+		redraw_button.text = "REDRAW (%d)" % GameState.redraws_left
+	redraw_button.disabled = _redraw_mode and (_pending_redraw.is_empty() or GameState.redraws_left < 1)
 
 
 func _refresh_word() -> void:
@@ -197,7 +188,7 @@ func _refresh_word() -> void:
 		var s: Dictionary = _slots[i]
 		word += str(s["letter"])
 		var el: Control = KeyCapElementScene.instantiate()
-		el.custom_minimum_size = Vector2(72, 72)
+		el.custom_minimum_size = Vector2(120, 120)
 		word_strip.add_child(el)
 		el.setup(s["cap"])
 		el.override_letter(str(s["letter"]))
@@ -206,19 +197,30 @@ func _refresh_word() -> void:
 		el.drag_drop.connect(_on_word_drop)
 	_refresh_hand_states()
 	if _redraw_mode:
-		hint_label.text = "Mark tiles to swap (costs 1 redraw)"
-		confirm_button.text = "Confirm swap"
-		confirm_button.disabled = _pending_redraw.is_empty() or GameState.redraws_left < 1
+		hint_label.text = "Mark tiles to swap"
+		play_button.text = "Confirm swap"
+		play_button.disabled = _pending_redraw.is_empty() or GameState.redraws_left < 1
 		return
-	confirm_button.text = "Confirm"
-	var valid: Dictionary = CombatService.validate_word(_slots) if _slots.size() >= 3 else {"ok": false}
+	if _slots.is_empty():
+		hint_label.text = "Tap tiles to spell a word"
+		play_button.text = "PLAY"
+		play_button.disabled = true
+		return
+	var valid: Dictionary = CombatService.validate_word(_slots)
 	if valid.get("ok", false):
 		var res: Dictionary = CombatService.calculate_word(_slots)
-		hint_label.text = "%s · %d dmg" % [str(valid["word"]), int(res["damage"])]
-		confirm_button.disabled = false
+		var dmg: int = int(res["damage"])
+		if _slots.size() < 3:
+			hint_label.text = "PLAY (%d DMG)" % dmg
+			play_button.text = "PLAY (%d DMG)" % dmg
+		else:
+			hint_label.text = "WORD: %s · %d DMG" % [word, dmg]
+			play_button.text = "PLAY (%d DMG)" % dmg
+		play_button.disabled = false
 	else:
-		hint_label.text = _reason_text(valid.get("reason", "keep building"))
-		confirm_button.disabled = true
+		hint_label.text = "Not a word"
+		play_button.text = "PLAY"
+		play_button.disabled = true
 
 
 func _on_slot_clicked(i: int) -> void:
@@ -242,17 +244,7 @@ func _on_word_drop(from: int, to: int) -> void:
 	_refresh_word()
 
 
-func _reason_text(reason: String) -> String:
-	match reason:
-		"not_word":
-			return "Not a word"
-		"repeat_letter":
-			return "Can't repeat letters here"
-		_:
-			return "Keep building (min 3 letters)"
-
-
-func _on_confirm_pressed() -> void:
+func _on_play_pressed() -> void:
 	if _animating or GameState.turns_left <= 0:
 		return
 	if _redraw_mode:
@@ -260,12 +252,15 @@ func _on_confirm_pressed() -> void:
 			return
 		_do_redraw()
 		return
-	if confirm_button.disabled:
-		return
-	var valid: Dictionary = CombatService.validate_word(_slots)
-	if not valid.get("ok", false):
+	if _slots.is_empty():
 		return
 	_play_score_animation()
+
+
+func _on_bag_pressed() -> void:
+	var modal: Control = BAG_MODAL.instantiate()
+	add_child(modal)
+	modal.open()
 
 
 func _do_redraw() -> void:
@@ -364,26 +359,24 @@ func _fmt_pts(pts: float) -> String:
 
 
 func _set_controls_enabled(v: bool) -> void:
-	backspace_button.disabled = not v
 	redraw_button.disabled = not v
-	skip_button.disabled = not v
 	if v:
 		_refresh_word()
 	else:
-		confirm_button.disabled = true
+		play_button.disabled = true
 
 
 func _clear_word() -> void:
 	_slots.clear()
 	_pending_redraw.clear()
 	_redraw_mode = false
-	redraw_button.text = "Redraw mode"
+	redraw_button.text = "REDRAW (%d)" % GameState.redraws_left
 	_refresh_word()
 
 
 func _open_picker(cap: Dictionary) -> void:
 	_build_picker_grid(cap)
-	wildcard_popup.popup_centered(Vector2i(520, 460))
+	wildcard_popup.popup_centered(Vector2i(900, 1100))
 
 
 func _build_picker_grid(cap: Dictionary) -> void:
@@ -392,8 +385,9 @@ func _build_picker_grid(cap: Dictionary) -> void:
 	for c in _letters_for_wild(cap):
 		var b := Button.new()
 		b.text = str(c)
-		b.add_theme_font_override("font", MONO_FONT)
-		b.custom_minimum_size = Vector2(52, 60)
+		b.add_theme_font_override("font", KB_FONT)
+		b.add_theme_font_size_override("font_size", 48)
+		b.custom_minimum_size = Vector2(120, 120)
 		b.pressed.connect(_on_wild_letter.bind(str(c)))
 		picker_grid.add_child(b)
 
