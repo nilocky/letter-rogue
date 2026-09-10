@@ -7,16 +7,19 @@ extends Control
 @onready var fight_button: Button = %FightButton
 @onready var upgrade_box: VBoxContainer = %UpgradeBox
 @onready var buy_dialog: ConfirmationDialog = %BuyDialog
+@onready var sell_dialog: ConfirmationDialog = %SellDialog
 
 const KeyCapScene := preload("res://scenes/components/KeyCapElement.tscn")
 
 var _pending_purchase: Dictionary = {}
+var _pending_sale: Dictionary = {}
 
 
 func _ready() -> void:
 	reroll_button.pressed.connect(_on_reroll_pressed)
 	fight_button.pressed.connect(_on_fight_pressed)
 	buy_dialog.confirmed.connect(_on_buy_confirmed)
+	sell_dialog.confirmed.connect(_on_sell_confirmed)
 	EventBus.shop_inventory_generated.connect(_on_inventory_generated)
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
 	_build_upgrade_buttons()
@@ -32,21 +35,33 @@ func _refresh_ui() -> void:
 	for c in inventory_grid.get_children():
 		c.queue_free()
 	for i in range(GameState.shop_inventory.size()):
-		var elem: Control = _make_tile(_on_shop_item_clicked.bind(i))
+		var cap: Dictionary = GameState.shop_inventory[i]
+		var elem: Control = _make_tile(_on_shop_item_clicked.bind(i), int(cap.get("price", 0)))
 		inventory_grid.add_child(elem)
-		elem.setup(GameState.shop_inventory[i])
+		elem.setup(cap)
 	for c in bag_grid.get_children():
 		c.queue_free()
 	for i in range(GameState.bag.size()):
-		var elem: Control = _make_tile(_on_bag_item_clicked.bind(i))
+		var cap: Dictionary = GameState.bag[i]
+		var elem: Control = _make_tile(_on_bag_item_clicked.bind(i), ShopService.sell_value(cap))
 		bag_grid.add_child(elem)
-		elem.setup(GameState.bag[i])
+		elem.setup(cap)
 
 
-func _make_tile(handler: Callable) -> Control:
+func _make_tile(handler: Callable, price: int) -> Control:
 	var elem: Control = KeyCapScene.instantiate()
 	elem.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	elem.custom_minimum_size = Vector2(64, 48)
+	var price_label := Label.new()
+	price_label.text = "$%d" % price
+	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	price_label.add_theme_font_size_override("font_size", 10)
+	price_label.add_theme_color_override("font_color", Color(1, 0.9, 0.5))
+	price_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	price_label.offset_top = -12.0
+	price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	elem.add_child(price_label)
 	elem.clicked.connect(handler)
 	return elem
 
@@ -69,9 +84,20 @@ func _on_buy_confirmed() -> void:
 
 
 func _on_bag_item_clicked(index: int) -> void:
-	if index < GameState.bag.size():
-		ShopService.sell_cap(GameState.bag[index])
-		_refresh_ui()
+	if index >= GameState.bag.size():
+		return
+	_pending_sale = GameState.bag[index]
+	sell_dialog.dialog_text = _describe_cap(_pending_sale, true)
+	sell_dialog.get_ok_button().disabled = str(_pending_sale.get("condition", "")) == "eternal"
+	sell_dialog.popup_centered()
+
+
+func _on_sell_confirmed() -> void:
+	if _pending_sale.is_empty():
+		return
+	ShopService.sell_cap(_pending_sale)
+	_pending_sale = {}
+	_refresh_ui()
 
 
 func _on_reroll_pressed() -> void:
@@ -83,7 +109,7 @@ func _on_fight_pressed() -> void:
 	EventBus.fight_pressed.emit()
 
 
-func _describe_cap(cap: Dictionary) -> String:
+func _describe_cap(cap: Dictionary, selling: bool = false) -> String:
 	var lines: PackedStringArray = [
 		"Letter: %s" % str(cap.get("letter", "?")),
 		"Rarity: %s" % str(cap.get("rarity", "?")),
@@ -98,7 +124,13 @@ func _describe_cap(cap: Dictionary) -> String:
 	var condition: String = str(cap.get("condition", ""))
 	if condition != "":
 		lines.append("Condition: %s" % _condition_text(condition))
-	lines.append("Price: $%d" % int(cap.get("price", 0)))
+	if selling:
+		if condition == "eternal":
+			lines.append("Sell: Eternal — cannot be sold")
+		else:
+			lines.append("Sell for: $%d" % ShopService.sell_value(cap))
+	else:
+		lines.append("Price: $%d" % int(cap.get("price", 0)))
 	return "\n".join(lines)
 
 

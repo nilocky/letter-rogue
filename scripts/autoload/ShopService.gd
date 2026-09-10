@@ -89,11 +89,15 @@ func buy_cap(cap: Dictionary) -> bool:
 func sell_cap(cap: Dictionary) -> bool:
 	if str(cap.get("condition", "")) == "eternal":
 		return false
-	var value: int = maxi(int(round(int(cap.get("price", 0)) * SELL_RATIO)), 1)
+	var value: int = sell_value(cap)
 	GameState.bag.erase(cap)
 	GameState.money += value
 	EventBus.cap_sold.emit(cap)
 	return true
+
+
+func sell_value(cap: Dictionary) -> int:
+	return maxi(int(round(int(cap.get("price", 0)) * SELL_RATIO)), 1)
 
 
 func reroll() -> bool:

@@ -147,3 +147,9 @@ unique_name_in_owner = true
 title = "Confirm Purchase"
 ok_button_text = "Buy"
 cancel_button_text = "Cancel"
+
+[node name="SellDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Sell Tile"
+ok_button_text = "Sell"
+cancel_button_text = "Cancel"
