@@ -20,7 +20,7 @@ func start_round() -> void:
 ## Validate a word built from `slots` (each {"cap": Dictionary, "letter": String}).
 func validate_word(slots: Array) -> Dictionary:
 	if slots.size() < 3:
-		return {"ok": false, "reason": "too_short"}
+		return {"ok": true}
 	var word := ""
 	var letters: Array = []
 	for s in slots:
@@ -126,10 +126,6 @@ func commit_word(slots: Array) -> void:
 
 	_apply_monster_damage(int(res["damage"]) + lucky_extra_damage, money_gain)
 
-
-func skip_turn() -> void:
-	EventBus.word_committed.emit("", 0, 0)
-	_end_turn()
 
 
 func _letter_base_score(letter: String) -> int:

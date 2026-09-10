@@ -31,6 +31,8 @@ func is_word(word: String) -> bool:
 
 func length_multiplier(length: int) -> float:
 	match length:
+		1, 2:
+			return 1.0
 		3:
 			return 1.0
 		4:
