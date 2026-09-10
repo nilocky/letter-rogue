@@ -1,0 +1,3 @@
+FROM nginx:alpine
+COPY deploy/web/nginx.conf /etc/nginx/conf.d/default.conf
+COPY build/web /usr/share/nginx/html

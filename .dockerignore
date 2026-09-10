@@ -1,0 +1,10 @@
+.git
+.gitignore
+.godot
+.opencode
+.superpowers
+addons
+docs
+data/raw
+*.uid
+AGENTS.md

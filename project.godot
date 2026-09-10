@@ -28,7 +28,6 @@ KeyCapService="*res://scripts/autoload/KeyCapService.gd"
 ShopService="*res://scripts/autoload/ShopService.gd"
 WordService="*res://scripts/autoload/WordService.gd"
 CombatService="*res://scripts/autoload/CombatService.gd"
-MCPRuntimeProbe="*uid://bsg12huaf1u5i"
 
 [display]
 
@@ -37,9 +36,14 @@ window/size/viewport_height=680
 window/size/window_width_override=500
 window/size/window_height_override=680
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 window/size/min_width=500
 window/size/min_height=680
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
