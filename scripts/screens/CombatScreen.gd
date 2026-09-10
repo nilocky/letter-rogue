@@ -176,12 +176,13 @@ func _on_redraw_toggle() -> void:
 func _redraw_button_ui() -> void:
 	if _redraw_mode:
 		redraw_button.text = "Cancel"
+		redraw_button.disabled = false
 		play_button.text = "Confirm swap"
-		play_button.disabled = true
+		play_button.disabled = _pending_redraw.is_empty() or GameState.redraws_left < 1
 	else:
 		redraw_button.text = "REDRAW (%d)" % GameState.redraws_left
+		redraw_button.disabled = GameState.redraws_left < 1
 		play_button.disabled = false
-	redraw_button.disabled = _redraw_mode and (_pending_redraw.is_empty() or GameState.redraws_left < 1)
 
 
 func _refresh_word() -> void:
