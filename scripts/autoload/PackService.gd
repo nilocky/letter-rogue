@@ -18,3 +18,9 @@ func select_pack(pack_id: String):
 
 func get_available_packs() -> Array:
 	return available_packs
+
+func pack_by_id(pack_id: String) -> Dictionary:
+	for pack in available_packs:
+		if str(pack.get("id", "")) == pack_id:
+			return pack
+	return {}

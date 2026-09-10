@@ -1,11 +1,13 @@
 extends Control
 
-@onready var label = $Label
-@onready var ability_label = $AbilityLabel
-@onready var rarity_bg = $RarityBg
-@onready var finish_label = $FinishLabel
-@onready var sticker_label = $StickerLabel
-@onready var condition_label = $ConditionLabel
+signal clicked
+
+@onready var label = %Label
+@onready var ability_label = %AbilityLabel
+@onready var rarity_bg = %RarityBg
+@onready var finish_label = %FinishLabel
+@onready var sticker_label = %StickerLabel
+@onready var condition_label = %ConditionLabel
 
 var cap_data: Dictionary = {}
 var selected := false
@@ -58,6 +60,10 @@ func _modifier_abbr(id: String) -> String:
 		"eternal": return "ET"
 		"rental": return "RT"
 		_: return ""
+
+func _gui_input(event: InputEvent):
+	if event is InputEventMouseButton and event.pressed:
+		clicked.emit()
 
 func set_selected(s: bool):
 	selected = s
