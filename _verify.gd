@@ -11,6 +11,7 @@ func _ready() -> void:
 	_test_no_skip_turn()
 	_test_eventbus_signals()
 	await _test_game_root_signals()
+	_test_bag_modal()
 	if _failures == 0:
 		print("VERIFY OK")
 		get_tree().quit(0)
@@ -78,4 +79,21 @@ func _test_game_root_signals() -> void:
 	_check(game_root.has_method("_on_shop_requested"), "game_root has _on_shop_requested")
 	_check(game_root.has_method("_on_game_complete"), "game_root has _on_game_complete")
 	game_root.queue_free()
+	await get_tree().process_frame
+
+
+func _test_bag_modal() -> void:
+	var scene: PackedScene = load("res://scenes/components/BagModal.tscn")
+	if scene == null:
+		_check(false, "BagModal scene loads")
+		return
+	var modal: Control = scene.instantiate()
+	add_child(modal)
+	await get_tree().process_frame
+	_check(modal.has_method("open"), "BagModal has open()")
+	var close_btn: Button = modal.get_node("CloseButton")
+	_check(close_btn != null, "BagModal has CloseButton")
+	if close_btn != null:
+		_check(close_btn.custom_minimum_size.y >= 120.0, "close button >= 120 tall")
+	modal.queue_free()
 	await get_tree().process_frame
