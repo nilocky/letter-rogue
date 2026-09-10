@@ -1,7 +1,5 @@
 extends Control
 
-const KB_FONT := preload("res://assets/fonts/Kenney Blocks.ttf")
-
 @onready var title: Label = %Title
 @onready var receipt: VBoxContainer = %Receipt
 @onready var total_label: Label = %TotalLabel
@@ -12,13 +10,16 @@ var _total: int = 0
 var _animated_total: int = 0
 
 
+func _ready() -> void:
+	continue_button.pressed.connect(_on_continue)
+
+
 func open(summary: Dictionary) -> void:
 	_summary = summary
 	_total = int(summary.get("total", 0))
 	var is_boss: bool = bool(summary.get("is_boss", false))
 	title.text = "GAME COMPLETE" if is_boss else "ROUND WON"
 	continue_button.text = "BACK TO MENU" if is_boss else "CONTINUE TO SHOP"
-	continue_button.pressed.connect(_on_continue)
 
 	var base: int = int(summary.get("base_reward", 0))
 	var leftover: int = int(summary.get("leftover_turns", 0))
