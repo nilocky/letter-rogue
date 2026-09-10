@@ -51,7 +51,7 @@ func _refresh_ui() -> void:
 func _make_tile(handler: Callable, price: int) -> Control:
 	var elem: Control = KeyCapScene.instantiate()
 	elem.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	elem.custom_minimum_size = Vector2(64, 48)
+	elem.custom_minimum_size = Vector2(56, 56)
 	var price_label := Label.new()
 	price_label.text = "$%d" % price
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

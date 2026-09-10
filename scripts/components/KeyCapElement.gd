@@ -8,6 +8,7 @@ signal clicked
 @onready var finish_label = %FinishLabel
 @onready var sticker_label = %StickerLabel
 @onready var condition_label = %ConditionLabel
+@onready var index_label = %IndexLabel
 
 var cap_data: Dictionary = {}
 var selected := false
@@ -40,6 +41,19 @@ func setup(data: Dictionary):
 	var condition = data.get("condition", "")
 	condition_label.text = _modifier_abbr(condition)
 	condition_label.visible = condition != ""
+
+func override_letter(letter: String) -> void:
+	label.text = letter
+
+
+func set_word_index(i: int) -> void:
+	index_label.visible = i > 0
+	index_label.text = str(i) if i > 0 else ""
+
+
+func set_used(used: bool) -> void:
+	modulate = Color(0.5, 0.5, 0.5, 0.75) if used else Color.WHITE
+
 
 func _modifier_abbr(id: String) -> String:
 	match id:

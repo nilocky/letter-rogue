@@ -20,6 +20,7 @@ var _slots: Array = []  # {"cap": Dictionary, "letter": String} in word order
 var _pending_redraw: Array = []  # hand indices to swap
 var _redraw_mode: bool = false
 var _wildcard_pending: Dictionary = {}  # {"cap":..., "index": int} awaiting letter
+var _hand_elements: Array = []  # parallel to GameState.hand, tile controls
 
 const KeyCapElementScene := preload("res://scenes/components/KeyCapElement.tscn")
 
@@ -84,13 +85,31 @@ func _on_round_won(_money_earned: int) -> void:
 func _refresh_hand() -> void:
 	for child in hand_container.get_children():
 		child.queue_free()
-	hand_container.queue_redraw()
+	_hand_elements.clear()
 	for i in range(GameState.hand.size()):
 		var el: Control = KeyCapElementScene.instantiate()
+		el.custom_minimum_size = Vector2(56, 56)
 		hand_container.add_child(el)
 		el.setup(GameState.hand[i])
 		el.clicked.connect(_on_hand_clicked.bind(i))
+		_hand_elements.append(el)
 	hand_empty_warning.visible = GameState.hand.is_empty()
+	_refresh_hand_states()
+
+
+func _refresh_hand_states() -> void:
+	for i in range(mini(_hand_elements.size(), GameState.hand.size())):
+		var pos: int = _slot_pos_of_hand(i)
+		var el: Control = _hand_elements[i]
+		el.set_used(pos > 0)
+		el.set_word_index(pos)
+
+
+func _slot_pos_of_hand(idx: int) -> int:
+	for i in range(_slots.size()):
+		if int(_slots[i].get("hand_idx", -1)) == idx:
+			return i + 1
+	return 0
 
 
 func _on_hand_clicked(idx: int) -> void:
@@ -160,11 +179,16 @@ func _refresh_word() -> void:
 	for child in word_strip.get_children():
 		child.queue_free()
 	var word := ""
-	for s in _slots:
+	for i in range(_slots.size()):
+		var s: Dictionary = _slots[i]
 		word += str(s["letter"])
-		var lbl := Label.new()
-		lbl.text = str(s["letter"])
-		word_strip.add_child(lbl)
+		var el: Control = KeyCapElementScene.instantiate()
+		el.custom_minimum_size = Vector2(44, 44)
+		word_strip.add_child(el)
+		el.setup(s["cap"])
+		el.override_letter(str(s["letter"]))
+		el.clicked.connect(_on_slot_clicked.bind(i))
+	_refresh_hand_states()
 	var valid: Dictionary = CombatService.validate_word(_slots) if _slots.size() >= 3 else {"ok": false}
 	if valid.get("ok", false):
 		var res: Dictionary = CombatService.calculate_word(_slots)
@@ -173,6 +197,15 @@ func _refresh_word() -> void:
 	else:
 		hint_label.text = _reason_text(valid.get("reason", "keep building"))
 		confirm_button.disabled = true
+
+
+func _on_slot_clicked(i: int) -> void:
+	if i >= _slots.size() - 1:
+		return
+	var tmp: Dictionary = _slots[i]
+	_slots[i] = _slots[i + 1]
+	_slots[i + 1] = tmp
+	_refresh_word()
 
 
 func _reason_text(reason: String) -> String:
