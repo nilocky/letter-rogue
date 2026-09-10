@@ -1,6 +1,17 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/ShopScreen.gd" id="1_abcdef"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.12, 0.12, 0.15, 0.92)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="ShopScreen" type="Control"]
 anchors_preset = 15
@@ -9,10 +20,17 @@ anchor_bottom = 1.0
 script = ExtResource("1_abcdef")
 
 [node name="TopBar" type="HBoxContainer" parent="."]
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="TopBar"]
+text = "Shop"
+theme_override_font_sizes/font_size = 22
+size_flags_horizontal = 3
 
 [node name="MoneyLabel" type="Label" parent="TopBar"]
 unique_name_in_owner = true
 text = "$10"
+theme_override_font_sizes/font_size = 18
 
 [node name="RerollButton" type="Button" parent="TopBar"]
 unique_name_in_owner = true
@@ -22,59 +40,96 @@ text = "Reroll ($3)"
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 40.0
-offset_bottom = -40.0
+offset_top = 44.0
+offset_bottom = -44.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
 
 [node name="Columns" type="HBoxContainer" parent="MarginContainer"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 12
 
 [node name="ShopColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
+stretch_ratio = 1.4
+theme_override_constants/separation = 6
 
 [node name="ForSaleLabel" type="Label" parent="MarginContainer/Columns/ShopColumn"]
 text = "For Sale"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
 
-[node name="InventoryScroll" type="ScrollContainer" parent="MarginContainer/Columns/ShopColumn"]
+[node name="ShopPanel" type="PanelContainer" parent="MarginContainer/Columns/ShopColumn"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="InventoryScroll" type="ScrollContainer" parent="MarginContainer/Columns/ShopColumn/ShopPanel"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="InventoryGrid" type="GridContainer" parent="MarginContainer/Columns/ShopColumn/InventoryScroll"]
+[node name="InventoryGrid" type="GridContainer" parent="MarginContainer/Columns/ShopColumn/ShopPanel/InventoryScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-columns = 1
+columns = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 
 [node name="BagColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
+stretch_ratio = 1.3
+theme_override_constants/separation = 6
 
 [node name="BagLabel" type="Label" parent="MarginContainer/Columns/BagColumn"]
 text = "Your Bag"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.5, 0.85, 1, 1)
 
-[node name="BagScroll" type="ScrollContainer" parent="MarginContainer/Columns/BagColumn"]
+[node name="BagPanel" type="PanelContainer" parent="MarginContainer/Columns/BagColumn"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="BagScroll" type="ScrollContainer" parent="MarginContainer/Columns/BagColumn/BagPanel"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="BagGrid" type="GridContainer" parent="MarginContainer/Columns/BagColumn/BagScroll"]
+[node name="BagGrid" type="GridContainer" parent="MarginContainer/Columns/BagColumn/BagPanel/BagScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-columns = 1
+columns = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 
 [node name="UpgradeColumn" type="VBoxContainer" parent="MarginContainer/Columns"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
+stretch_ratio = 1.0
+theme_override_constants/separation = 6
 
 [node name="UpgradeLabel" type="Label" parent="MarginContainer/Columns/UpgradeColumn"]
 text = "Upgrades"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.6, 1, 0.6, 1)
 
-[node name="UpgradeScroll" type="ScrollContainer" parent="MarginContainer/Columns/UpgradeColumn"]
+[node name="UpgradePanel" type="PanelContainer" parent="MarginContainer/Columns/UpgradeColumn"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="UpgradeScroll" type="ScrollContainer" parent="MarginContainer/Columns/UpgradeColumn/UpgradePanel"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="UpgradeBox" type="VBoxContainer" parent="MarginContainer/Columns/UpgradeColumn/UpgradeScroll"]
+[node name="UpgradeBox" type="VBoxContainer" parent="MarginContainer/Columns/UpgradeColumn/UpgradePanel/UpgradeScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
 [node name="FightButton" type="Button" parent="."]
 unique_name_in_owner = true
@@ -86,3 +141,9 @@ offset_bottom = -8.0
 offset_left = 8.0
 offset_right = -8.0
 text = "Fight!"
+
+[node name="BuyDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Confirm Purchase"
+ok_button_text = "Buy"
+cancel_button_text = "Cancel"
