@@ -169,6 +169,7 @@ func _on_redraw_toggle() -> void:
 	_redraw_mode = not _redraw_mode
 	if not _redraw_mode:
 		_pending_redraw.clear()
+		_refresh_word()
 	_redraw_button_ui()
 
 

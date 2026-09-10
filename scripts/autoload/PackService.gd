@@ -14,7 +14,6 @@ func _load_packs():
 
 func select_pack(pack_id: String):
 	GameState.active_pack_id = pack_id
-	EventBus.pack_selected.emit(pack_id)
 
 func get_available_packs() -> Array:
 	return available_packs
