@@ -23,6 +23,7 @@ var _pending_redraw: Array = []  # hand indices to swap
 var _redraw_mode: bool = false
 var _wildcard_pending: Dictionary = {}  # {"cap":..., "hand_idx":..., "slot":...} awaiting letter
 var _hand_elements: Array = []  # parallel to GameState.hand, tile controls
+var _animating: bool = false  # score animation in flight; blocks further input
 
 const KeyCapElementScene := preload("res://scenes/components/KeyCapElement.tscn")
 
@@ -114,7 +115,7 @@ func _slot_pos_of_hand(idx: int) -> int:
 
 
 func _on_hand_clicked(idx: int) -> void:
-	if GameState.turns_left <= 0:
+	if _animating or GameState.turns_left <= 0:
 		return
 	if _redraw_mode:
 		if idx in _pending_redraw:
@@ -212,7 +213,7 @@ func _refresh_word() -> void:
 
 
 func _on_slot_clicked(i: int) -> void:
-	if i >= _slots.size():
+	if _animating or i >= _slots.size():
 		return
 	var s: Dictionary = _slots[i]
 	if bool(s.get("cap", {}).get("is_symbol", false)):
@@ -224,7 +225,7 @@ func _on_slot_clicked(i: int) -> void:
 
 
 func _on_word_drop(from: int, to: int) -> void:
-	if from < 0 or from >= _slots.size() or to < 0 or to >= _slots.size():
+	if _animating or from < 0 or from >= _slots.size() or to < 0 or to >= _slots.size():
 		return
 	var moving: Dictionary = _slots[from]
 	_slots.remove_at(from)
@@ -243,14 +244,78 @@ func _reason_text(reason: String) -> String:
 
 
 func _on_confirm_pressed() -> void:
-	if confirm_button.disabled:
+	if _animating or confirm_button.disabled:
 		return
 	if GameState.turns_left <= 0:
 		return
 	var valid: Dictionary = CombatService.validate_word(_slots)
 	if not valid.get("ok", false):
 		return
+	_play_score_animation()
+
+
+func _play_score_animation() -> void:
+	_animating = true
+	_set_controls_enabled(false)
+	var res: Dictionary = CombatService.calculate_word(_slots, false)
+	var scores: Array = res.get("letter_scores", [])
+	var tiles: Array = word_strip.get_children()
+	var tween := create_tween()
+	for i in range(tiles.size()):
+		tween.tween_interval(0.22)
+		var pts: float = float(scores[i]) if i < scores.size() else 0.0
+		var tile: Control = tiles[i] as Control
+		tween.tween_callback(func() -> void: _hop_tile(tile, pts))
+	await tween.finished
+	_set_controls_enabled(true)
+	_animating = false
 	CombatService.commit_word(_slots)
+
+
+func _hop_tile(tile: Control, pts: float) -> void:
+	var origin: Vector2 = tile.global_position
+	var hop := create_tween()
+	hop.tween_property(tile, "global_position", origin + Vector2(0, -16), 0.12) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	hop.tween_property(tile, "global_position", origin, 0.14) \
+		.set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	_spawn_score_label(tile, pts)
+
+
+func _spawn_score_label(tile: Control, pts: float) -> void:
+	if pts <= 0.0:
+		return
+	var lbl := Label.new()
+	lbl.text = _fmt_pts(pts)
+	lbl.add_theme_font_size_override("font_size", 16)
+	lbl.add_theme_color_override("font_color", Color(1, 0.9, 0.3, 1))
+	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	lbl.add_theme_constant_override("outline_size", 4)
+	lbl.z_index = 100
+	lbl.position = tile.global_position + Vector2(0, -22)
+	add_child(lbl)
+	var ft := lbl.create_tween()
+	ft.set_parallel(true)
+	ft.tween_property(lbl, "global_position", lbl.global_position + Vector2(0, -24), 0.5) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	ft.tween_property(lbl, "modulate:a", 0.0, 0.5)
+	ft.chain().tween_callback(lbl.queue_free)
+
+
+func _fmt_pts(pts: float) -> String:
+	if absf(pts - roundi(pts)) < 0.001:
+		return "+%d" % roundi(pts)
+	return "+%.1f" % pts
+
+
+func _set_controls_enabled(v: bool) -> void:
+	backspace_button.disabled = not v
+	redraw_button.disabled = not v
+	skip_button.disabled = not v
+	if v:
+		_refresh_word()
+	else:
+		confirm_button.disabled = true
 
 
 func _clear_word() -> void:

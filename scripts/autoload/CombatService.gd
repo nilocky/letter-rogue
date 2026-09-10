@@ -39,14 +39,16 @@ func validate_word(slots: Array) -> Dictionary:
 
 
 ## Deterministic damage/money for a word. Does NOT mutate GameState.
-func calculate_word(slots: Array) -> Dictionary:
+func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 	var disabled: bool = str(GameState.current_monster.get("boss_modifier", "")) == "silence"
 	var pack := PackService.pack_by_id(GameState.active_pack_id)
 	var per_tile: int = int(pack.get("score_modifier", 0)) if not pack.is_empty() else 0
+	var modifier: String = str(GameState.current_monster.get("boss_modifier", ""))
 
 	var total := 0.0
 	var flat := 0
 	var money := 0
+	var letter_scores: Array = []
 	for s in slots:
 		var cap: Dictionary = s["cap"]
 		var letter: String = str(s["letter"])
@@ -74,20 +76,29 @@ func calculate_word(slots: Array) -> Dictionary:
 				money += 2
 			if str(cap.get("condition", "")) == "glass":
 				contribution *= 2.0
-		var modifier: String = str(GameState.current_monster.get("boss_modifier", ""))
 		if modifier == "vowel_lock" and not is_vowel:
 			contribution = 0.0
 		elif modifier == "consonant_lock" and is_vowel:
 			contribution = 0.0
 		total += contribution
-	var damage: int = int(round(total * WordService.length_multiplier(slots.size()))) + flat
-	return {"damage": damage, "money": money}
+		letter_scores.append(contribution)
+	var mult: float = WordService.length_multiplier(slots.size())
+	var damage: int = int(round(total * mult)) + flat
+	if log:
+		var word := ""
+		for s in slots:
+			word += str(s["letter"])
+		print("[score] word=\"%s\" (mult x%.1f, %d letters)" % [word, mult, slots.size()])
+		for i in range(slots.size()):
+			print("[score]   %s: %.1f power" % [str(slots[i]["letter"]), float(letter_scores[i])])
+		print("[score]   total=%.1f x mult -> %d dmg (+%d bonus) +$%d" % [total, damage, flat, money])
+	return {"damage": damage, "money": money, "letter_scores": letter_scores}
 
 
 ## Commit a word: deal damage, collect money, roll lucky/glass/blue side
 ## effects, then advance the turn. Emits win/lose/game_over as needed.
 func commit_word(slots: Array) -> void:
-	var res := calculate_word(slots)
+	var res := calculate_word(slots, true)
 	var word := ""
 	for s in slots:
 		word += str(s["letter"])
