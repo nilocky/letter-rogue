@@ -1,5 +1,22 @@
 # Agent Instructions
 
+## Workflow Protocol (Lightweight & Batch Sync)
+
+### 1. In-Session Tasks (Build Mode)
+- **Code First / Fast Iteration**: When receiving tactical bug fixes or UI adjustment prompts, proceed directly with code changes and Godot verification.
+- **Do NOT** perform full Phase 1 doc reconciliation or call Outline MCP on every single micro-task. Keep sessions lean and token-efficient.
+
+### 2. Session Finalization (`/session-sync`)
+- When the user signals the end of the session or runs `/session-sync`:
+  1. Review all code changes across the session.
+  2. Batch update `docs/spec.md`, `docs/plan.md` and `docs/project-structure.md`.
+  3. Push updated spec to Outline Wiki (`4f19f637-60dd-4ed1-ae88-b991dfa10a6a`) via `outline-mcp`.
+  4. Perform atomic `git add`, `git commit`, and `git push`.
+
+## Mandatory Task Lifecycle: The "Doc-First & Outline Sync" Gate
+
+---
+
 ## MCP Servers
 
 This project can use the **godot-mcp** MCP server for debugging Godot code. If you have it configured in your MCP client, use it to connect to a running Godot editor instance for inspecting scenes, running scripts, and debugging.

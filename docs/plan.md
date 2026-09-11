@@ -60,7 +60,21 @@
 
 ## Current Active Tasks
 
+### Layout & Responsiveness
+- [x] **Adaptive hand tile layout** — single row ≤5, dual rows 6–10+, fixed keycap size 48×54px and font 20
+- [x] **Fix hand tile centering over stone altar** — HandTileContainer must be horizontally centered (SIZE_SHRINK_CENTER), rows must center, not left-align
+- [x] **Unify keycap press physics** — mouse-down press must use same cap_pressed sprite + 5px offset as latched state
+- [x] **Fix keycap release jitter** — don't pop up on release, let CombatScreen decide latched state seamlessly
+
 ### Polish & Juice
+- [x] **KeyCap 3-layer sandwich (SwitchBase + CapLayer + CapTexture/OverlayTexture)** — Mount Cherry MX switch housing beneath every keycap, driven by `GameState.active_pack_id`. CapLayer wraps textures as movable unit, plunges 6px onto fixed SwitchBase.
+- [x] **Shift hand tiles down onto stone slab** — HandTileContainer Y anchor moved to 745–830px, tiles rest directly on stone altar surface. MidZone_Blue min height 210.
+- [x] **Fix keycap elevation over switch** — SwitchBase fixed at (5,24) on slab surface; CapLayer (48×44) plunges 5px on press, SwitchBase (38×28) stays planted.
+- [x] **Calibrate hand keyboard to stone altar safe zone** — HandTileContainer anchored absolutely at Position (106,704), Size (324,110) (measured white-mask safe box, 540×960 viewport); realistic keycap pitch (8px H separation, 6px V separation); fixed keycap size 48×56; 5px keycap plunge travel.
+- [x] **Shift hand keyboard up 10px & reconstruct keycap-to-switch stacking (image-2/image-3 match)** — HandTileContainer position.y 714→704, size (324,110); KeyCapElement root 48×56, SwitchBase (38×28) at (5,24) extending below the cap skirt (stretch_mode KEEP_ASPECT_CENTERED), CapLayer (48×44) floats at UNPRESSED_CAP_Y 0.0 and plunges to PRESSED_CAP_Y 5.0 on press/latch, tint (0.85,0.88,0.95).
+- [x] **Plate-mounted socket masking for Cherry MX switch (image.jpg black-mask match)** — SwitchSocketContainer (`clip_contents = true`, 38×22 at (5,14)) clips the bottom 6px (~19%) of the SwitchBase (38×28, STRETCH_KEEP native top-left) so the switch appears socketed/embedded into the stone altar plate; StoneSocketSlot ColorRect (40×6 at (4,30), dark `Color(0.1,0.12,0.16,0.9)`) adds the recessed slot shadow/bevel line at the base.
+- [x] **Restore visible switch base underneath keycaps (image-2/image-3 match)** — previous socket container (Y=14..36) was fully covered by the opaque 44px cap; flattened hierarchy: root 48×54 mouse_filter PASS, CapLayer (0,0) 48×40, SwitchBase direct child standalone (5,22) 38×28 full atlas extending ~10px below cap skirt (5px projection when cap plunges to PRESSED_CAP_Y 5.0); CombatScreen `_refresh_hand()` tile_size (48,54) so runtime tiles match the root.
+- [x] **Context-aware keycap switch embedding (Combat embedded vs Shop standalone)** — `@export embedded_mode: bool = false`; `set_embedded_mode(enabled)` re-applies skin; CombatScreen `_instantiate_tile()` sets `embedded_mode = true`. Embedded: `SocketShadow` ColorRect (38×3 at (5,46), `Color(0.08,0.10,0.14,0.95)`) visible, SwitchBase (5,26) 38×22 with **cropped duplicate** atlas (`region.size.y *= 0.79`, proportional ~21% because the switch slice is 262×258 source px — literal `-= 6.0` would crop only ~0.7 display px). Standalone (ShopScreen/RunSetupScreen): SocketShadow hidden, full uncropped switch (5,22) 38×28. Crop applied on `duplicate()` so the shared cached atlas is never mutated.
 - [ ] **SFX Audio Manager** — hook audio calls (commented-out `AudioManager.play()` calls in CombatScreen) with a simple autoload AudioManager that plays from `res://assets/audio/`
 - [ ] **Particle effects** — add particle emitters for tile score bursts, damage impact, victory celebration
 - [ ] **Redraw animation polish** — ensure smooth in/out tweens for swapped tiles

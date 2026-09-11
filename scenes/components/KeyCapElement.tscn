@@ -17,10 +17,33 @@ corner_radius_bottom_left = 6
 [node name="KeyCapElement" type="Control"]
 script = ExtResource("1_abcdef")
 anchors_preset = 0
-size = Vector2(54, 54)
-custom_minimum_size = Vector2(54, 54)
+size = Vector2(48, 54)
+custom_minimum_size = Vector2(48, 54)
+mouse_filter = 1
 
-[node name="CapTexture" type="TextureRect" parent="."]
+[node name="SocketShadow" type="ColorRect" parent="."]
+anchors_preset = 0
+visible = false
+position = Vector2(5, 46)
+size = Vector2(38, 3)
+mouse_filter = 2
+color = Color(0.08, 0.1, 0.14, 0.95)
+
+[node name="SwitchBase" type="TextureRect" parent="."]
+anchors_preset = 0
+position = Vector2(5, 22)
+size = Vector2(38, 28)
+mouse_filter = 2
+stretch_mode = 5
+expand_mode = 1
+
+[node name="CapLayer" type="Control" parent="."]
+anchors_preset = 0
+position = Vector2(0, 0)
+size = Vector2(48, 40)
+mouse_filter = 2
+
+[node name="CapTexture" type="TextureRect" parent="CapLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -28,7 +51,7 @@ mouse_filter = 2
 stretch_mode = 5
 expand_mode = 1
 
-[node name="OverlayTexture" type="TextureRect" parent="."]
+[node name="OverlayTexture" type="TextureRect" parent="CapLayer"]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
@@ -37,7 +60,7 @@ mouse_filter = 2
 stretch_mode = 5
 expand_mode = 1
 
-[node name="MarkFrame" type="Panel" parent="."]
+[node name="MarkFrame" type="Panel" parent="CapLayer"]
 unique_name_in_owner = true
 visible = false
 anchors_preset = 15
@@ -46,7 +69,7 @@ anchor_bottom = 1.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_mark")
 mouse_filter = 2
 
-[node name="LegendContainer" type="MarginContainer" parent="."]
+[node name="LegendContainer" type="MarginContainer" parent="CapLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -56,7 +79,7 @@ theme_override_constants/margin_bottom = 16
 theme_override_constants/margin_left = 6
 theme_override_constants/margin_right = 6
 
-[node name="LetterLabel" type="Label" parent="LegendContainer"]
+[node name="LetterLabel" type="Label" parent="CapLayer/LegendContainer"]
 unique_name_in_owner = true
 mouse_filter = 2
 anchors_preset = 15
@@ -67,7 +90,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 text = "A"
 
-[node name="PowerLabel" type="Label" parent="."]
+[node name="PowerLabel" type="Label" parent="CapLayer"]
 unique_name_in_owner = true
 mouse_filter = 2
 anchors_preset = 8

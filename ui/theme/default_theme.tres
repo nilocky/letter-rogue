@@ -1,0 +1,34 @@
+[gd_resource type="Theme" load_steps=5 format=3]
+
+[ext_resource type="FontFile" uid="uid://obxbtq4a4566" path="res://assets/fonts/monogram.ttf" id="1_mono"]
+[ext_resource type="FontFile" uid="uid://j7xvbouxwbf5" path="res://assets/fonts/m5x7.ttf" id="2_m57"]
+[ext_resource type="FontFile" uid="uid://doyyuryme11xx" path="res://assets/fonts/Kenney Pixel.ttf" id="3_px"]
+
+[resource]
+default_font = ExtResource("3_px")
+default_font_size = 16
+HeaderLabel/base_type = &"Label"
+HeaderLabel/fonts/font = ExtResource("3_px")
+HeaderLabel/font_sizes/font_size = 26
+HeaderLabel/colors/font_color = Color(1, 0.9, 0.62, 1)
+MetricLabel/base_type = &"Label"
+MetricLabel/fonts/font = ExtResource("3_px")
+MetricLabel/font_sizes/font_size = 22
+MetricLabel/colors/font_color = Color(0.9, 0.95, 1, 1)
+KeyCapFaceLabel/base_type = &"Label"
+KeyCapFaceLabel/fonts/font = ExtResource("1_mono")
+KeyCapFaceLabel/font_sizes/font_size = 26
+KeyCapFaceLabel/colors/font_color = Color(1, 1, 1, 1)
+BodyLabel/base_type = &"Label"
+BodyLabel/fonts/font = ExtResource("2_m57")
+BodyLabel/font_sizes/font_size = 16
+BodyLabel/colors/font_color = Color(0.86, 0.88, 0.92, 1)
+BodyLabel/constants/line_spacing = 3
+BadgeLabel/base_type = &"Label"
+BadgeLabel/fonts/font = ExtResource("2_m57")
+BadgeLabel/font_sizes/font_size = 15
+BadgeLabel/colors/font_color = Color(1, 1, 1, 1)
+MicroLabel/base_type = &"Label"
+MicroLabel/fonts/font = ExtResource("2_m57")
+MicroLabel/font_sizes/font_size = 13
+MicroLabel/colors/font_color = Color(0.72, 0.74, 0.8, 1)

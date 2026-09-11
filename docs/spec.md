@@ -328,3 +328,62 @@ All JSON under `data/`, ships inside exported pck:
 - No player HP, no shield, no healing
 - No discard pile — tiles return to bag at turn end
 - All UI responsive via Containers — no fixed positions
+
+## KeyCap 3-Layer Mechanical Sandwich Architecture
+
+Each `KeyCapElement` tile is a context-aware stack rendering from back to front. One scene, two rendering modes:
+
+- **Embedded mode** (`embedded_mode = true`, set by `CombatScreen` hand tiles): the switch is cropped to its upper housing and a dark socket shadow sits at its base — the switch is socketed into the stone altar plate (image.jpg black-mask match).
+- **Standalone mode** (default; ShopScreen/RunSetupScreen previews): the full switch with complete bottom skirt is shown — the keycap as a full product.
+
+| Layer | Node | Source | Description |
+|---|---|---|---|
+| **Root** | `Control` (48×54) | — | KeycapButton root bounding box, `mouse_filter = PASS`. Holds SocketShadow (embedded only) + SwitchBase (bottom) + CapLayer (top). |
+| **SocketShadow** | `ColorRect` (38×3 at 5,46) | — | Dark recessed socket slit `Color(0.08, 0.10, 0.14, 0.95)`, `visible` only in embedded mode. Reads as the carved slot the switch plugs into. |
+| **SwitchBase** | `TextureRect` | `keycap_kit_6.png` Row 3 (switches) | Cherry MX transparent housing + colored cross-stem. Standalone: position (5,22), size 38×28, full uncropped atlas. Embedded: position (5,26), size 38×22, cropped **duplicate** of the atlas (`region.size.y *= 0.79`). Atlas key = `"switches"` + `GameState.active_pack_id` (mx_red/mx_blue/mx_brown/mx_black/mx_speed). Always visible, fixed position — never moves. |
+| **CapLayer** | `Control` (48×40 at 0,0) | — | Wraps CapTexture, OverlayTexture, LegendContainer, MarkFrame, and PowerLabel as a single movable unit. `position.y` is animated for press/release. |
+| **CapTexture** | `TextureRect` (full rect, child of CapLayer) | `keycap_kit_6.png` Row 1/2 | The movable keycap. `cap_unpressed` (Y=0) or `cap_pressed` (Y=5px, squashed sprite). |
+| **OverlayTexture** | `TextureRect` (full rect, child of CapLayer) | `keycap_kit_6.png` Row 4 | Finish/condition/sticker overlays (foil, holographic, glass, sticker_gold). |
+
+**Layer ordering** (back to front): `SocketShadow → SwitchBase → CapLayer (CapTexture → OverlayTexture → LegendContainer → MarkFrame → PowerLabel)`.
+
+**Embedding logic** (`@export var embedded_mode: bool = false`, setter `set_embedded_mode(enabled)`): `_apply_switch_base()` branches on the flag. Embedded: `SocketShadow.visible = true`; the switch atlas is **duplicated** (`base_atlas.duplicate()`) and `cropped.region.size.y *= 0.79` before assignment — the crop is proportional (~21%) because the switch slice is 262×258 source px (a literal 6px crop would remove only ~0.7 display px). The duplicate guarantees the shared cached atlas used by standalone/Shop tiles is never mutated. Embedded geometry: SwitchBase `position (5,26)`, `size (38,22)`. Standalone: `SocketShadow.visible = false`, full atlas, `position (5,22)`, `size (38,28)`. `SwitchBase` uses `mouse_filter = 2` (ignore) so it never intercepts clicks, `expand_mode = 1` (EXPAND_IGNORE_SIZE), and `stretch_mode = 5` (STRETCH_KEEP_ASPECT_CENTERED). The switch housing is always at the same Y position — only the CapLayer moves on press/release.
+
+**CapLayer** is a `Control` (48×40 at (0,0)) that wraps CapTexture, OverlayTexture, LegendContainer, MarkFrame, and PowerLabel as a single movable unit. On press/release, `CapLayer.position.y` is animated from `UNPRESSED_CAP_Y` (0.0, floating high as in image-2) to `PRESSED_CAP_Y` (5.0, squashed as in image-3), plunging the entire keycap down to rest solidly on the fixed switch base and cover the top of the stem.
+
+## Stone Altar Safe Area & Hand Keyboard Calibration
+
+Pixel analysis of the combat background's stone altar white-mask marked the exact safe bounding box (540×960 viewport space):
+
+| Item | Value |
+|---|---|
+| Container Rect | Position (106, 704), Size (324, 110) |
+| Center | (268, 759) |
+| Bezel margin | Top 4px, Bottom 5px, Left 12px, Right 12px |
+| Row separation | VBox 6px |
+| Key separation | HBox 8px |
+| Keycap size | 48×54 px |
+
+`HandTileContainer` is a `CenterContainer` anchored absolutely at `position (106, 704)` with `size`/`custom_minimum_size` `(324, 110)` and `mouse_filter = PASS`. It is a direct child of the `CombatScreen` root (outside the VBox layout) so container layout never overrides its geometry.
+
+| Hand Size | Layout | Tile Size | Font Size | Gap |
+|---|---|---|---|---|
+| 1–5 | Single centered row | 48×54px | 20 | 8px |
+| 6–10 | Two rows (split ceil(n/2) top / floor(n/2) bottom) | 48×54px | 20 | 8px horizontal / 6px vertical |
+
+At max 10 tiles (2 rows × 54px + 6px gap = 114px), the keyboard block is vertically centered in the 110px container with the switch housings extending below each cap skirt. Max 5 keys per row = 5×48 + 4×8 = 272px ≤ 324px container width, centered with ~26px side bezels. Each row `HBoxContainer` uses `alignment = ALIGNMENT_CENTER` + `SIZE_SHRINK_CENTER`; rows sit inside a `VBoxContainer` with 6px separation.
+
+Bottom action buttons (REDRAW / PLAY) sit below the slab on the stone floor at Y≈845–900px.
+
+## Unified Keycap Physics
+
+Both real-time mouse-down press and latched (word-strip) state share identical visual behavior:
+
+| Aspect | Behavior |
+|---|---|
+| **Sprite** | `cap_pressed` atlas texture (squashed perspective) |
+| **Vertical offset** | 5px downward (`PRESSED_CAP_Y` from `UNPRESSED_CAP_Y` 0.0) |
+| **Color tint** | `Color(0.85, 0.88, 0.95, 1.0)` — slight tactile shading |
+| **CapLayer offset** | Entire CapLayer shifts 5px down, plunging keycap flush onto fixed SwitchBase |
+
+On mouse-button release, the keycap **never pops up** — it remains in the pressed position. CombatScreen then either calls `set_latched(true)` (seamless stay-down) or the next interaction pops it up. This eliminates the 1-frame jitter where the keycap would bounce up before being latched back down.

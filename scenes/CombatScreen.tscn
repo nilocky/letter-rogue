@@ -99,7 +99,7 @@ alignment = 1
 theme_override_constants/h_separation = 8
 
 [node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
-custom_minimum_size = Vector2(448, 145)
+custom_minimum_size = Vector2(448, 210)
 alignment = 1
 theme_override_constants/separation = 4
 
@@ -204,17 +204,10 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BottomZone_Green" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
-custom_minimum_size = Vector2(448, 280)
+custom_minimum_size = Vector2(448, 370)
 size_flags_vertical = 3
 alignment = 1
 theme_override_constants/separation = 8
-
-[node name="HandTileContainer" type="HFlowContainer" parent="CombatRootMargin/CombatVerticalStack/BottomZone_Green"]
-unique_name_in_owner = true
-size_flags_vertical = 4
-alignment = 1
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
 
 [node name="HandEmptyWarning" type="Label" parent="CombatRootMargin/CombatVerticalStack/BottomZone_Green"]
 unique_name_in_owner = true
@@ -241,6 +234,13 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 22
 disabled = true
 text = "PLAY"
+
+[node name="HandTileContainer" type="CenterContainer" parent="."]
+unique_name_in_owner = true
+position = Vector2(106, 704)
+size = Vector2(324, 110)
+custom_minimum_size = Vector2(324, 110)
+mouse_filter = 1
 
 [node name="WildcardPopup" type="PopupPanel" parent="."]
 unique_name_in_owner = true

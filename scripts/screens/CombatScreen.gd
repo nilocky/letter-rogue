@@ -63,6 +63,14 @@ func _ready() -> void:
 	play_button.pressed.connect(_on_play_pressed)
 	picker_cancel_button.pressed.connect(_on_picker_cancel)
 	word_strip.item_dropped.connect(_on_rune_dropped)
+	_setup_hand_container_geometry()
+
+
+func _setup_hand_container_geometry() -> void:
+	hand_container.custom_minimum_size = Vector2(324, 110)
+	hand_container.size = Vector2(324, 110)
+	hand_container.position = Vector2(106, 704)
+	hand_container.mouse_filter = Control.MOUSE_FILTER_PASS
 
 
 func show_round() -> void:
@@ -119,14 +127,59 @@ func _refresh_hand() -> void:
 	for child in hand_container.get_children():
 		child.queue_free()
 	_hand_elements.clear()
-	for i in range(GameState.hand.size()):
-		var el: Control = KeyCapElementScene.instantiate()
-		hand_container.add_child(el)
-		el.setup(GameState.hand[i])
-		el.clicked.connect(_on_hand_clicked.bind(i))
-		_hand_elements.append(el)
-	hand_empty_warning.visible = GameState.hand.is_empty()
+	var total := GameState.hand.size()
+	if total == 0:
+		hand_empty_warning.visible = true
+		return
+	hand_empty_warning.visible = false
+	var tile_size := Vector2(48, 54)
+	var font_size := 20
+	var h_sep := 8
+	var v_sep := 6
+
+	if total <= 5:
+		var row := HBoxContainer.new()
+		row.alignment = BoxContainer.ALIGNMENT_CENTER
+		row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		row.add_theme_constant_override("separation", h_sep)
+		hand_container.add_child(row)
+		for i in range(total):
+			var el := _instantiate_tile(GameState.hand[i], i, tile_size, font_size, row)
+			_hand_elements.append(el)
+	else:
+		var top_count := int(ceil(total / 2.0))
+		var vbox := VBoxContainer.new()
+		vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		vbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		vbox.add_theme_constant_override("separation", v_sep)
+		hand_container.add_child(vbox)
+		var row1 := HBoxContainer.new()
+		row1.alignment = BoxContainer.ALIGNMENT_CENTER
+		row1.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		row1.add_theme_constant_override("separation", h_sep)
+		vbox.add_child(row1)
+		var row2 := HBoxContainer.new()
+		row2.alignment = BoxContainer.ALIGNMENT_CENTER
+		row2.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		row2.add_theme_constant_override("separation", h_sep)
+		vbox.add_child(row2)
+		for i in range(total):
+			var el := _instantiate_tile(GameState.hand[i], i, tile_size, font_size, row1 if i < top_count else row2)
+			_hand_elements.append(el)
 	_refresh_hand_states()
+
+func _instantiate_tile(data: Dictionary, idx: int, tile_size: Vector2, font_size: int, parent: Node) -> Control:
+	var el: Control = KeyCapElementScene.instantiate()
+	el.set("embedded_mode", true)
+	el.custom_minimum_size = tile_size
+	el.size = tile_size
+	parent.add_child(el)
+	el.setup(data)
+	var lbl: Label = el.get_node_or_null("%LetterLabel")
+	if lbl:
+		lbl.add_theme_font_size_override("font_size", font_size)
+	el.clicked.connect(_on_hand_clicked.bind(idx))
+	return el
 
 
 func _refresh_hand_states() -> void:

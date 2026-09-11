@@ -67,13 +67,18 @@ letter-rogue/
 │   ├── MainMenuScreen.tscn    Background + SafeArea + Title + StartButton
 │   ├── RunSetupScreen.tscn    Pack cards, bag buttons grid, bag preview, Start/Back
 │   ├── CombatScreen.tscn      TopBar (monster/HP/turns/bag/money) + MidZone (word strip) +
-│   │                           BottomZone (hand + Redraw/Play buttons) + WildcardPopup overlay
+│   │                           BottomZone (Redraw/Play buttons) + HandTileContainer (absolute child of
+│   │                           root at Position (106,704), Size (324,110)) + WildcardPopup overlay
 │   ├── ShopScreen.tscn        InventoryGrid + BagGrid + UpgradeBox + money/reroll/fight buttons
 │   ├── GameOverScreen.tscn    BodyLabel + RestartButton
 │   │
 │   └── components/
-│       ├── KeyCapElement.tscn   Tile visual: CapTexture (TextureRect), OverlayTexture, LetterLabel, PowerLabel,
-│       │                         MarkFrame. Skin-driven appearance.
+│       ├── KeyCapElement.tscn   Tile visual: SocketShadow (ColorRect 38×3 at (5,46), dark socket slit, visible
+│       │                         only in embedded mode), SwitchBase (TextureRect direct child of root, standalone
+│       │                         (5,22) 38×28 full atlas vs embedded (5,26) 38×22 cropped duplicate atlas ~21%),
+│       │                         CapLayer (Control 48×40 at (0,0), wraps CapTexture, OverlayTexture,
+│       │                         LegendContainer, MarkFrame, PowerLabel as movable unit, plunges 5px on press),
+│       │                         LetterLabel, PowerLabel. embedded_mode flag: combat-embedded vs shop-standalone.
 │       ├── WordRuneSlot.tscn    Rune slot: LetterLabel, PowerLabel (BadgeLabel variant). Draggable PanelContainer.
 │       ├── BagModal.tscn        Overlay + Panel + scrollable LetterGrid + VowelRatio + CloseButton
 │       └── VictoryModal.tscn    Overlay + Panel + Title + Receipt + TotalLabel + ContinueButton
@@ -87,10 +92,13 @@ letter-rogue/
 ├── assets/
 │   ├── fonts/                 Kenney Blocks/Pixel/Mini/High/Future + monogram + m5x7
 │   └── textures/
-│       └── backgrounds/       bg_main_menu.jpg, bg_main_menu_low.jpg
+│       └── backgrounds/       bg_main_menu.jpg, bg_main_menu_low.jpg, bg_combat_2.jpg,
+│                              bg_combat_2_keyboard_safe.jpg (safe-area mask reference)
 │
 ├── tools/
-│   └── build_words.py         One-off Python generator: wordlist → data/words.json
+│   ├── build_words.py         One-off Python generator: wordlist → data/words.json
+│   └── debug/
+│       └── sync_outline.py    Utility to push docs/*.md to the Outline wiki via API
 │
 ├── deploy/
 │   └── web/                   Docker deployment for Web export
