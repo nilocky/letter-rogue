@@ -29,6 +29,8 @@ letter-rogue/
 │   │   ├── PackService.gd     Active Cherry MX pack modifier lookups
 │   │   ├── KeyCapService.gd   Draw hand from bag, targeted redraw swaps, resolve_ability,
 │   │   │                       starter bag loaders
+│   │   ├── KeyCapSkinService.gd  Atlas-based skin system: loads keycap_kit_6.png slices via AtlasTexture,
+│   │   │                       supports cap_unpressed/cap_pressed/overlays states by skin_id (slate, etc.)
 │   │   ├── ShopService.gd     Tile buy/sell/reroll, 3 run upgrades (Bigger Bag, Extra Turn, Extra Redraw)
 │   │   ├── WordService.gd     Dictionary load/lookup, word length multiplier
 │   │   └── CombatService.gd   Round setup, word validation & scoring, damage application, win/lose
@@ -39,15 +41,24 @@ letter-rogue/
 │   │
 │   ├── screens/               # One script per screen, wired to .tscn via %UniqueName
 │   │   ├── MainMenuScreen.gd  Title + Start Run (emits run_setup_requested)
-│   │   ├── RunSetupScreen.gd  Pack cycler (5 MX switches) + bag selector (4 bags) with preview
-│   │   ├── CombatScreen.gd    Word builder: hand tiles, word strip, scoring banner, wildcard picker,
-│   │   │                       BagModal, VictoryModal. Balatro-style sequential scoring animation.
+│   │   ├── RunSetupScreen.gd  Pack cycler (5 MX switches, switch icon from skin atlas) + bag selector (4 bags) with preview
+│   │   ├── CombatScreen.gd    Word builder: hand tiles (latched deep-travel) → WordRuneSlot magical rune
+│   │   │                       display strip, scoring banner (Balatro-style sequential letter scores, multiplier
+│   │   │                       ramp, projectile to monster, smooth HP drop), wildcard picker, BagModal, VictoryModal.
+│   │   │                       Tap-to-skip animation, drag-drop reorder via WordRackDropZone.
 │   │   ├── ShopScreen.gd      Tile buy/sell/reroll grids, run upgrade column, confirmation dialogs
 │   │   └── GameOverScreen.gd  Shows reached round + money, restart button
 │   │
 │   └── components/
-│       ├── KeyCapElement.gd   Reusable tile widget: letter, rarity bg, ability label, modifier badges,
-│       │                        position index, drag-drop reorder, selected/used/redraw-marked states
+│       ├── KeyCapElement.gd   Hand tile widget: letter, power badge, skin atlas textures (cap_unpressed/pressed),
+│       │                        overlay (foil/holographic/glass/gold), latched state with 5px deep-travel animation,
+│       │                        redraw-marked state. Not used in word strip.
+│       ├── WordRuneSlot.gd    Word-strip rune tile: letter label (cyan), power badge (amber), obsidian-style
+│       │                        StyleBoxFlat panel with cyan border. Tap-to-dismiss removes letter from word.
+│       ├── WordRackDropZone.gd Extends HBoxContainer. Drag-drop reorder zone with magnetic InsertionSpacer
+│       │                        (spring-physics width, Hermite smoothstep proximity, cyan glow). On drop:
+│       │                        queue_free()s spacer, emits item_dropped(from_slot, to_pure_index). Rebuilds
+│       │                        _slots from live tree — zero manual array surgery.
 │       ├── BagModal.gd        Bag inspector overlay: per-letter frequency counts, vowel/consonant ratio
 │       └── VictoryModal.gd    Itemized reward receipt with counting-up total animation, Continue button
 │
@@ -61,8 +72,9 @@ letter-rogue/
 │   ├── GameOverScreen.tscn    BodyLabel + RestartButton
 │   │
 │   └── components/
-│       ├── KeyCapElement.tscn   Tile visual: Label, RarityBg, FinishLabel, StickerLabel,
-│       │                         ConditionLabel, IndexLabel, MarkFrame
+│       ├── KeyCapElement.tscn   Tile visual: CapTexture (TextureRect), OverlayTexture, LetterLabel, PowerLabel,
+│       │                         MarkFrame. Skin-driven appearance.
+│       ├── WordRuneSlot.tscn    Rune slot: LetterLabel, PowerLabel (BadgeLabel variant). Draggable PanelContainer.
 │       ├── BagModal.tscn        Overlay + Panel + scrollable LetterGrid + VowelRatio + CloseButton
 │       └── VictoryModal.tscn    Overlay + Panel + Title + Receipt + TotalLabel + ContinueButton
 │
