@@ -4,12 +4,12 @@
 [ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_main_menu.jpg" id="2_bg"]
 
 [node name="MainMenuScreen" type="Control"]
-script = ExtResource("1_abcdef")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_abcdef")
 
 [node name="Background" type="TextureRect" parent="."]
 anchors_preset = 15
@@ -28,23 +28,28 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 96
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 64
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_top = 168
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 68
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SafeArea"]
-alignment = 1
-theme_override_constants/separation = 24
-
-[node name="Title" type="Label" parent="SafeArea/VBoxContainer"]
-theme_type_variation = &"HeaderLabel"
-text = "Letter Rogue"
-horizontal_alignment = 1
-size_flags_horizontal = 4
+alignment = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
 
 [node name="StartButton" type="Button" parent="SafeArea/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(320, 56)
 text = "Start Run"
+size_flags_horizontal = 4
+
+[node name="CollectionButton" type="Button" parent="SafeArea/VBoxContainer"]
+custom_minimum_size = Vector2(320, 56)
+text = "Collection"
+size_flags_horizontal = 4
+
+[node name="SettingsButton" type="Button" parent="SafeArea/VBoxContainer"]
+custom_minimum_size = Vector2(320, 56)
+text = "Settings"
 size_flags_horizontal = 4

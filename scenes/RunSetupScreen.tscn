@@ -1,7 +1,23 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/RunSetupScreen.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_main_menu.jpg" id="2_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bag"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.10196, 0.08235, 0.15686, 0.90196)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.83137, 0.68627, 0.21569, 1)
 
 [node name="RunSetupScreen" type="Control"]
 anchors_preset = 15
@@ -22,94 +38,114 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="SafeArea" type="MarginContainer" parent="."]
+[node name="SafeMarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 96
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 80
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_top = 172
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 70
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SafeArea"]
-theme_override_constants/separation = 24
+[node name="MainContentVBox" type="VBoxContainer" parent="SafeMarginContainer"]
+theme_override_constants/separation = 10
 
-[node name="HeaderRow" type="HBoxContainer" parent="SafeArea/VBoxContainer"]
-theme_override_constants/separation = 24
+[node name="HeaderBar" type="HBoxContainer" parent="SafeMarginContainer/MainContentVBox"]
+custom_minimum_size = Vector2(0, 40)
 
-[node name="BackButton" type="Button" parent="SafeArea/VBoxContainer/HeaderRow"]
+[node name="BackButton" type="Button" parent="SafeMarginContainer/MainContentVBox/HeaderBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 120)
-text = "<"
+custom_minimum_size = Vector2(80, 40)
+text = "← BACK"
 
-[node name="HeaderLabel" type="Label" parent="SafeArea/VBoxContainer/HeaderRow"]
+[node name="TitleLabel" type="Label" parent="SafeMarginContainer/MainContentVBox/HeaderBar"]
 theme_type_variation = &"HeaderLabel"
 text = "CONFIGURE RUN"
+horizontal_alignment = 1
 vertical_alignment = 1
 size_flags_horizontal = 3
 
-[node name="PackSection" type="PanelContainer" parent="SafeArea/VBoxContainer"]
+[node name="PackSelectionSection" type="VBoxContainer" parent="SafeMarginContainer/MainContentVBox"]
+theme_override_constants/separation = 6
+
+[node name="SectionTitle" type="Label" parent="SafeMarginContainer/MainContentVBox/PackSelectionSection"]
+theme_type_variation = &"BadgeLabel"
+text = "1. CHOOSE PACK"
+
+[node name="PackCardContainer" type="PanelContainer" parent="SafeMarginContainer/MainContentVBox/PackSelectionSection"]
+custom_minimum_size = Vector2(0, 180)
+
+[node name="PackCardHBox" type="HBoxContainer" parent="SafeMarginContainer/MainContentVBox/PackSelectionSection/PackCardContainer"]
+alignment = 1
+
+[node name="PrevPackButton" type="Button" parent="SafeMarginContainer/MainContentVBox/PackSelectionSection/PackCardContainer/PackCardHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 60)
+text = "◀"
+
+[node name="PackDetailsVBox" type="VBoxContainer" parent="SafeMarginContainer/MainContentVBox/PackSelectionSection/PackCardContainer/PackCardHBox"]
 size_flags_horizontal = 3
 
-[node name="PackBox" type="VBoxContainer" parent="SafeArea/VBoxContainer/PackSection"]
-theme_override_constants/separation = 16
-
-[node name="PackAccent" type="ColorRect" parent="SafeArea/VBoxContainer/PackSection/PackBox"]
+[node name="PackNameLabel" type="Label" parent="SafeMarginContainer/MainContentVBox/PackSelectionSection/PackCardContainer/PackCardHBox/PackDetailsVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 16)
-color = Color(0.85, 0.15, 0.15, 1)
+theme_type_variation = &"MetricLabel"
+text = "CHERRY MX RED"
 
-[node name="PackName" type="Label" parent="SafeArea/VBoxContainer/PackSection/PackBox"]
-unique_name_in_owner = true
-theme_type_variation = &"BodyLabel"
-text = "MX Red"
-
-[node name="PackDesc" type="Label" parent="SafeArea/VBoxContainer/PackSection/PackBox"]
+[node name="PackDescLabel" type="Label" parent="SafeMarginContainer/MainContentVBox/PackSelectionSection/PackCardContainer/PackCardHBox/PackDetailsVBox"]
 unique_name_in_owner = true
 theme_type_variation = &"BodyLabel"
 text = ""
 autowrap_mode = 3
 
-[node name="PackPager" type="HBoxContainer" parent="SafeArea/VBoxContainer/PackSection/PackBox"]
-alignment = 1
-
-[node name="PrevPackButton" type="Button" parent="SafeArea/VBoxContainer/PackSection/PackBox/PackPager"]
+[node name="NextPackButton" type="Button" parent="SafeMarginContainer/MainContentVBox/PackSelectionSection/PackCardContainer/PackCardHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 120)
-text = "<"
+custom_minimum_size = Vector2(40, 60)
+text = "▶"
 
-[node name="PackDots" type="Label" parent="SafeArea/VBoxContainer/PackSection/PackBox/PackPager"]
+[node name="StarterBagSection" type="VBoxContainer" parent="SafeMarginContainer/MainContentVBox"]
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="BagSelectorHBox" type="HBoxContainer" parent="SafeMarginContainer/MainContentVBox/StarterBagSection"]
+
+[node name="PrevBagButton" type="Button" parent="SafeMarginContainer/MainContentVBox/StarterBagSection/BagSelectorHBox"]
+unique_name_in_owner = true
+text = "◀"
+
+[node name="BagNameLabel" type="Label" parent="SafeMarginContainer/MainContentVBox/StarterBagSection/BagSelectorHBox"]
 unique_name_in_owner = true
 theme_type_variation = &"BadgeLabel"
+text = "STANDARD BAG"
 horizontal_alignment = 1
 vertical_alignment = 1
 size_flags_horizontal = 3
-text = "1 / 5"
 
-[node name="NextPackButton" type="Button" parent="SafeArea/VBoxContainer/PackSection/PackBox/PackPager"]
+[node name="NextBagButton" type="Button" parent="SafeMarginContainer/MainContentVBox/StarterBagSection/BagSelectorHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 120)
-text = ">"
+text = "▶"
 
-[node name="BagSection" type="VBoxContainer" parent="SafeArea/VBoxContainer"]
+[node name="BagFrameContainer" type="PanelContainer" parent="SafeMarginContainer/MainContentVBox/StarterBagSection"]
 size_flags_vertical = 3
-theme_override_constants/separation = 16
+theme_override_styles/panel = SubResource("StyleBoxFlat_bag")
 
-[node name="BagTitle" type="Label" parent="SafeArea/VBoxContainer/BagSection"]
-theme_type_variation = &"BodyLabel"
-text = "STARTER BAG"
+[node name="BagMargin" type="MarginContainer" parent="SafeMarginContainer/MainContentVBox/StarterBagSection/BagFrameContainer"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
-[node name="BagButtons" type="GridContainer" parent="SafeArea/VBoxContainer/BagSection"]
+[node name="LetterGridContainer" type="GridContainer" parent="SafeMarginContainer/MainContentVBox/StarterBagSection/BagFrameContainer/BagMargin"]
 unique_name_in_owner = true
-columns = 2
+columns = 5
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+alignment = 1
 
-[node name="BagPreview" type="HBoxContainer" parent="SafeArea/VBoxContainer/BagSection"]
+[node name="StartRunButton" type="Button" parent="SafeMarginContainer/MainContentVBox"]
 unique_name_in_owner = true
-theme_override_constants/separation = 8
-
-[node name="StartButton" type="Button" parent="SafeArea/VBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 56)
 text = "START RUN"
+theme_override_font_sizes/font_size = 22
+size_flags_horizontal = 3
