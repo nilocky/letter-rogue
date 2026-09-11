@@ -10,7 +10,6 @@ extends Control
 @onready var sell_dialog: ConfirmationDialog = %SellDialog
 
 const KeyCapScene := preload("res://scenes/components/KeyCapElement.tscn")
-const PX_FONT := preload("res://assets/fonts/Kenney Pixel.ttf")
 const M57_FONT := preload("res://assets/fonts/m5x7.ttf")
 
 var _pending_purchase: Dictionary = {}
@@ -55,16 +54,15 @@ func _refresh_ui() -> void:
 func _make_tile(handler: Callable, price: int) -> Control:
 	var elem: Control = KeyCapScene.instantiate()
 	elem.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	elem.custom_minimum_size = Vector2(88, 88)
+	elem.custom_minimum_size = Vector2(54, 54)
 	var price_label := Label.new()
 	price_label.text = "$%d" % price
+	price_label.theme_type_variation = &"BadgeLabel"
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	price_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	price_label.add_theme_font_override("font", M57_FONT)
-	price_label.add_theme_font_size_override("font_size", 24)
-	price_label.add_theme_color_override("font_color", Color(1, 0.9, 0.5))
+	price_label.add_theme_color_override("font_color", Color(0.9255, 0.7882, 0.2941, 1))
 	price_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	price_label.offset_top = -22.0
+	price_label.offset_top = -18.0
 	price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	elem.add_child(price_label)
 	elem.clicked.connect(handler)
@@ -198,20 +196,18 @@ func _build_upgrade_buttons() -> void:
 		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var name_lbl := Label.new()
 		name_lbl.text = "%s (owned %d)" % [str(u["name"]), ShopService.owned_level(u["id"])]
-		name_lbl.add_theme_font_override("font", M57_FONT)
-		name_lbl.add_theme_font_size_override("font_size", 24)
+		name_lbl.theme_type_variation = &"BodyLabel"
 		name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var desc_lbl := Label.new()
 		desc_lbl.text = str(u["desc"])
-		desc_lbl.add_theme_font_override("font", M57_FONT)
-		desc_lbl.add_theme_font_size_override("font_size", 24)
+		desc_lbl.theme_type_variation = &"MicroLabel"
 		desc_lbl.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8))
 		desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		info.add_child(name_lbl)
 		info.add_child(desc_lbl)
 		var buy_btn := Button.new()
 		buy_btn.text = "$%d" % ShopService.upgrade_cost(u["id"])
-		buy_btn.add_theme_font_override("font", PX_FONT)
+		buy_btn.custom_minimum_size = Vector2(100, 60)
 		var uid: String = str(u["id"])
 		buy_btn.pressed.connect(func() -> void:
 			if ShopService.purchase_upgrade(uid):

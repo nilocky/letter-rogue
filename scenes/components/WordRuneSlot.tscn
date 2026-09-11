@@ -1,0 +1,72 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/WordRuneSlot.gd" id="1_abcdef"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.047, 0.063, 0.106, 0.902)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 1, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 4
+content_margin_top = 4
+content_margin_right = 4
+content_margin_bottom = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.047, 0.063, 0.106, 0.902)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 1, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 4
+content_margin_top = 4
+content_margin_right = 4
+content_margin_bottom = 4
+
+[node name="WordRuneSlot" type="PanelContainer"]
+custom_minimum_size = Vector2(46, 52)
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+script = ExtResource("1_abcdef")
+
+[node name="Margin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LetterLabel" type="Label" parent="Margin/VBox"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.404, 0.976, 0.976, 1)
+theme_override_colors/font_outline_color = Color(0.031, 0.569, 0.698, 1)
+theme_override_constants/outline_size = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PowerLabel" type="Label" parent="Margin/VBox"]
+unique_name_in_owner = true
+theme_type_variation = &"MicroLabel"
+theme_override_colors/font_color = Color(0.992, 0.878, 0.278, 1)
+horizontal_alignment = 2
+vertical_alignment = 2

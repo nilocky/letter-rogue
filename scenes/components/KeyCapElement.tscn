@@ -1,23 +1,6 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/KeyCapElement.gd" id="1_abcdef"]
-[ext_resource type="FontFile" uid="uid://obxbtq4a4566" path="res://assets/fonts/monogram.ttf" id="2_mono"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
-content_margin_left = 3.0
-content_margin_top = 3.0
-content_margin_right = 3.0
-content_margin_bottom = 3.0
-bg_color = Color(0, 0, 0, 0.15)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 1, 1, 0.55)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mark"]
 bg_color = Color(1, 0.75, 0.2, 0.12)
@@ -34,23 +17,25 @@ corner_radius_bottom_left = 6
 [node name="KeyCapElement" type="Control"]
 script = ExtResource("1_abcdef")
 anchors_preset = 0
-size = Vector2(96, 56)
-custom_minimum_size = Vector2(96, 56)
+size = Vector2(54, 54)
+custom_minimum_size = Vector2(54, 54)
 
-[node name="RarityBg" type="ColorRect" parent="."]
-unique_name_in_owner = true
+[node name="CapTexture" type="TextureRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.3, 0.3, 0.3, 1)
 mouse_filter = 2
+stretch_mode = 5
+expand_mode = 1
 
-[node name="FramePanel" type="Panel" parent="."]
+[node name="OverlayTexture" type="TextureRect" parent="."]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
 mouse_filter = 2
+stretch_mode = 5
+expand_mode = 1
 
 [node name="MarkFrame" type="Panel" parent="."]
 unique_name_in_owner = true
@@ -61,75 +46,37 @@ anchor_bottom = 1.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_mark")
 mouse_filter = 2
 
-[node name="Label" type="Label" parent="."]
+[node name="LegendContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_right = 6
+
+[node name="LetterLabel" type="Label" parent="LegendContainer"]
 unique_name_in_owner = true
 mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_fonts/font = ExtResource("2_mono")
-theme_override_font_sizes/font_size = 42
+theme_type_variation = &"KeyCapFaceLabel"
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "A"
 
-[node name="AbilityLabel" type="Label" parent="."]
-unique_name_in_owner = true
-mouse_filter = 2
-anchors_preset = 7
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_font_sizes/font_size = 24
-horizontal_alignment = 2
-vertical_alignment = 1
-text = ""
-
-[node name="FinishLabel" type="Label" parent="."]
-unique_name_in_owner = true
-mouse_filter = 2
-anchors_preset = 6
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_font_sizes/font_size = 52
-horizontal_alignment = 2
-vertical_alignment = 1
-text = ""
-modulate = Color(1, 1, 0, 1)
-
-[node name="StickerLabel" type="Label" parent="."]
+[node name="PowerLabel" type="Label" parent="."]
 unique_name_in_owner = true
 mouse_filter = 2
 anchors_preset = 8
-anchor_top = 0.7
+anchor_top = 0.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_font_sizes/font_size = 24
+anchor_bottom = 0.3
+theme_type_variation = &"BadgeLabel"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.9647, 0.6784, 0.3333, 1)
 horizontal_alignment = 2
 vertical_alignment = 1
 text = ""
-modulate = Color(0, 1, 1, 1)
-
-[node name="ConditionLabel" type="Label" parent="."]
-unique_name_in_owner = true
-mouse_filter = 2
-anchors_preset = 1
-anchor_bottom = 0.3
-theme_override_font_sizes/font_size = 24
-horizontal_alignment = 0
-vertical_alignment = 0
-text = ""
-modulate = Color(1, 0, 0, 1)
-
-[node name="IndexLabel" type="Label" parent="."]
-unique_name_in_owner = true
-mouse_filter = 2
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -20.0
-theme_override_font_sizes/font_size = 24
-horizontal_alignment = 1
-vertical_alignment = 1
-text = ""
-modulate = Color(1, 0.9, 0.5, 1)

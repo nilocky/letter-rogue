@@ -34,7 +34,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="Panel/VBox"]
 unique_name_in_owner = true
@@ -45,7 +45,7 @@ text = "ROUND WON"
 [node name="Receipt" type="VBoxContainer" parent="Panel/VBox"]
 unique_name_in_owner = true
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
 [node name="TotalLabel" type="Label" parent="Panel/VBox"]
 unique_name_in_owner = true
@@ -55,5 +55,5 @@ text = "TOTAL CASH: +$0"
 
 [node name="ContinueButton" type="Button" parent="Panel/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 70)
 text = "CONTINUE TO SHOP"

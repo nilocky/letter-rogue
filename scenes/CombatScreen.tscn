@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
+[ext_resource type="Texture2D" uid="uid://gby12pk6ffsq" path="res://assets/textures/backgrounds/bg_combat_2.jpg" id="2_bgcombat"]
+[ext_resource type="Script" path="res://scripts/components/WordRackDropZone.gd" id="3_wrdropzone"]
 
 [node name="CombatScreen" type="Control"]
 anchors_preset = 15
@@ -10,116 +12,242 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_abcdef")
 
-[node name="SafeArea" type="MarginContainer" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 96
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 64
+expand_mode = 1
+stretch_mode = 6
+mouse_filter = 2
+texture = ExtResource("2_bgcombat")
 
-[node name="VBox" type="VBoxContainer" parent="SafeArea"]
-theme_override_constants/separation = 12
+[node name="CombatRootMargin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 46
+theme_override_constants/margin_top = 79
+theme_override_constants/margin_right = 46
+theme_override_constants/margin_bottom = 60
 
-[node name="TopZone" type="VBoxContainer" parent="SafeArea/VBox"]
+[node name="CombatVerticalStack" type="VBoxContainer" parent="CombatRootMargin"]
 theme_override_constants/separation = 8
 
-[node name="TopBar" type="HBoxContainer" parent="SafeArea/VBox/TopZone"]
+[node name="TopZone_Red" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
+custom_minimum_size = Vector2(448, 285)
+theme_override_constants/separation = 8
+
+[node name="TopStatusBar" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
+custom_minimum_size = Vector2(0, 36)
 theme_override_constants/separation = 16
 
-[node name="MonsterBox" type="VBoxContainer" parent="SafeArea/VBox/TopZone/TopBar"]
-size_flags_horizontal = 3
-theme_override_constants/separation = 4
-
-[node name="MonsterLabel" type="Label" parent="SafeArea/VBox/TopZone/TopBar/MonsterBox"]
+[node name="BagButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
 unique_name_in_owner = true
-theme_type_variation = &"HeaderLabel"
-autowrap_mode = 3
-
-[node name="HpLabel" type="Label" parent="SafeArea/VBox/TopZone/TopBar/MonsterBox"]
-unique_name_in_owner = true
-theme_type_variation = &"MetricLabel"
-
-[node name="TurnsLabel" type="Label" parent="SafeArea/VBox/TopZone/TopBar/MonsterBox"]
-unique_name_in_owner = true
-theme_type_variation = &"MicroLabel"
-
-[node name="RightBox" type="VBoxContainer" parent="SafeArea/VBox/TopZone/TopBar"]
-theme_override_constants/separation = 4
-
-[node name="BagButton" type="Button" parent="SafeArea/VBox/TopZone/TopBar/RightBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(100, 38)
+theme_override_font_sizes/font_size = 16
 text = "BAG (0/0)"
 
-[node name="MoneyLabel" type="Label" parent="SafeArea/VBox/TopZone/TopBar/RightBox"]
+[node name="TurnRoundLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
 unique_name_in_owner = true
 theme_type_variation = &"MetricLabel"
+theme_override_colors/font_color = Color(1, 0.9, 0.62, 1)
+size_flags_horizontal = 3
+horizontal_alignment = 1
+text = "TURNS: 3"
+
+[node name="MoneyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+theme_override_colors/font_color = Color(0.9255, 0.7882, 0.2941, 1)
 horizontal_alignment = 2
 text = "$0"
 
-[node name="MidZone" type="VBoxContainer" parent="SafeArea/VBox"]
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.4
-theme_override_constants/separation = 8
-
-[node name="WordStrip" type="HFlowContainer" parent="SafeArea/VBox/MidZone"]
+[node name="MonsterDisplayArea" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
 unique_name_in_owner = true
 alignment = 1
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/separation = 4
 
-[node name="HintLabel" type="Label" parent="SafeArea/VBox/MidZone"]
+[node name="MonsterSprite" type="TextureRect" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+custom_minimum_size = Vector2(110, 110)
+size_flags_horizontal = 4
+stretch_mode = 5
+
+[node name="MonsterNameLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+unique_name_in_owner = true
+theme_type_variation = &"HeaderLabel"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="MonsterHPBar" type="ProgressBar" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 24)
+size_flags_horizontal = 4
+show_percentage = false
+value = 100
+
+[node name="HpLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+horizontal_alignment = 1
+
+[node name="BossModifierContainer" type="HFlowContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+alignment = 1
+theme_override_constants/h_separation = 8
+
+[node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
+custom_minimum_size = Vector2(448, 145)
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="HintLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
 unique_name_in_owner = true
 theme_type_variation = &"BodyLabel"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
 horizontal_alignment = 1
 autowrap_mode = 3
 text = "Tap tiles to spell a word"
 
-[node name="BottomZone" type="VBoxContainer" parent="SafeArea/VBox"]
-size_flags_vertical = 3
-size_flags_stretch_ratio = 1.0
+[node name="WordRackContainer" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+alignment = 1
+theme_override_constants/separation = 8
+script = ExtResource("3_wrdropzone")
+
+[node name="ScoringBannerOverlay" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
+unique_name_in_owner = true
+visible = false
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 64)
+
+[node name="BannerVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay"]
+unique_name_in_owner = true
 theme_override_constants/separation = 8
 
-[node name="HandContainer" type="HFlowContainer" parent="SafeArea/VBox/BottomZone"]
+[node name="CellsHBox" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox"]
+unique_name_in_owner = true
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="BasePanel" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+
+[node name="BaseVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox/BasePanel"]
+alignment = 1
+theme_override_constants/separation = 2
+
+[node name="BaseSubLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox/BasePanel/BaseVBox"]
+unique_name_in_owner = true
+theme_type_variation = &"MicroLabel"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
+horizontal_alignment = 1
+text = "BASE POWER"
+
+[node name="BaseScoreLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox/BasePanel/BaseVBox"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
+horizontal_alignment = 1
+text = "0"
+
+[node name="MultiplyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox"]
+unique_name_in_owner = true
+theme_type_variation = &"BodyLabel"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.8, 0.82, 0.86, 1)
+vertical_alignment = 1
+text = "×"
+
+[node name="MultPanel" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+
+[node name="MultVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox/MultPanel"]
+alignment = 1
+theme_override_constants/separation = 2
+
+[node name="MultSubLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox/MultPanel/MultVBox"]
+unique_name_in_owner = true
+theme_type_variation = &"MicroLabel"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
+horizontal_alignment = 1
+text = "MULT"
+
+[node name="MultScoreLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/CellsHBox/MultPanel/MultVBox"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
+horizontal_alignment = 1
+text = "×1.0"
+
+[node name="TotalDamageShelf" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 28)
+visible = false
+
+[node name="TotalDamageLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox/TotalDamageShelf"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.93, 0.79, 0.29, 1)
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomZone_Green" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
+custom_minimum_size = Vector2(448, 280)
+size_flags_vertical = 3
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="HandTileContainer" type="HFlowContainer" parent="CombatRootMargin/CombatVerticalStack/BottomZone_Green"]
 unique_name_in_owner = true
 size_flags_vertical = 4
 alignment = 1
-theme_override_constants/h_separation = 12
-theme_override_constants/v_separation = 12
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 
-[node name="HandEmptyWarning" type="Label" parent="SafeArea/VBox/BottomZone"]
+[node name="HandEmptyWarning" type="Label" parent="CombatRootMargin/CombatVerticalStack/BottomZone_Green"]
 unique_name_in_owner = true
 theme_type_variation = &"BodyLabel"
 horizontal_alignment = 1
 autowrap_mode = 3
 text = "Hand empty"
 
-[node name="ActionButtons" type="HBoxContainer" parent="SafeArea/VBox/BottomZone"]
+[node name="ActionZone_Orange" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
+custom_minimum_size = Vector2(448, 68)
 theme_override_constants/separation = 16
 
-[node name="RedrawButton" type="Button" parent="SafeArea/VBox/BottomZone/ActionButtons"]
+[node name="RedrawButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 130)
+custom_minimum_size = Vector2(200, 60)
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 text = "REDRAW (0)"
 
-[node name="PlayButton" type="Button" parent="SafeArea/VBox/BottomZone/ActionButtons"]
+[node name="PlayButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 130)
+custom_minimum_size = Vector2(200, 60)
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 disabled = true
 text = "PLAY"
 
 [node name="WildcardPopup" type="PopupPanel" parent="."]
 unique_name_in_owner = true
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 908.0
-offset_bottom = 1108.0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 500.0
+offset_bottom = 560.0
 
 [node name="Margin" type="MarginContainer" parent="WildcardPopup"]
 anchors_preset = 15
@@ -134,7 +262,7 @@ theme_override_constants/margin_bottom = 24
 theme_override_constants/separation = 16
 
 [node name="Scroll" type="ScrollContainer" parent="WildcardPopup/Margin/VBox"]
-custom_minimum_size = Vector2(840, 900)
+custom_minimum_size = Vector2(400, 420)
 
 [node name="PickerGrid" type="GridContainer" parent="WildcardPopup/Margin/VBox/Scroll"]
 unique_name_in_owner = true
@@ -145,5 +273,5 @@ theme_override_constants/v_separation = 12
 
 [node name="PickerCancelButton" type="Button" parent="WildcardPopup/Margin/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 60)
 text = "Cancel"

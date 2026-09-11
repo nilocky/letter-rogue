@@ -11,6 +11,7 @@ const KeyCapScene := preload("res://scenes/components/KeyCapElement.tscn")
 @onready var bag_name: Label = %BagNameLabel
 @onready var next_bag_button: Button = %NextBagButton
 @onready var letter_grid: GridContainer = %LetterGridContainer
+@onready var pack_switch_icon: TextureRect = %PackSwitchIcon
 @onready var start_button: Button = %StartRunButton
 
 var _pack_index: int = 0
@@ -43,6 +44,11 @@ func _render_pack() -> void:
 	var pack_id: String = str(pack.get("id", ""))
 	pack_name.text = str(pack.get("name", pack_id))
 	pack_desc.text = str(pack.get("desc", ""))
+	var sw_atlas: AtlasTexture = KeyCapSkinService.get_atlas("switches", pack_id)
+	if sw_atlas:
+		pack_switch_icon.texture = sw_atlas
+	else:
+		pack_switch_icon.texture = null
 
 
 func _current_pack_id() -> String:
@@ -67,8 +73,8 @@ func _render_bag() -> void:
 	var tiles: Array = KeyCapService.load_starter_bag(bag_id)
 	for tile: Dictionary in tiles:
 		var elem: Control = KeyCapScene.instantiate()
-		elem.custom_minimum_size = Vector2(44, 44)
-		elem.size = Vector2(44, 44)
+		elem.custom_minimum_size = Vector2(46, 46)
+		elem.size = Vector2(46, 46)
 		letter_grid.add_child(elem)
 		elem.setup(tile)
 

@@ -46,3 +46,32 @@ These pitfalls caused repeated hangs/no-output runs — internalize them:
 3. **When diagnosing a hang, run with `--quit-after N`** (e.g. `--quit-after 30`) so Godot force-exits after N frames instead of hanging forever; then run without it once fixed.
 4. **Root Controls added directly to the tree get size 0 in headless** — full-rect anchors never size them. Before measuring layout, force it with `get_window().size = Vector2i(768, 1376)` (the project viewport size) and `await get_tree().process_frame` once or twice. The window's `get_visible_rect().size` is a reliable 768x1376 even when the root Control is 0.
 5. Always end the verify with `get_tree().quit(0)` (or `quit(1)` on assert failure) and keep asserts side-effect-free. Delete `_verify.gd`/`_verify.tscn` (and any `.uid` sidecars) afterwards.
+
+## Strict Project Sandbox & Debugging Boundaries
+
+### 1. Zero External Filesystem Pollution (STRICT RULE)
+- **Do NOT navigate outside the project root (`letter-rogue/`).** 
+- **Do NOT create, write, or execute files in `/tmp`, `/var/tmp`, `~`, or parent directories (`../`).**
+- Every script, test runner, scratchpad, or temporary verification file MUST be contained strictly inside the project tree.
+
+### 2. Designated Debugging & Verification Workspace
+- Any headless verification scripts, temporary repro scripts, or automated tests MUST live under one of these dedicated in-project directories:
+  - `tests/` (for persistent unit/integration tests and headless verification harnesses).
+  - `tools/debug/` (for throwaway reproduction scripts, isolated data parsers, or slice testers).
+- Use `git status` awareness: Any throwaway debug script created in `tools/debug/` must be cleaned up and removed before marking a task as complete, OR added to `.gitignore`.
+
+### 3. In-Project Godot Headless Execution Standard
+- Always execute Godot verification commands from the project root using relative `res://` paths:
+  ```bash
+  # CORRECT:
+  godot --headless --script res://tests/verify_scoring.gd
+  godot --headless --script res://tools/debug/test_atlas_slices.gd
+
+  # FORBIDDEN:
+  godot --headless -s /tmp/test.gd
+  python3 ../temp_verify.py
+  ```
+- Running inside the project guarantees that:
+  - All 8 Autoload singletons (`EventBus`, `GameState`, etc.) initialize cleanly.
+  - Slices from `res://assets/ui/keycap_kit_6.png` resolve without path errors.
+  - Project-wide Theme resources (`res://ui/theme/default_theme.tres`) load properly.
