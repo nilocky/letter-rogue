@@ -60,6 +60,14 @@ These pitfalls caused repeated hangs/no-output runs — internalize them:
   - `tools/debug/` (for throwaway reproduction scripts, isolated data parsers, or slice testers).
 - Use `git status` awareness: Any throwaway debug script created in `tools/debug/` must be cleaned up and removed before marking a task as complete, OR added to `.gitignore`.
 
+### Rule 4: Mandatory `extends SceneTree` for CLI Headless Scripts
+- Any test script executed via `godot --headless --script res://tests/...` MUST begin with:
+  ```gdscript
+  extends SceneTree
+  ```
+- NEVER write `extends Node` or `extends Control` for standalone headless entry scripts.
+- Always call `quit(0)` upon test completion (or `quit(1)` on test assertion failure) so the process terminates cleanly without hanging or triggering OS alert popups.
+
 ### 3. In-Project Godot Headless Execution Standard
 - Always execute Godot verification commands from the project root using relative `res://` paths:
   ```bash
