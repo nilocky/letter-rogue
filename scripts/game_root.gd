@@ -32,17 +32,6 @@ func _switch_to_menu() -> void:
 	_show(MENU_SCENE)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if OS.is_debug_build() and event is InputEventKey and event.pressed and event.keycode == KEY_F1:
-		GameState.reset()
-		GameState.active_pack_id = "mx_red"
-		GameState.money = 50
-		GameState.bag = KeyCapService.load_starter_bag("standard")
-		ShopService.new_shop()
-		current_state = State.SHOP
-		_show(SHOP_SCENE)
-
-
 func _on_run_setup_requested() -> void:
 	current_state = State.RUN_SETUP
 	_show(RUN_SETUP_SCENE)
@@ -91,6 +80,51 @@ func _on_game_over(reached_round: int) -> void:
 	_show(GAME_OVER_SCENE)
 	if current_screen.has_method("show_game_over"):
 		current_screen.show_game_over(reached_round)
+
+
+func route_to(state: String) -> void:
+	match state:
+		"menu":
+			_switch_to_menu()
+		"run_setup":
+			_on_run_setup_requested()
+		"combat":
+			_fight_or_boss()
+		"shop":
+			if GameState.active_pack_id == "":
+				GameState.active_pack_id = "mx_red"
+				GameState.bag = KeyCapService.load_starter_bag("standard")
+			_on_shop_requested()
+		"boss":
+			jump_boss_round()
+
+
+func inject_state(cfg: Dictionary) -> void:
+	for key: String in cfg:
+		if GameState.has_method("set_" + key):
+			GameState.call("set_" + key, cfg[key])
+		elif GameState.get(key) != null:
+			GameState.set(key, cfg[key])
+	if current_screen and current_screen.has_method("show_round"):
+		current_screen.show_round()
+
+
+func trigger_mechanic(id: String) -> void:
+	if current_state != State.COMBAT or current_screen == null:
+		return
+	match id:
+		"silence":
+			GameState.current_monster["modifier"] = "silence"
+	if current_screen.has_method("_refresh_header"):
+		current_screen._refresh_header()
+
+
+func jump_boss_round() -> void:
+	var next: int = int(ceil(GameState.round_number / 3.0)) * 3
+	if next == 0:
+		next = 3
+	GameState.round_number = next
+	_fight_or_boss()
 
 
 func _show(scene: PackedScene) -> void:
