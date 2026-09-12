@@ -15,6 +15,7 @@ func start_round() -> void:
 	GameState.current_monster["hp_remaining"] = GameState.monster_hp_scaled()
 	EventBus.turn_started.emit(GameState.turns_left, GameState.redraws_left)
 	KeyCapService.draw_hand()
+	EffectPipeline.trigger("on_draw", [GameState.hand])
 
 
 ## Validate a word built from `slots` (each {"cap": Dictionary, "letter": String}).
@@ -35,7 +36,12 @@ func validate_word(slots: Array) -> Dictionary:
 			if seen.has(letter):
 				return {"ok": false, "reason": "repeat_letter"}
 			seen[letter] = true
+	EffectPipeline.trigger("on_word_validated", [word, true])
 	return {"ok": true, "word": word}
+
+
+func slot_letter(cap: Dictionary, index: int) -> void:
+	EffectPipeline.trigger("on_letter_slotted", [cap, index])
 
 
 ## Deterministic damage/money for a word. Does NOT mutate GameState.
@@ -92,7 +98,9 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 		for i in range(slots.size()):
 			print("[score]   %s: %.1f power" % [str(slots[i]["letter"]), float(letter_scores[i])])
 		print("[score]   total=%.1f x mult -> %d dmg (+%d bonus) +$%d" % [total, damage, flat, money])
-	return {"damage": damage, "money": money, "letter_scores": letter_scores}
+	var result: Dictionary = {"damage": damage, "money": money, "letter_scores": letter_scores}
+	EffectPipeline.trigger("on_score_calculated", [result])
+	return result
 
 
 ## Commit a word: deal damage, collect money, roll lucky/glass/blue side
@@ -145,17 +153,20 @@ func _apply_monster_damage(damage: int, money_gain: int) -> void:
 		var leftover_turns: int = GameState.turns_left
 		GameState.turns_left = 0
 		EventBus.monster_damaged.emit(0, GameState.monster_hp_scaled())
-		EventBus.round_won.emit({
+		var summary: Dictionary = {
 			"is_boss": GameState.round_number % 3 == 0,
 			"base_reward": reward,
 			"leftover_turns": leftover_turns,
 			"ability_money": money_gain,
 			"total": reward + leftover_turns + money_gain,
-		})
+		}
+		EventBus.round_won.emit(summary)
+		EffectPipeline.trigger("on_monster_defeated", [GameState.current_monster, summary])
 	else:
 		if money_gain > 0:
 			GameState.money += money_gain
 		EventBus.monster_damaged.emit(remaining, GameState.monster_hp_scaled())
+		EffectPipeline.trigger("on_monster_damaged", [GameState.current_monster, damage, remaining])
 		_end_turn()
 
 
@@ -166,6 +177,7 @@ func _monster_hp_remaining() -> int:
 func _end_turn() -> void:
 	GameState.turns_left -= 1
 	EventBus.turns_changed.emit(GameState.turns_left)
+	EffectPipeline.trigger("on_turn_end", [GameState.turns_left])
 	if GameState.turns_left <= 0:
 		# Emit only game_over; round_lost is not emitted (GameRoot handles
 		# game_over, emitting both caused a double game-over transition).
