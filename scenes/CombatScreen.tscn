@@ -1,8 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
 [ext_resource type="Texture2D" uid="uid://gby12pk6ffsq" path="res://assets/textures/backgrounds/bg_combat_2.jpg" id="2_bgcombat"]
 [ext_resource type="Script" path="res://scripts/components/WordRackDropZone.gd" id="3_wrdropzone"]
+
+[sub_resource type="StyleBoxFlat" id="ShadowStyle"]
+bg_color = Color(0, 0, 0, 0.35)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="CombatScreen" type="Control"]
 anchors_preset = 15
@@ -72,9 +79,16 @@ alignment = 1
 theme_override_constants/separation = 4
 
 [node name="MonsterSprite" type="TextureRect" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
-custom_minimum_size = Vector2(110, 110)
+unique_name_in_owner = true
+custom_minimum_size = Vector2(192, 192)
 size_flags_horizontal = 4
 stretch_mode = 5
+
+[node name="MonsterShadow" type="Panel" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 16)
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("ShadowStyle")
 
 [node name="MonsterNameLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
 unique_name_in_owner = true
@@ -99,22 +113,24 @@ alignment = 1
 theme_override_constants/h_separation = 8
 
 [node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
-custom_minimum_size = Vector2(448, 210)
-alignment = 1
+custom_minimum_size = Vector2(448, 152)
+alignment = 2
 theme_override_constants/separation = 4
 
 [node name="HintLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
 unique_name_in_owner = true
 theme_type_variation = &"BodyLabel"
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.45, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.4, 0.55, 1)
+theme_override_constants/outline_size = 4
 horizontal_alignment = 1
 autowrap_mode = 3
 text = "Tap tiles to spell a word"
 
 [node name="WordRackContainer" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(0, 62)
 alignment = 1
 theme_override_constants/separation = 8
 script = ExtResource("3_wrdropzone")
@@ -203,8 +219,16 @@ theme_override_colors/font_color = Color(0.93, 0.79, 0.29, 1)
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="WordMetaLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/ScoringBannerOverlay/BannerVBox"]
+unique_name_in_owner = true
+visible = false
+theme_type_variation = &"MicroLabel"
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+text = ""
+
 [node name="BottomZone_Green" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
-custom_minimum_size = Vector2(448, 370)
+custom_minimum_size = Vector2(448, 292)
 size_flags_vertical = 3
 alignment = 1
 theme_override_constants/separation = 8
@@ -237,9 +261,9 @@ text = "PLAY"
 
 [node name="HandTileContainer" type="CenterContainer" parent="."]
 unique_name_in_owner = true
-position = Vector2(106, 704)
-size = Vector2(324, 110)
-custom_minimum_size = Vector2(324, 110)
+position = Vector2(106, 690)
+size = Vector2(324, 130)
+custom_minimum_size = Vector2(324, 130)
 mouse_filter = 1
 
 [node name="WildcardPopup" type="PopupPanel" parent="."]

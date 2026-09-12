@@ -16,6 +16,7 @@ const BANNER_FADE_TIME := 0.25
 const PROJECTILE_TIME := 0.35
 
 @onready var monster_label: Label = %MonsterNameLabel
+@onready var monster_sprite: TextureRect = %MonsterSprite
 @onready var hp_bar: ProgressBar = %MonsterHPBar
 @onready var hp_label: Label = %HpLabel
 @onready var turns_label: Label = %TurnRoundLabel
@@ -42,6 +43,7 @@ const PROJECTILE_TIME := 0.35
 @onready var mult_sub_label: Label = %MultSubLabel
 @onready var total_shelf: PanelContainer = %TotalDamageShelf
 @onready var total_damage_label: Label = %TotalDamageLabel
+@onready var word_meta_label: Label = %WordMetaLabel
 
 var _slots: Array = []
 var _pending_redraw: Array = []
@@ -50,6 +52,7 @@ var _wildcard_pending: Dictionary = {}
 var _hand_elements: Array = []
 var _animating: bool = false
 var _skip_anim: bool = false
+var _idle_tween: Tween = null
 
 
 func _ready() -> void:
@@ -64,12 +67,37 @@ func _ready() -> void:
 	picker_cancel_button.pressed.connect(_on_picker_cancel)
 	word_strip.item_dropped.connect(_on_rune_dropped)
 	_setup_hand_container_geometry()
+	_start_idle_anim()
+
+
+func _start_idle_anim() -> void:
+	if _idle_tween and _idle_tween.is_valid():
+		_idle_tween.kill()
+	_idle_tween = create_tween()
+	_idle_tween.set_loops()
+	_idle_tween.tween_property(monster_sprite, "scale", Vector2(1.04, 1.04), 0.9) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_idle_tween.tween_property(monster_sprite, "scale", Vector2(1.0, 1.0), 0.9) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _squash_hit() -> void:
+	if _idle_tween and _idle_tween.is_valid():
+		_idle_tween.kill()
+	_idle_tween = null
+	monster_sprite.scale = Vector2(1.0, 1.0)
+	var tw := create_tween()
+	tw.tween_property(monster_sprite, "scale", Vector2(1.25, 0.75), 0.12) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(monster_sprite, "scale", Vector2(1.0, 1.0), 0.3) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(_start_idle_anim)
 
 
 func _setup_hand_container_geometry() -> void:
-	hand_container.custom_minimum_size = Vector2(324, 110)
-	hand_container.size = Vector2(324, 110)
-	hand_container.position = Vector2(106, 704)
+	hand_container.custom_minimum_size = Vector2(324, 130)
+	hand_container.size = Vector2(324, 130)
+	hand_container.position = Vector2(106, 680)
 	hand_container.mouse_filter = Control.MOUSE_FILTER_PASS
 
 
@@ -83,6 +111,11 @@ func _refresh_header() -> void:
 	if monster.is_empty():
 		return
 	monster_label.text = str(monster.get("name", "?"))
+	var sprite_path: String = str(monster.get("sprite", ""))
+	var sprite_tex: Texture2D = null
+	if sprite_path != "":
+		sprite_tex = load(sprite_path) as Texture2D
+	monster_sprite.texture = sprite_tex
 	var total: int = GameState.monster_hp_scaled()
 	var remaining: int = int(monster.get("hp_remaining", total))
 	hp_bar.max_value = total
@@ -132,16 +165,18 @@ func _refresh_hand() -> void:
 		hand_empty_warning.visible = true
 		return
 	hand_empty_warning.visible = false
-	var tile_size := Vector2(48, 54)
-	var font_size := 20
-	var h_sep := 8
-	var v_sep := 6
+	var tile_size := Vector2(62, 58)
+	var font_size := 30
+	var v_sep := 4
+
+	var row_sep := func(count: int) -> int:
+		return 3 if count >= 5 else 6
 
 	if total <= 5:
 		var row := HBoxContainer.new()
 		row.alignment = BoxContainer.ALIGNMENT_CENTER
 		row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		row.add_theme_constant_override("separation", h_sep)
+		row.add_theme_constant_override("separation", row_sep.call(total))
 		hand_container.add_child(row)
 		for i in range(total):
 			var el := _instantiate_tile(GameState.hand[i], i, tile_size, font_size, row)
@@ -156,12 +191,12 @@ func _refresh_hand() -> void:
 		var row1 := HBoxContainer.new()
 		row1.alignment = BoxContainer.ALIGNMENT_CENTER
 		row1.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		row1.add_theme_constant_override("separation", h_sep)
+		row1.add_theme_constant_override("separation", row_sep.call(top_count))
 		vbox.add_child(row1)
 		var row2 := HBoxContainer.new()
 		row2.alignment = BoxContainer.ALIGNMENT_CENTER
 		row2.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		row2.add_theme_constant_override("separation", h_sep)
+		row2.add_theme_constant_override("separation", row_sep.call(total - top_count))
 		vbox.add_child(row2)
 		for i in range(total):
 			var el := _instantiate_tile(GameState.hand[i], i, tile_size, font_size, row1 if i < top_count else row2)
@@ -449,6 +484,19 @@ func _play_score_animation() -> void:
 	if _skip_anim:
 		base_score_label.text = "%d" % roundi(current_base)
 
+	# Word metadata subtitle
+	var word := ""
+	for s in _slots:
+		word += str(s["letter"])
+	if word.length() >= 3:
+		var meta: Dictionary = WordService.get_word_meta(word)
+		if meta.get("is_valid", false):
+			word_meta_label.text = "%s \u00b7 %s \u00b7 \"%s\" \u00b7 V%d/C%d" % [
+				word, meta["part_of_speech"], meta["short_def"],
+				meta["vowel_count"], meta["consonant_count"]
+			]
+			word_meta_label.show()
+
 	# Phase B: Multiplier ignition
 	if _skip_anim:
 		mult_score_label.text = "×%.1f" % mult
@@ -656,6 +704,8 @@ func _banner_reset() -> void:
 	total_shelf.hide()
 	total_damage_label.text = ""
 	total_damage_label.scale = Vector2(1, 1)
+	word_meta_label.hide()
+	word_meta_label.text = ""
 	_set_controls_enabled(true)
 	_animating = false
 
@@ -689,6 +739,7 @@ func _projectile_to_monster(dmg: int) -> void:
 	var flash_m := create_tween()
 	flash_m.tween_property(monster_label, "modulate", Color(3, 3, 3, 1), 0.06)
 	flash_m.tween_property(monster_label, "modulate", Color(1, 1, 1, 1), 0.08)
+	_squash_hit()
 	# AudioManager.play("slam_impact")
 
 	await tw.finished
