@@ -17,9 +17,34 @@
 
 ---
 
-## MCP Servers
+## Tool Usage & MCP Constraints
 
-This project can use the **godot-mcp** MCP server for debugging Godot code. If you have it configured in your MCP client, use it to connect to a running Godot editor instance for inspecting scenes, running scripts, and debugging.
+1. **Available MCP Tools**:
+   - `outline-mcp`: Use this tool directly for querying specs, plans, and doc updates. Do NOT fetch Outline API via curl or bash.
+   - `godot-mcp`: Use this tool directly for checking scene trees, node status, and Godot engine inspections.
+
+2. **Strict Boundary Rules**:
+   - **NEVER** attempt to read user home directories (`~/.config/opencode`, `~/.bashrc`, etc.) or OS temp folders (`/tmp`). All configuration, tokens, and endpoints are already injected into the MCP server environment.
+   - **NEVER** ask for external directory permissions to inspect configuration files. If an MCP call fails, report the error directly instead of searching the filesystem for credentials.
+   - Always prefer MCP tool calls over manual CLI file searches for Outline wiki documentation and Godot runtime inspection.
+
+
+## OS & Terminal Constraints
+
+- **Host Operating System**: Windows 11 (Non-POSIX).
+- **Default Shell**: PowerShell (pwsh).
+- **Prohibited Commands**: NEVER execute Linux/Bash-specific commands:
+  - DO NOT USE: `ls`, `cat`, `grep`, `touch`, `rm -rf`, `find`, `export`, `source`, `which`
+- **Mandatory Equivalents**:
+  - `cat <file>` ➔ `Get-Content <file>`
+  - `grep <pattern>` ➔ `Select-String -Pattern "<pattern>"`
+  - `rm -rf <path>` ➔ `Remove-Item -Recurse -Force <path>`
+  - `touch <file>` ➔ `New-Item -ItemType File -Force <file>`
+  - `export VAR=val` ➔ `$env:VAR = "val"`
+  - `which <tool>` ➔ `Get-Command <tool>`
+- **Path Separators**: Always format file paths with Windows compatibility (e.g. `.\scripts\autoload\DebugManager.gd` or Godot's `res://...`).
+- **Chaining Commands**: Use `;` in PowerShell instead of `&&` when running consecutive commands on older PowerShell versions.
+
 
 ## Outline wiki uploads (UTF-8 encoding)
 
@@ -45,6 +70,23 @@ Notes:
 - Node naming in scripts: Use `%UniqueName` syntax for UI scene nodes referenced by scripts.
 - Signal naming: Use past-tense descriptive verbs (e.g., `word_committed`, `round_won`, `turn_ended`).
 - Do not add comments explaining basic language syntax; keep code concise and domain-focused.
+
+## Debug Tools
+
+Debug hotkeys live in `scripts/autoload/DebugManager.gd` (`_unhandled_input`) and are gated behind `OS.is_debug_build()` — they no-op in release builds.
+
+- **Backtick** (`KEY_QUOTELEFT`): toggles the `DebugOverlay` panel (`scenes/debug/DebugOverlay.tscn`).
+- **F12**: saves a screenshot to `user://screenshots/debug_<timestamp>.png`.
+
+The overlay buttons route through `DebugManager`, which delegates to `/root/GameRoot` methods:
+- **Menu / Combat / Shop** → `route_to(state)` (menu/run_setup/combat/shop).
+- **Jump Boss Round** → `jump_boss_round()`.
+- **x0.5 / x1 / x2** → `set_time_scale(v)` (clamps `Engine.time_scale` to 0.0–4.0).
+- **Screenshot** → `screenshot()`.
+- **+$50** → `inject_state(cfg)` (injects money).
+- **Trigger: silence** → `trigger_mechanic(id)` (sets current monster's `modifier` to `silence`).
+
+**F1 was removed.** It previously jumped straight to the shop with the mx_red pack + $50; that routing is now handled by the overlay buttons instead.
 
 ## Editing scenes in the Godot 2D editor
 
