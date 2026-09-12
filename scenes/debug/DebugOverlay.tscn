@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/screens/DebugOverlay.gd" id="1_script"]
+
+[node name="DebugOverlay" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+z_index = 2000
+script = ExtResource("1_script")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+
+[node name="StateLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="MenuButton" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Menu"
+
+[node name="CombatButton" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Combat"
+
+[node name="ShopButton" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Shop"
+
+[node name="BossButton" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Jump Boss Round"
+
+[node name="SpeedHalf" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "x0.5"
+
+[node name="SpeedNormal" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "x1"
+
+[node name="SpeedDouble" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "x2"
+
+[node name="ShotButton" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Screenshot"
+
+[node name="GrantMoney" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "+$50"
+
+[node name="TriggerSilence" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Trigger: silence"
+
+[node name="CloseButton" type="Button" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Close"
