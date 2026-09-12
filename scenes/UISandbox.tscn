@@ -1,0 +1,117 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/screens/UISandbox.gd" id="1_sandbox_script"]
+[ext_resource type="Script" path="res://scripts/components/OverlayHint.gd" id="2_overlay_hint"]
+
+[node name="UISandbox" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_sandbox_script")
+
+[node name="SafeAreaTop" type="Control" parent="."]
+unique_name_in_owner = true
+offset_right = 540.0
+offset_bottom = 48.0
+script = ExtResource("2_overlay_hint")
+color = Color(1, 0.3, 0.3, 0.25)
+title = "Safe Area Top 48"
+
+[node name="SafeAreaBottom" type="Control" parent="."]
+unique_name_in_owner = true
+offset_top = 928.0
+offset_right = 540.0
+offset_bottom = 960.0
+script = ExtResource("2_overlay_hint")
+color = Color(1, 0.3, 0.3, 0.25)
+title = "Safe Area Bottom 32"
+
+[node name="TouchLayer" type="Control" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ToggleTouch" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 180.0
+offset_top = 110.0
+offset_right = 360.0
+offset_bottom = 140.0
+text = "Toggle Touch Targets"
+
+[node name="InstructionLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 40.0
+offset_top = 160.0
+offset_right = 500.0
+offset_bottom = 190.0
+text = "Click the boxes below to test mouse_filter behavior."
+
+[node name="StopBox" type="ColorRect" parent="."]
+unique_name_in_owner = true
+offset_left = 40.0
+offset_top = 200.0
+offset_right = 120.0
+offset_bottom = 280.0
+color = Color(0.3, 0.9, 0.3, 1)
+mouse_filter = 0
+
+[node name="Label" type="Label" parent="StopBox"]
+offset_left = 16.0
+offset_top = 24.0
+offset_right = 64.0
+offset_bottom = 56.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "STOP"
+
+[node name="PassBox" type="ColorRect" parent="."]
+unique_name_in_owner = true
+offset_left = 160.0
+offset_top = 200.0
+offset_right = 240.0
+offset_bottom = 280.0
+color = Color(0.3, 0.3, 0.9, 1)
+mouse_filter = 1
+
+[node name="Label" type="Label" parent="PassBox"]
+offset_left = 16.0
+offset_top = 24.0
+offset_right = 64.0
+offset_bottom = 56.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "PASS"
+
+[node name="IgnoreBox" type="ColorRect" parent="."]
+unique_name_in_owner = true
+offset_left = 280.0
+offset_top = 200.0
+offset_right = 360.0
+offset_bottom = 280.0
+color = Color(0.5, 0.5, 0.5, 1)
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="IgnoreBox"]
+offset_left = 16.0
+offset_top = 24.0
+offset_right = 64.0
+offset_bottom = 56.0
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "IGNORE"
+
+[node name="HitLog" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 40.0
+offset_top = 400.0
+offset_right = 500.0
+offset_bottom = 430.0
+text = "(click a box)"
