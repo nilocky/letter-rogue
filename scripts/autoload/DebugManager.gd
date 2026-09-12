@@ -1,5 +1,5 @@
 extends Node
-## Debug autoload: backtick overlay, F12 screenshot, time-scale, scene routing.
+## Debug autoload: F1 overlay, F12 screenshot, time-scale, scene routing.
 ## No-ops outside debug builds.
 
 const OVERLAY_SCENE_PATH := "res://scenes/debug/DebugOverlay.tscn"
@@ -14,7 +14,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventKey and event.pressed:
 		match event.keycode:
-			KEY_QUOTELEFT:
+			KEY_F1:
 				toggle_overlay()
 			KEY_F12:
 				screenshot()
@@ -48,7 +48,7 @@ func is_overlay_open() -> bool:
 
 
 func screenshot() -> void:
-	var dir := "user://screenshots"
+	var dir := "res://screenshots"
 	DirAccess.make_dir_recursive_absolute(dir)
 	var stamp: String = Time.get_datetime_string_from_system().replace(":", "").replace("-", "")
 	var path := "%s/debug_%s.png" % [dir, stamp]

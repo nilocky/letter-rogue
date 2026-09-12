@@ -53,7 +53,7 @@ Web constraints:
 
 ### Service-based with Event Bus
 
-**Autoloads (8 singletons, registered in `project.godot`):**
+**Autoloads (12 singletons, registered in `project.godot`):**
 
 | Singleton | Responsibility |
 |---|---|
@@ -61,12 +61,16 @@ Web constraints:
 | `GameState` | Runtime state: money, round, bag, hand, current monster, turn/redraw budgets, upgrades, active pack/bag ids |
 | `PackService` | Active Cherry MX pack modifier lookups |
 | `KeyCapService` | Draw hand from bag, targeted redraw swaps, resolve ability effects, starter bag loaders |
+| `KeyCapSkinService` | Atlas-based skin system for keycap textures |
 | `ShopService` | Shop inventory generation, buy/sell/reroll, persistent run upgrade purchases |
-| `WordService` | Dictionary loading (`data/words.json`), word validation, word length multiplier |
-| `CombatService` | Round setup, per-turn word validation & scoring, damage application, win/lose from turn budget |
+| `WordService` | Dictionary loading (`data/words.json`), word validation, word length multiplier, `get_word_meta()` for POS/definition/letter counts |
+| `CombatService` | Round setup, per-turn word validation & scoring, damage application, win/lose from turn budget. Hooks into `EffectPipeline` for cap effect lifecycle. |
 | `ResolutionManager` | Cross-platform desktop window sizing (82% height cap, 9:16 aspect preservation) and mobile fullscreen |
+| `DebugManager` | Debug-only hotkeys (F1 overlay toggle, F12 screenshot), scene routing, state injection, time-scale |
+| `EffectPipeline` | Hook registry: caps register `{hook, apply}` callbacks triggered on combat lifecycle events |
+| `LootService` | Rolls loot drops from monster's `drop_table_id` on defeat |
 
-**Autoload order matters:** `EventBus`, `GameState`, `PackService`, `KeyCapService`, `ShopService`, `WordService`, `CombatService`, `ResolutionManager`.
+**Autoload order matters:** `EventBus`, `GameState`, `PackService`, `KeyCapService`, `KeyCapSkinService`, `ShopService`, `WordService`, `CombatService`, `ResolutionManager`, `DebugManager`, `EffectPipeline`, `LootService`.
 
 ### Screens
 
@@ -95,7 +99,8 @@ Balatro-style sequential animation with deliberate timing:
 2. **Phase A: Sequential letter hop** — each tile hops up (0.15s), lands with bounce (0.18s), floating score label fades up, 0.2s pause between tiles
 3. **Phase B: Multiplier ignition** — mult panel pulses, ramps from 1.0 to final mult over 0.35s (words ≥3 only)
 4. **Phase C: Final resolution** — total damage label appears with scale pulse, projectile flies from banner to monster (0.35s), HP bar drops smoothly (0.4s), damage float text, banner fades out (0.25s)
-5. **Phase D: Commit** — `CombatService.commit_word()` called
+5. **Phase B word metadata:** before multiplier ignition, a `%WordMetaLabel` shows `WORD · POS · "def" · Vn/Cn` (MicroLabel, hidden by default)
+6. **Phase D: Commit** — `CombatService.commit_word()` called
 
 Player can click during animation to skip remaining animation.
 
@@ -151,7 +156,9 @@ name: String
 hp: int
 max_hp: int
 is_boss: bool
-boss_modifier: String?    (null, "vowel_lock", "consonant_lock", "no_repeats", "silence")
+modifier: String          (unified: "", "vowel_lock", "consonant_lock", "no_repeats", "silence", "shielded", "enraged")
+sprite: String            (texture path, may be empty)
+drop_table_id: String     (loot table id for LootService, empty = no drops)
 ```
 
 ### GameState Fields
@@ -314,11 +321,13 @@ All JSON under `data/`, ships inside exported pck:
 
 | File | Purpose |
 |---|---|
-| `data/words.json` | Word dictionary (~370k words, 3+ letters) |
+| `data/words.json` | Word dictionary (~370k words, 3+ letters, enriched with POS bitmask + definition) |
 | `data/key_caps.json` | Shop pool tiles (letter + abilities + modifiers) |
-| `data/monsters.json` | Normal + boss monster definitions |
+| `data/monsters.json` | Normal + boss monster definitions (unified `modifier` field, `drop_table_id`) |
 | `data/packs.json` | Cherry MX pack modifiers |
 | `data/starter_bags.json` | Starting bag loadouts |
+| `data/secret_words.json` | Rare words flagged `is_secret: true` in metadata (future: scoring bonus) |
+| `data/drop_tables.json` | Weighted loot tables keyed by `drop_table_id` on monsters |
 
 ## Key Design Decisions
 
@@ -328,6 +337,10 @@ All JSON under `data/`, ships inside exported pck:
 - No player HP, no shield, no healing
 - No discard pile — tiles return to bag at turn end
 - All UI responsive via Containers — no fixed positions
+- Debug hotkeys gated behind `OS.is_debug_build()`: F1 toggles DebugOverlay, F12 saves screenshot to `res://screenshots/`
+- `EffectPipeline` provides 7 hook points: on_draw, on_letter_slotted, on_word_validated, on_score_calculated, on_monster_damaged, on_monster_defeated, on_turn_end
+- Monster modifiers unified under single `modifier` field (replaces separate `boss_modifier`)
+- Secret words from `data/secret_words.json` flagged in metadata; gameplay effects pending
 
 ## KeyCap 3-Layer Mechanical Sandwich Architecture
 

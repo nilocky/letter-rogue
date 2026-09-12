@@ -42,14 +42,17 @@ theme_override_constants/separation = 16
 unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 56)
 text = "Start Run"
+theme_override_font_sizes/font_size = 24
 size_flags_horizontal = 4
 
 [node name="CollectionButton" type="Button" parent="SafeArea/VBoxContainer"]
 custom_minimum_size = Vector2(320, 56)
 text = "Collection"
+theme_override_font_sizes/font_size = 24
 size_flags_horizontal = 4
 
 [node name="SettingsButton" type="Button" parent="SafeArea/VBoxContainer"]
 custom_minimum_size = Vector2(320, 56)
 text = "Settings"
+theme_override_font_sizes/font_size = 24
 size_flags_horizontal = 4

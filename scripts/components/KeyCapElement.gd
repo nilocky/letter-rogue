@@ -65,13 +65,13 @@ func _apply_switch_base() -> void:
 		var cropped: AtlasTexture = base_atlas.duplicate() as AtlasTexture
 		cropped.region.size.y *= 0.79
 		switch_base.texture = cropped
-		switch_base.size = Vector2(38, 22)
-		switch_base.position = Vector2(5, 26)
+		switch_base.size = Vector2(46, 32)
+		switch_base.position = Vector2(8, 28)
 	else:
 		socket_shadow.visible = false
 		switch_base.texture = base_atlas
-		switch_base.size = Vector2(38, 28)
-		switch_base.position = Vector2(5, 22)
+		switch_base.size = Vector2(46, 32)
+		switch_base.position = Vector2(8, 30)
 	switch_base.visible = true
 
 func _apply_skin(state: String) -> void:

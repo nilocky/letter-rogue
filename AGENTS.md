@@ -75,7 +75,7 @@ Notes:
 
 Debug hotkeys live in `scripts/autoload/DebugManager.gd` (`_unhandled_input`) and are gated behind `OS.is_debug_build()` — they no-op in release builds.
 
-- **Backtick** (`KEY_QUOTELEFT`): toggles the `DebugOverlay` panel (`scenes/debug/DebugOverlay.tscn`).
+- **F1**: toggles the `DebugOverlay` panel (`scenes/debug/DebugOverlay.tscn`).
 - **F12**: saves a screenshot to `user://screenshots/debug_<timestamp>.png`.
 
 The overlay buttons route through `DebugManager`, which delegates to `/root/GameRoot` methods:

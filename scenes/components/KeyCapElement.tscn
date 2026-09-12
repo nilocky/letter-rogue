@@ -17,22 +17,22 @@ corner_radius_bottom_left = 6
 [node name="KeyCapElement" type="Control"]
 script = ExtResource("1_abcdef")
 anchors_preset = 0
-size = Vector2(48, 54)
-custom_minimum_size = Vector2(48, 54)
+size = Vector2(62, 66)
+custom_minimum_size = Vector2(62, 66)
 mouse_filter = 1
 
 [node name="SocketShadow" type="ColorRect" parent="."]
 anchors_preset = 0
 visible = false
-position = Vector2(5, 46)
-size = Vector2(38, 3)
+position = Vector2(8, 58)
+size = Vector2(46, 4)
 mouse_filter = 2
 color = Color(0.08, 0.1, 0.14, 0.95)
 
 [node name="SwitchBase" type="TextureRect" parent="."]
 anchors_preset = 0
-position = Vector2(5, 22)
-size = Vector2(38, 28)
+position = Vector2(8, 28)
+size = Vector2(46, 32)
 mouse_filter = 2
 stretch_mode = 5
 expand_mode = 1
@@ -40,7 +40,7 @@ expand_mode = 1
 [node name="CapLayer" type="Control" parent="."]
 anchors_preset = 0
 position = Vector2(0, 0)
-size = Vector2(48, 40)
+size = Vector2(62, 48)
 mouse_filter = 2
 
 [node name="CapTexture" type="TextureRect" parent="CapLayer"]
@@ -86,6 +86,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme_type_variation = &"KeyCapFaceLabel"
+theme_override_font_sizes/font_size = 30
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "A"
@@ -98,7 +99,7 @@ anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 0.3
 theme_type_variation = &"BadgeLabel"
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.9647, 0.6784, 0.3333, 1)
 horizontal_alignment = 2
 vertical_alignment = 1

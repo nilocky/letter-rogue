@@ -6,22 +6,28 @@
 
 ### Core Architecture
 - [x] Autoload singletons: EventBus, GameState, PackService, KeyCapService, ShopService, WordService, CombatService, ResolutionManager
+- [x] DebugManager autoload (F1 overlay, F12 screenshot, scene routing, state injection, time-scale, mechanic triggers)
+- [x] EffectPipeline autoload (hook registry: 7 combat lifecycle events)
+- [x] LootService autoload (drop table rolls from monster drop_table_id)
 - [x] GameRoot state machine: MENU → RUN_SETUP → COMBAT → SHOP → GAME_OVER
+- [x] GameRoot routing hooks: route_to(), inject_state(), trigger_mechanic(), jump_boss_round()
 - [x] EventBus signal-driven screen transitions
 - [x] ResolutionManager: cross-platform desktop/mobile window sizing
 - [x] Custom theme with font scale variations (`default_theme.tres`)
 
 ### Data Layer
-- [x] `data/words.json` — word dictionary (~370k words, 3+ letters)
+- [x] `data/words.json` — word dictionary (~370k words, enriched with POS bitmask + definition)
+- [x] `data/secret_words.json` — rare secret words (gameplay effect pending)
+- [x] `data/drop_tables.json` — weighted loot tables keyed by drop_table_id
+- [x] `data/monsters.json` — unified `modifier` field + `drop_table_id`, added Shielded Goblin + Raging Orcs
 - [x] `data/key_caps.json` — shop pool letter tiles with abilities, finishes, stickers, conditions
 - [x] `data/monsters.json` — normal + boss monsters with modifiers
 - [x] `data/packs.json` — 5 Cherry MX packs with draw/score/start-money modifiers
 - [x] `data/starter_bags.json` — 4 starter bag loadouts (Standard, Vowel Explorer, Consonant Heavy, Minimalist)
 
 ### Services
-- [x] `WordService` — dictionary load/lookup, word length multiplier (1-2 = 1.0, 3 = 1.0, 4 = 1.3, 5 = 1.6, 6 = 2.0, 7+ = 2.5)
-- [x] `KeyCapService` — draw hand from bag, targeted redraw swaps, resolve_ability, starter bag loaders
-- [x] `CombatService` — round setup, validate_word (1-2 letter valid, 3+ needs dictionary), calculate_word, commit_word, monster damage/win-lose
+- [x] `WordService` — dictionary load/lookup, word length multiplier, `get_word_meta()` with POS/definition/vowel/consonant counts
+- [x] `CombatService` — round setup, validate_word, calculate_word, commit_word, monster damage/win-lose, EffectPipeline hook integration, unified `_current_modifier()` dispatch
 - [x] `ShopService` — tile buy/sell/reroll, run upgrades (Bigger Bag, Extra Turn, Extra Redraw)
 - [x] `PackService` — pack lookup for draw/score modifiers
 
@@ -36,7 +42,7 @@
 - [x] `KeyCapElement` — reusable tile widget: letter, rarity bg, ability label, finish/sticker/condition badges, position index, drag-drop support, selection state, used state, latched state with 5px deep-travel animation
 - [x] `WordRuneSlot` — magical rune display slot: cyan letter label, amber power badge, obsidian/cyan StyleBoxFlat panel, tap-to-dismiss
 - [x] `BagModal` — bag inspector: per-letter frequency counts, vowel/consonant ratio
-- [x] `VictoryModal` — itemized reward receipt with counting-up total animation, Continue button
+- [x] `VictoryModal` — itemized reward receipt with counting-up total animation, loot drops display, Continue button
 - [x] `ScoringBannerOverlay` — Balatro-style scoring HUD with sequential per-tile hop animation, multiplier ramp, total damage reveal, projectile to monster
 
 ### Combat Mechanics
@@ -44,7 +50,7 @@
 - [x] Redraw tokens (default 3/round), toggle mode with tile marking
 - [x] 1-2 letter valid plays (no skip turn button)
 - [x] 3+ letter dictionary validation
-- [x] Boss modifiers: vowel_lock, consonant_lock, no_repeats, silence
+- [x] Boss modifiers: vowel_lock, consonant_lock, no_repeats, silence (unified `modifier` field, works on normal monsters too)
 - [x] Wildcard tile popup letter picker
 - [x] Scoring animation with skip-on-click
 - [x] Ability/finish/sticker/condition stacking in scoring
@@ -52,6 +58,7 @@
 - [x] Magical rune display strip: WordRuneSlot replaces KeyCapElement in mid zone — glowing cyan/obsidian runic terminal aesthetic
 
 ### Display & Layout
+- [x] UISandbox gallery scene (safe-area overlay, touch-target grid, mouse-filter demo boxes)
 - [x] 540x960 viewport, 9:16 portrait orientation
 - [x] `canvas_items` stretch mode
 - [x] Desktop window sizing (82% height cap)
@@ -83,7 +90,8 @@
 - [ ] **HP bar styling** — add gradient/color transitions for damage
 
 ### Testing & Quality
-- [ ] **Headless verify harness** — create `_verify.gd`/`_verify.tscn` for automated regression
+- [x] Headless test suite: run_tests.gd runner + 4 test suites (lexicon, word, monster_modifier, scenario)
+- [x] All 4 test suites passing
 - [ ] **Edge cases** — empty bag, empty hand, zero turns left boundary, wildcard with no letters in picker
 - [ ] **Bag overflow** — bag larger than hand draw size (already handled via `mini()`)
 

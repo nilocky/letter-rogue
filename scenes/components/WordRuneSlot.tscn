@@ -35,7 +35,7 @@ content_margin_right = 4
 content_margin_bottom = 4
 
 [node name="WordRuneSlot" type="PanelContainer"]
-custom_minimum_size = Vector2(46, 52)
+custom_minimum_size = Vector2(52, 58)
 theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
 script = ExtResource("1_abcdef")
 
@@ -57,7 +57,7 @@ anchor_bottom = 1.0
 unique_name_in_owner = true
 size_flags_vertical = 3
 theme_type_variation = &"HeaderLabel"
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 theme_override_colors/font_color = Color(0.404, 0.976, 0.976, 1)
 theme_override_colors/font_outline_color = Color(0.031, 0.569, 0.698, 1)
 theme_override_constants/outline_size = 2

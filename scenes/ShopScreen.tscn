@@ -1,17 +1,35 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/ShopScreen.gd" id="1_abcdef"]
+[ext_resource type="Texture2D" uid="uid://gby12pk6ffsq" path="res://assets/textures/backgrounds/bg_combat_2.jpg" id="2_bgcombat"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 12.0
 content_margin_top = 12.0
 content_margin_right = 12.0
 content_margin_bottom = 12.0
-bg_color = Color(0.12, 0.12, 0.15, 0.92)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+bg_color = Color(0.12, 0.13, 0.16, 0.92)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.227, 0.239, 0.282, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fight"]
+bg_color = Color(0.62, 0.13, 0.11, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.35, 1)
 
 [node name="ShopScreen" type="Control"]
 anchors_preset = 15
@@ -20,6 +38,26 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_abcdef")
+
+[node name="Background" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bgcombat")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Dim" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.05, 0.05, 0.08, 0.45)
 
 [node name="SafeArea" type="MarginContainer" parent="."]
 anchors_preset = 15
@@ -106,7 +144,13 @@ theme_override_constants/separation = 16
 
 [node name="FightButton" type="Button" parent="SafeArea/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(300, 50)
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 0.92, 0.7, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_fight")
+theme_override_styles/hover = SubResource("StyleBoxFlat_fight")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fight")
 text = "Fight!"
 
 [node name="BuyDialog" type="ConfirmationDialog" parent="."]
