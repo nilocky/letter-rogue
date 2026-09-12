@@ -2,13 +2,16 @@ extends Node
 ## Word dictionary + word-length scoring helper. Pure lookups; no state.
 
 const WORDS_PATH := "res://data/words.json"
+const SECRET_WORDS_PATH := "res://data/secret_words.json"
 
 var _words: Dictionary = {}  # word:String -> {pos:int, def:String}
+var _secret_words: Dictionary = {}
 var _count: int = 0
 
 
 func _ready() -> void:
 	_load_dictionary()
+	_load_secret_dictionary()
 
 
 func _load_dictionary() -> void:
@@ -30,8 +33,20 @@ func _load_dictionary() -> void:
 	_count = _words.size()
 
 
+func _load_secret_dictionary() -> void:
+	var text := FileAccess.get_file_as_string(SECRET_WORDS_PATH)
+	if text.is_empty():
+		return
+	var data: Variant = JSON.parse_string(text)
+	if typeof(data) != TYPE_DICTIONARY or not data.has("words"):
+		return
+	var raw: Variant = data["words"]
+	for entry: Dictionary in raw:
+		_secret_words[entry["w"]] = {"pos": entry.get("pos", 16), "def": entry.get("def", "")}
+
+
 func is_word(word: String) -> bool:
-	return _words.has(word)
+	return _words.has(word) or _secret_words.has(word)
 
 
 func length_multiplier(length: int) -> float:
@@ -56,6 +71,9 @@ func word_count() -> int:
 
 func get_word_meta(word: String) -> Dictionary:
 	var meta: Variant = _words.get(word)
+	var is_secret: bool = not meta and _secret_words.has(word)
+	if is_secret:
+		meta = _secret_words.get(word)
 	var valid: bool = typeof(meta) == TYPE_DICTIONARY
 	var pos_name_str: String = pos_name(meta.get("pos", 16)) if valid else "Other"
 	var def_str: String = meta.get("def", "") if valid else ""
@@ -68,6 +86,7 @@ func get_word_meta(word: String) -> Dictionary:
 			consonant_count += 1
 	return {
 		"is_valid": valid,
+		"is_secret": is_secret,
 		"part_of_speech": pos_name_str,
 		"short_def": def_str,
 		"vowel_count": vowel_count,

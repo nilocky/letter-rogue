@@ -8,6 +8,7 @@ extends Control
 var _summary: Dictionary = {}
 var _total: int = 0
 var _animated_total: int = 0
+var _pending_loot: Array = []
 
 
 func _ready() -> void:
@@ -30,6 +31,11 @@ func open(summary: Dictionary) -> void:
 		_add_receipt_line("Leftover Turns (+$1/turn)", leftover)
 	if ability > 0:
 		_add_receipt_line("Abilities", ability)
+	if summary.has("loot"):
+		_pending_loot = summary["loot"]
+		for drop: Variant in _pending_loot:
+			var d: Dictionary = drop
+			_add_receipt_line(str(d.get("label", "Drop")), int(d.get("value", 0)))
 	if is_boss:
 		var cleared := Label.new()
 		cleared.theme_type_variation = &"BodyLabel"
@@ -72,6 +78,10 @@ func _on_total_tick(value: float) -> void:
 
 func _on_continue() -> void:
 	GameState.money += _total
+	for drop: Variant in _pending_loot:
+		var d: Dictionary = drop
+		if d.get("type", "") == "money":
+			GameState.money += int(d.get("value", 0))
 	if bool(_summary.get("is_boss", false)):
 		EventBus.game_complete.emit()
 	else:

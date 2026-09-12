@@ -19,6 +19,10 @@ func start_round() -> void:
 
 
 ## Validate a word built from `slots` (each {"cap": Dictionary, "letter": String}).
+func _current_modifier() -> String:
+	return str(GameState.current_monster.get("modifier", GameState.current_monster.get("boss_modifier", "")))
+
+
 func validate_word(slots: Array) -> Dictionary:
 	if slots.size() < 3:
 		return {"ok": true}
@@ -29,7 +33,7 @@ func validate_word(slots: Array) -> Dictionary:
 		letters.append(str(s["letter"]))
 	if not WordService.is_word(word):
 		return {"ok": false, "reason": "not_word"}
-	var modifier: String = str(GameState.current_monster.get("boss_modifier", ""))
+	var modifier: String = _current_modifier()
 	if modifier == "no_repeats":
 		var seen: Dictionary = {}
 		for letter in letters:
@@ -46,10 +50,10 @@ func slot_letter(cap: Dictionary, index: int) -> void:
 
 ## Deterministic damage/money for a word. Does NOT mutate GameState.
 func calculate_word(slots: Array, log: bool = false) -> Dictionary:
-	var disabled: bool = str(GameState.current_monster.get("boss_modifier", "")) == "silence"
+	var modifier: String = _current_modifier()
+	var disabled: bool = modifier == "silence"
 	var pack := PackService.pack_by_id(GameState.active_pack_id)
 	var per_tile: int = int(pack.get("score_modifier", 0)) if not pack.is_empty() else 0
-	var modifier: String = str(GameState.current_monster.get("boss_modifier", ""))
 
 	var total := 0.0
 	var flat := 0
@@ -118,7 +122,7 @@ func commit_word(slots: Array) -> void:
 	var money_gain: int = res["money"]
 	for s in slots:
 		var cap: Dictionary = s["cap"]
-		var disabled: bool = str(GameState.current_monster.get("boss_modifier", "")) == "silence"
+		var disabled: bool = _current_modifier() == "silence"
 		if disabled:
 			continue
 		if str(cap.get("sticker", "")) == "blue":
@@ -159,6 +163,7 @@ func _apply_monster_damage(damage: int, money_gain: int) -> void:
 			"leftover_turns": leftover_turns,
 			"ability_money": money_gain,
 			"total": reward + leftover_turns + money_gain,
+			"loot": LootService.roll_drops(GameState.current_monster),
 		}
 		EventBus.round_won.emit(summary)
 		EffectPipeline.trigger("on_monster_defeated", [GameState.current_monster, summary])

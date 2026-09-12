@@ -1,0 +1,23 @@
+{
+  "drop_tables": [
+    {"id": "goblin_loot", "entries": [
+      {"type": "money", "weight": 6, "value": 5, "label": "Gold"},
+      {"type": "cap", "weight": 3, "rarity": "uncommon", "label": "Keycap"}
+    ]},
+    {"id": "orc_loot", "entries": [
+      {"type": "money", "weight": 5, "value": 8, "label": "Gold"},
+      {"type": "cap", "weight": 4, "rarity": "rare", "label": "Keycap"}
+    ]},
+    {"id": "golem_loot", "entries": [
+      {"type": "money", "weight": 4, "value": 12, "label": "Gold"},
+      {"type": "money", "weight": 3, "value": 6, "label": "Gem"}
+    ]},
+    {"id": "skeleton_loot", "entries": [
+      {"type": "money", "weight": 5, "value": 4, "label": "Gold"},
+      {"type": "cap", "weight": 2, "rarity": "rare", "label": "Bone Keycap"}
+    ]},
+    {"id": "slime_loot", "entries": [
+      {"type": "money", "weight": 7, "value": 3, "label": "Goo"}
+    ]}
+  ]
+}

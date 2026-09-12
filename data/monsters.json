@@ -1,15 +1,17 @@
 {
   "normal": [
-    {"id": "goblin", "name": "Goblin", "hp": 10, "max_hp": 10, "is_boss": false, "boss_modifier": null},
-    {"id": "skeleton", "name": "Skeleton", "hp": 15, "max_hp": 15, "is_boss": false, "boss_modifier": null},
-    {"id": "slime", "name": "Slime", "hp": 8, "max_hp": 8, "is_boss": false, "boss_modifier": null},
-    {"id": "orc", "name": "Orc", "hp": 18, "max_hp": 18, "is_boss": false, "boss_modifier": null},
-    {"id": "golem", "name": "Golem", "hp": 25, "max_hp": 25, "is_boss": false, "boss_modifier": null}
+    {"id": "goblin", "name": "Goblin", "hp": 10, "max_hp": 10, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_golbin_1.png", "drop_table_id": "goblin_loot"},
+    {"id": "shielded_goblin", "name": "Shielded Goblin", "hp": 12, "max_hp": 12, "is_boss": false, "modifier": "shielded", "sprite": "res://assets/ui/monster_sq_192_golbin_1.png", "drop_table_id": "goblin_loot"},
+    {"id": "skeleton", "name": "Skeleton", "hp": 15, "max_hp": 15, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_skeleton_2.png", "drop_table_id": "skeleton_loot"},
+    {"id": "slime", "name": "Slime", "hp": 8, "max_hp": 8, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_slime_1.png", "drop_table_id": "slime_loot"},
+    {"id": "orc", "name": "Orc", "hp": 18, "max_hp": 18, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_orc_1.png", "drop_table_id": "orc_loot"},
+    {"id": "enraged_orcs", "name": "Raging Orcs", "hp": 18, "max_hp": 18, "is_boss": false, "modifier": "enraged", "sprite": "res://assets/ui/monster_sq_192_orc_1.png", "drop_table_id": "orc_loot"},
+    {"id": "golem", "name": "Golem", "hp": 25, "max_hp": 25, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "golem_loot"}
   ],
   "bosses": [
-    {"id": "vowel_witch", "name": "Vowel Witch", "hp": 30, "max_hp": 30, "is_boss": true, "boss_modifier": "vowel_lock"},
-    {"id": "consonant_king", "name": "Consonant King", "hp": 30, "max_hp": 30, "is_boss": true, "boss_modifier": "consonant_lock"},
-    {"id": "echo_phantom", "name": "Echo Phantom", "hp": 30, "max_hp": 30, "is_boss": true, "boss_modifier": "no_repeats"},
-    {"id": "silence_wraith", "name": "Silence Wraith", "hp": 30, "max_hp": 30, "is_boss": true, "boss_modifier": "silence"}
+    {"id": "vowel_witch", "name": "Vowel Witch", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "vowel_lock", "sprite": "res://assets/ui/boss_witch_1.jpg", "drop_table_id": ""},
+    {"id": "consonant_king", "name": "Consonant King", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "consonant_lock", "sprite": "", "drop_table_id": ""},
+    {"id": "echo_phantom", "name": "Echo Phantom", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "no_repeats", "sprite": "", "drop_table_id": ""},
+    {"id": "silence_wraith", "name": "Silence Wraith", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "silence", "sprite": "", "drop_table_id": ""}
   ]
 }
