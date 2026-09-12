@@ -31,6 +31,7 @@ WordService="*res://scripts/autoload/WordService.gd"
 CombatService="*res://scripts/autoload/CombatService.gd"
 ResolutionManager="*res://scripts/services/ResolutionManager.gd"
 MCPRuntimeProbe="*uid://bsg12huaf1u5i"
+DebugManager="*res://scripts/autoload/DebugManager.gd"
 
 [display]
 
