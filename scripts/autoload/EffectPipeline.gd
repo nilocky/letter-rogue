@@ -39,7 +39,12 @@ func trigger(hook: String, args: Array) -> void:
 				continue
 			var apply: Callable = e.get("apply", Callable())
 			if apply.is_valid():
-				apply.callv(args)
+				match args.size():
+					0: apply.call()
+					1: apply.call(args[0])
+					2: apply.call(args[0], args[1])
+					3: apply.call(args[0], args[1], args[2])
+					_: push_error("EffectPipeline: too many args (%d)" % args.size())
 
 
 func _emit_hook_signal(hook: String, args: Array) -> void:
