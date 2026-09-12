@@ -32,6 +32,7 @@ CombatService="*res://scripts/autoload/CombatService.gd"
 ResolutionManager="*res://scripts/services/ResolutionManager.gd"
 MCPRuntimeProbe="*uid://bsg12huaf1u5i"
 DebugManager="*res://scripts/autoload/DebugManager.gd"
+EffectPipeline="*res://scripts/autoload/EffectPipeline.gd"
 
 [display]
 
