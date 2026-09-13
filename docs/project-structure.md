@@ -1,12 +1,12 @@
 # Letter Rogue — Project Structure
 
-Annotated layout of the repository as of 2026-09-12.
+Annotated layout of the repository as of 2026-09-13.
 
 ```
 letter-rogue/
 │
 ├── project.godot              Godot project config: 540x960 viewport, 441x784 window override,
-│                               canvas_items stretch, portrait locked, 12 autoloads, custom theme
+│                               canvas_items stretch, portrait locked, 16 autoloads, custom theme
 │
 ├── AGENTS.md                  Agent instructions (Godot MCP, Outline wiki, code conventions,
 │                               headless verification harness procedure)
@@ -16,8 +16,14 @@ letter-rogue/
 │   ├── words.json             Word dictionary (~370k words, 3+ letters, POS+def enriched)
 │   ├── key_caps.json          Shop pool: letter tiles with abilities/finishes/stickers/conditions
 │   ├── monsters.json          Normal + boss monster definitions with unified `modifier` + `drop_table_id`
-│   ├── packs.json             5 Cherry MX packs: draw/score/start-money modifiers
-│   ├── starter_bags.json      4 starter bag loadouts (Standard, Vowel Explorer, Consonant Heavy, Minimalist)
+│   ├── packs.json             5 Switch Packs with conditional passives (Clicky/Linear/Tactile/Heavy Tactile/Silent)
+│   ├── starter_bags.json      4 starter bag loadouts (Standard 14 tiles, Vowel Explorer, Consonant Heavy, Minimalist)
+│   ├── word_forms.json        Word Form definitions (Trio/Quartet/Quintet/Hexagram/Double-Tap/Mirror/Consonant Core)
+│   ├── artisans.json          Artisan Keycap definitions (4 archetypes, trigger+effect)
+│   ├── consumables.json       Toolkit (tarot) + Cursed Hardware (spectral) + Grimoire definitions
+│   ├── blueprints.json        Workshop Blueprint definitions
+│   ├── firmware_tags.json     Firmware Tag definitions
+│   ├── depths.json            Depth encounter tables (Vanguard/Sentry/Boss pools)
 │   ├── secret_words.json      Rare words flagged `is_secret: true` (gameplay effect pending)
 │   └── drop_tables.json       Weighted loot tables keyed by monster `drop_table_id`
 │
@@ -26,19 +32,28 @@ letter-rogue/
 │   │                           Instantiates/destroys screen scenes. F1 debug shortcut.
 │   │
 │   ├── autoload/              # Singletons (registered in project.godot)
-│   │   ├── EventBus.gd        Signal definitions: navigation, combat, shop, upgrades
-│   │   ├── GameState.gd       Runtime state: money, round, bag, hand, monster, budgets, upgrades
-│   │   ├── PackService.gd     Active Cherry MX pack modifier lookups
-│   │   ├── KeyCapService.gd   Draw hand from bag, targeted redraw swaps, resolve_ability,
-│   │   │                       starter bag loaders
+│   │   ├── EventBus.gd        Signal definitions: navigation, combat, shop, upgrades, bag/draw,
+│   │   │                       scoring pipeline, artisan rail, depth/shop
+│   │   ├── GameState.gd       Runtime state: money, round, bag, discard_pile, hand, monster, budgets,
+│   │   │                       upgrades, word_form_levels, artisan_rail, active_blueprints, skip_tags, depth_stage
+│   │   ├── PackService.gd     Active Switch Pack modifier lookups + evaluate_conditionals() passives
+│   │   ├── KeyCapService.gd   Play-and-refill draw from bag, vowel safeguard, discard reshuffle,
+│   │   │                       resolve_ability, starter bag loaders
 │   │   ├── KeyCapSkinService.gd  Atlas-based skin system: loads keycap_kit_6.png slices via AtlasTexture,
-│   │   │                       supports cap_unpressed/cap_pressed/overlays states by skin_id (slate, etc.)
-│   │   ├── ShopService.gd     Tile buy/sell/reroll, 3 run upgrades (Bigger Bag, Extra Turn, Extra Redraw)
+│   │   │                       supports cap_unpressed/overlays states + switch atlas per pack id
+│   │   ├── ShopService.gd     Tile buy/sell/reroll, 3 run upgrades (Bigger Bag, Extra Turn, Extra Redraw),
+│   │   │                       Blueprint purchases, Grab Bag generation
 │   │   ├── WordService.gd     Dictionary load/lookup, word length multiplier, get_word_meta()
-│   │   ├── CombatService.gd   Round setup, word validation & scoring, damage application, win/lose,
-│   │   │                       EffectPipeline hooks, unified _current_modifier()
+│   │   ├── WordFormService.gd Word Form detection (Trio/Quartet/Mirror/Double-Tap/Consonant Core),
+│   │   │                       per-form base+mult, grimoire level tracking
+│   │   ├── ArtisanRailManager.gd 5-slot Artisan rail, equip/unequip, left-to-right cascade trigger eval
+│   │   ├── CombatService.gd   Round setup, word validation, 4-phase scoring pipeline, damage application,
+│   │   │                       win/lose, EffectPipeline hooks, unified _current_modifier()
+│   │   ├── DepthService.gd    3-stage encounter generation (Vanguard/Sentry/Boss), stage pools
+│   │   ├── ConsumableService.gd  Apply tarot/spectral/grimoire effects, bag mutations
 │   │   ├── DebugManager.gd    Debug hotkeys (F1 overlay, F12 screenshot), scene routing, state injection
-│   │   ├── EffectPipeline.gd  Hook registry: 7 combat lifecycle events (on_draw..on_turn_end)
+│   │   ├── EffectPipeline.gd  Hook registry: 11 combat lifecycle events (on_draw..on_turn_end,
+│   │   │                       on_word_form_evaluated, on_artisan_triggered, on_shop_opened, on_bag_mutated)
 │   │   └── LootService.gd     Rolls loot drops from monster drop_table_id on defeat
 │   │
 │   ├── services/
@@ -47,21 +62,23 @@ letter-rogue/
 │   │
 │   ├── screens/               # One script per screen, wired to .tscn via %UniqueName
 │   │   ├── MainMenuScreen.gd  Title + Start Run (emits run_setup_requested)
-│   │   ├── RunSetupScreen.gd  Pack cycler (5 MX switches, switch icon from skin atlas) + bag selector (4 bags) with preview
+│   │   ├── RunSetupScreen.gd  Pack cycler (5 Switch Packs, switch icon from skin atlas) + bag selector (4 bags) with preview
 │   │   ├── CombatScreen.gd    Word builder: hand tiles (latched deep-travel) → WordRuneSlot magical rune
-│   │   │                       display strip, scoring banner (Balatro-style sequential letter scores, multiplier
-│   │   │                       ramp, projectile to monster, smooth HP drop), wildcard picker, BagModal, VictoryModal.
+│   │   │                       display strip, Artisan rail display, scoring banner (4-phase Balatro-style:
+│   │   │                       sequential letter scores → form ignition → total damage, projectile to monster,
+│   │   │                       smooth HP drop), wildcard picker, BagModal, VictoryModal.
 │   │   │                       Tap-to-skip animation, drag-drop reorder via WordRackDropZone.
 │   │   │                       Word metadata subtitle (WORD · POS · "def" · Vn/Cn).
-│   │   ├── ShopScreen.gd      Tile buy/sell/reroll grids, run upgrade column, confirmation dialogs
+│   │   ├── ShopScreen.gd      Tile buy/sell/reroll grids, run upgrade column, Workshop Blueprint section,
+│   │   │                       confirmation dialogs
 │   │   ├── GameOverScreen.gd  Shows reached round + money, restart button
 │   │   ├── DebugOverlay.gd    Debug overlay panel (route buttons, state readout, time-scale, screenshot)
 │   │   └── UISandbox.gd       UI gallery: safe-area overlay, touch-target grid, mouse-filter demo boxes
 │   │
 │   └── components/
-│       ├── KeyCapElement.gd   Hand tile widget: letter, power badge, skin atlas textures (cap_unpressed/pressed),
-│       │                        overlay (foil/holographic/glass/gold), latched state with 5px deep-travel animation,
-│       │                        redraw-marked state. Not used in word strip.
+│       ├── KeyCapElement.gd   Hand tile widget: letter, power badge, skin atlas textures (cap_unpressed),
+│       │                        overlay (foil/holographic/glass/gold), latched state with 2px rigid plunge
+│       │                        animation (no squash/stretch), redraw-marked state. Not used in word strip.
 │       ├── WordRuneSlot.gd    Word-strip rune tile: letter label (cyan), power badge (amber), obsidian-style
 │       │                        StyleBoxFlat panel with cyan border. Tap-to-dismiss removes letter from word.
 │       ├── WordRackDropZone.gd Extends HBoxContainer. Drag-drop reorder zone with magnetic InsertionSpacer
@@ -91,7 +108,7 @@ letter-rogue/
 │       │                         only in embedded mode), SwitchBase (TextureRect direct child of root, standalone
 │       │                         (5,22) 38×28 full atlas vs embedded (5,26) 38×22 cropped duplicate atlas ~21%),
 │       │                         CapLayer (Control 48×40 at (0,0), wraps CapTexture, OverlayTexture,
-│       │                         LegendContainer, MarkFrame, PowerLabel as movable unit, plunges 5px on press),
+│       │                         LegendContainer, MarkFrame, PowerLabel as movable unit, rigid 2px plunge on press),
 │       │                         LetterLabel, PowerLabel. embedded_mode flag: combat-embedded vs shop-standalone.
 │       ├── WordRuneSlot.tscn    Rune slot: LetterLabel, PowerLabel (BadgeLabel variant). Draggable PanelContainer.
 │       ├── BagModal.tscn        Overlay + Panel + scrollable LetterGrid + VowelRatio + CloseButton
@@ -114,10 +131,18 @@ letter-rogue/
 │   ├── lexicon_test.gd        WordService.get_word_meta assertions
 │   ├── word_test.gd           is_word, length_multiplier, word_count
 │   ├── monster_modifier_test.gd  silence/vowel_lock/consonant_lock/no_repeats modifier rules
-│   └── scenario_test.gd       Full combat flow with "CAT" word
+│   ├── scenario_test.gd       Full combat flow with "CAT" word
+│   ├── test_bag_expansion.gd  V3: standard starter bag = 14 tiles w/ correct letters
+│   ├── test_play_refill.gd    V3: play-and-refill, discard, vowel safeguard
+│   ├── test_word_form_detection.gd  V3: form detection + pattern priority
+│   ├── test_scoring_pipeline.gd     V3: 4-phase pipeline (CAT=7, LEVEL=80)
+│   ├── test_artisan_rail.gd   V3: artisan cascade (Caps Lock flat, Rotary Knob xmult)
+│   ├── test_switch_packs.gd   V3: conditional passive evaluation
+│   └── test_consumables_depths.gd   V3: consumables apply + depth encounter gen
 │
 ├── tools/
 │   ├── build_words.py         One-off Python generator: wordlist → data/words.json (POS+def enriched)
+│   ├── deploy-web.ps1         Export Web release + copy build/web/* to T:\letter-rogue
 │   └── debug/
 │       └── sync_outline.py    Utility to push docs/*.md to the Outline wiki via API
 │
@@ -145,11 +170,11 @@ letter-rogue/
 
 ## Data Flow Notes
 
-- **Autoload order matters:** `EventBus → GameState → PackService → KeyCapService → KeyCapSkinService → ShopService → WordService → CombatService → ResolutionManager → DebugManager → EffectPipeline → LootService`. Services reference each other via autoload names at call time, not in `_ready()` cross-dependencies.
+- **Autoload order matters:** `EventBus → GameState → PackService → KeyCapService → KeyCapSkinService → ShopService → WordService → WordFormService → ArtisanRailManager → CombatService → DepthService → ConsumableService → ResolutionManager → DebugManager → EffectPipeline → LootService`. Services reference each other via autoload names at call time, not in `_ready()` cross-dependencies.
 
-- **Scoring flow:** `CombatService.calculate_word()` applies per-tile abilities, finishes, stickers, conditions, boss modifiers, and pack score_modifier. Returns `letter_scores` array driving the scoring animation. `WordService` supplies only `is_word()` and `length_multiplier()`. Flat `bonus_damage` is added after multiplier.
+- **Scoring flow — 4-phase pipeline:** `CombatService.calculate_word()` runs Phase 1 Tile Hops (per-tile letter score + abilities/finishes/stickers/conditions + pack passives → `letter_scores`), Phase 2 Word Form Ignition (`(Σ + form_base) × length_mult × form_mult`), Phase 3 Artisan Cascade (`(total_after_form + artisan_flat) × artisan_xmult`, from `ArtisanRailManager.cascade()`), Phase 4 Runic Blast (`roundi(total) + flat_bonus`). Returns `letter_scores`, `form_data`, `flat_bonus` driving the banner animation. `WordService` supplies only `is_word()` and `length_multiplier()`.
 
-- **Bag/hand lifecycle:** `GameState.bag` is the permanent tile collection. `KeyCapService.draw_hand()` samples tiles from bag into `GameState.hand` each turn. Tiles are not consumed — they return to bag at turn end. No discard pile exists.
+- **Bag/hand lifecycle — play-and-refill:** `GameState.bag` is the permanent tile collection, `GameState.discard_pile` holds consumed tiles. `KeyCapService.draw_hand()` refills `GameState.hand` to `draw_size()` keeping unused tiles; played tiles move to discard on commit; `_vowel_safeguard()` keeps 2+ vowels/wildcards in hand; when bag empties, discard reshuffles back into bag.
 
 - **Victory money timing:** On monster defeat, money is NOT added immediately. VictoryModal shows the computed total; money is added to `GameState.money` only on Continue button press. Non-victory turn ability money is still added immediately.
 

@@ -6,6 +6,17 @@
 - **Code First / Fast Iteration**: When receiving tactical bug fixes or UI adjustment prompts, proceed directly with code changes and Godot verification.
 - **Do NOT** perform full Phase 1 doc reconciliation or call Outline MCP on every single micro-task. Keep sessions lean and token-efficient.
 
+### 1.5. Web Export (every session)
+- **Every session** (after code changes, before finalization): re-export the Web build and deploy:
+  ```powershell
+  godot --headless --export-release "Web" build/web/index.html
+  ```
+- Then copy to NAS target:
+  ```powershell
+  Copy-Item -Path "build\web\*" -Destination "T:\letter-rogue" -Recurse -Force
+  ```
+- Or run the combined script: `.\tools\deploy-web.ps1`
+
 ### 2. Session Finalization (`/session-sync`)
 - When the user signals the end of the session or runs `/session-sync`:
   1. Review all code changes across the session.

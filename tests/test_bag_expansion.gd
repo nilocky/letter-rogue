@@ -1,6 +1,7 @@
 extends SceneTree
 
 func _init() -> void:
+	await process_frame
 	var text := FileAccess.get_file_as_string("res://data/starter_bags.json")
 	var data: Variant = JSON.parse_string(text)
 	var bags: Array = data.get("starter_bags", [])

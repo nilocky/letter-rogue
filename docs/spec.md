@@ -53,33 +53,37 @@ Web constraints:
 
 ### Service-based with Event Bus
 
-**Autoloads (12 singletons, registered in `project.godot`):**
+**Autoloads (16 singletons, registered in `project.godot`):**
 
 | Singleton | Responsibility |
 |---|---|
 | `EventBus` | Signal definitions only — no logic |
-| `GameState` | Runtime state: money, round, bag, hand, current monster, turn/redraw budgets, upgrades, active pack/bag ids |
-| `PackService` | Active Cherry MX pack modifier lookups |
-| `KeyCapService` | Draw hand from bag, targeted redraw swaps, resolve ability effects, starter bag loaders |
+| `GameState` | Runtime state: money, round, bag, discard pile, hand, current monster, turn/redraw budgets, upgrades, active pack/bag ids, word form levels, artisan rail, active blueprints, skip tags, depth stage |
+| `PackService` | Active Switch Pack modifier lookups + conditional passive evaluation (`evaluate_conditionals`) |
+| `KeyCapService` | Play-and-refill draw from bag (used tiles → discard, unused stay), vowel safeguard, discard reshuffle, resolve ability effects, starter bag loaders |
 | `KeyCapSkinService` | Atlas-based skin system for keycap textures |
-| `ShopService` | Shop inventory generation, buy/sell/reroll, persistent run upgrade purchases |
+| `ShopService` | Shop inventory generation, buy/sell/reroll, persistent run upgrade purchases, Blueprint purchases, Grab Bag generation |
 | `WordService` | Dictionary loading (`data/words.json`), word validation, word length multiplier, `get_word_meta()` for POS/definition/letter counts |
-| `CombatService` | Round setup, per-turn word validation & scoring, damage application, win/lose from turn budget. Hooks into `EffectPipeline` for cap effect lifecycle. |
+| `WordFormService` | Word Form pattern detection (Trio/Quartet/Mirror/Double-Tap/Consonant Core), per-form base damage & multiplier, grimoire level tracking |
+| `ArtisanRailManager` | 5-slot Artisan rail state, equip/unequip, left-to-right cascade trigger evaluation |
+| `CombatService` | Round setup, per-turn word validation & 4-phase scoring, damage application, win/lose from turn budget. Hooks into `EffectPipeline` for cap effect lifecycle. |
+| `DepthService` | 3-stage encounter generation (Vanguard/Sentry/Boss), stage pools |
+| `ConsumableService` | Apply tarot/spectral/grimoire effects, bag mutations |
 | `ResolutionManager` | Cross-platform desktop window sizing (82% height cap, 9:16 aspect preservation) and mobile fullscreen |
 | `DebugManager` | Debug-only hotkeys (F1 overlay toggle, F12 screenshot), scene routing, state injection, time-scale |
 | `EffectPipeline` | Hook registry: caps register `{hook, apply}` callbacks triggered on combat lifecycle events |
 | `LootService` | Rolls loot drops from monster's `drop_table_id` on defeat |
 
-**Autoload order matters:** `EventBus`, `GameState`, `PackService`, `KeyCapService`, `KeyCapSkinService`, `ShopService`, `WordService`, `CombatService`, `ResolutionManager`, `DebugManager`, `EffectPipeline`, `LootService`.
+**Autoload order matters:** `EventBus`, `GameState`, `PackService`, `KeyCapService`, `KeyCapSkinService`, `ShopService`, `WordService`, `WordFormService`, `ArtisanRailManager`, `CombatService`, `DepthService`, `ConsumableService`, `ResolutionManager`, `DebugManager`, `EffectPipeline`, `LootService`.
 
 ### Screens
 
 | Scene | Purpose |
 |---|---|---|
 | `MainMenuScreen` | Title + Start Run button |
-| `RunSetupScreen` | Cherry MX Pack (5) + Starter Bag (4) selection |
-| `CombatScreen` | Word builder: hand tiles with deep-travel latched state, WordRuneSlot magical rune display strip, damage preview, scoring banner, BagModal, VictoryModal |
-| `ShopScreen` | Buyable tiles grid, sell/reroll, upgrade column |
+| `RunSetupScreen` | Switch Pack (5) + Starter Bag (4) selection |
+| `CombatScreen` | Word builder: hand tiles with deep-travel latched state, WordRuneSlot magical rune display strip, Artisan rail display, damage preview, 4-phase scoring banner, BagModal, VictoryModal |
+| `ShopScreen` | Buyable tiles grid, sell/reroll, upgrade column, Workshop Blueprints |
 | `GameOverScreen` | Round reached + money display, restart |
 
 ### GameRoot State Machine
@@ -94,12 +98,12 @@ MENU → RUN_SETUP → COMBAT ←→ SHOP → GAME_OVER
 
 ### Scoring Animation (CombatScreen)
 
-Balatro-style sequential animation with deliberate timing:
+Balatro-style sequential animation aligned to the 4-phase scoring pipeline:
 1. **Banner entrance** (0.25s fade + scale)
-2. **Phase A: Sequential letter hop** — each tile hops up (0.15s), lands with bounce (0.18s), floating score label fades up, 0.2s pause between tiles
-3. **Phase B: Multiplier ignition** — mult panel pulses, ramps from 1.0 to final mult over 0.35s (words ≥3 only)
-4. **Phase C: Final resolution** — total damage label appears with scale pulse, projectile flies from banner to monster (0.35s), HP bar drops smoothly (0.4s), damage float text, banner fades out (0.25s)
-5. **Phase B word metadata:** before multiplier ignition, a `%WordMetaLabel` shows `WORD · POS · "def" · Vn/Cn` (MicroLabel, hidden by default)
+2. **Phase A: Sequential letter hop** — each tile hops up (0.15s), lands with bounce (0.18s), floating score label fades up, 0.2s pause between tiles. Running total accumulates into the BASE label.
+3. **Phase B: Word Form ignition + multiplier ramp** — Word Form base damage lands into the BASE label first (scale punch), then the mult panel pulses and ramps from 1.0 to `length_mult × form_mult` over 0.35s (words ≥3 only)
+4. **Phase C: Artisan cascade + final resolution** — total damage label (`int(res["damage"])`, full pipeline result) appears with scale pulse, projectile flies from banner to monster (0.35s), HP bar drops smoothly (0.4s), damage float text, banner fades out (0.25s)
+5. **Word metadata:** before multiplier ignition, a `%WordMetaLabel` shows `WORD · POS · "def" · Vn/Cn` (MicroLabel, hidden by default)
 6. **Phase D: Commit** — `CombatService.commit_word()` called
 
 Player can click during animation to skip remaining animation.
@@ -120,11 +124,11 @@ MainMenu → RunSetup → Combat → (win) → VictoryModal → Shop → Combat 
 
 ### Turn Loop
 
-1. **Draw** — fill hand to current draw size (default 5) by sampling random tiles from bag. Tiles are NOT consumed — they return to bag at turn end. No discard pile.
+1. **Draw (play-and-refill)** — fill hand to current draw size (default 5) by sampling random tiles from bag. On turn start, **unused tiles stay in hand**; only tiles played on the previous turn are missing and get refilled. A vowel safeguard swaps in vowels/wildcards to guarantee ≥2 per hand. When the bag empties, the discard pile reshuffles back into the bag.
 2. **Spell** — build exactly one word from hand tiles. Tap tile to add to word strip; tap word strip tile to remove it. Drag-and-drop reorder within word strip. Wildcard tiles open a letter picker popup.
 3. **Play** — any length ≥1 is valid. 1-2 letter plays deal flat base power (no multiplier). 3+ letter plays must be in the dictionary.
-4. **Score** — sequential Balatro-style animation, then damage applied.
-5. **End turn** — tiles return to bag; decrement turns; next turn begins.
+4. **Score** — 4-phase Balatro-style animation (Tile Hops → Word Form → Artisan Cascade → Runic Blast), then damage applied.
+5. **End turn** — **played tiles move to the discard pile** (not back to bag); decrement turns; unused hand tiles persist into the next turn, missing tiles refilled.
 
 ### Redraw (Targeted Swap)
 
@@ -167,7 +171,8 @@ drop_table_id: String     (loot table id for LootService, empty = no drops)
 money: int
 round_number: int
 bag: Array[Dictionary]        (permanent tile collection)
-hand: Array[Dictionary]       (current turn's tiles)
+discard_pile: Array           (played tiles awaiting reshuffle)
+hand: Array[Dictionary]       (current turn's tiles, unused persist between turns)
 current_monster: Dictionary
 shop_inventory: Array[Dictionary]
 active_pack_id: String
@@ -178,6 +183,12 @@ upgrade_draw: int             (bag-size upgrade bonus)
 upgrade_turns: int            (per-round turn bonus)
 upgrade_redraws: int          (per-round redraw bonus)
 next_draw_bonus: int          (one-time extra draw, e.g. Blue sticker)
+altar_rune: Dictionary        (communal tile socket, persists across turns)
+word_form_levels: Dictionary  ({form_id: level}, raised by Grimoires)
+artisan_rail: Array           (5 slots, null or artisan Dictionary)
+active_blueprints: Dictionary ({blueprint_id: true})
+skip_tags: Array              (accumulated Firmware Tags)
+depth_stage: int              (0=vanguard, 1=sentry, 2=boss)
 
 round_turn_budget()   = BASE_TURNS(3) + upgrade_turns
 round_redraw_budget() = BASE_REDRAWS(3) + upgrade_redraws
@@ -196,10 +207,41 @@ round_reward()        = 5 + round_number * 2
 
 Wildcard tiles contribute **0 base power** but count toward word length.
 
-## Scoring Formula
+## Scoring — 4-Phase Pipeline
+
+`CombatService.calculate_word()` runs four phases (Balatro-style):
 
 ```
-word_damage = round(sum(letter_base + abilities) * length_multiplier) + flat_bonus_damage
+Phase 1: Tile Hops
+  for each letter in word:
+    base = letter_base_score(letter)
+    + pack_score_modifier
+    + ability_score
+    × ability_mult (double_score = ×2)
+    + finish_bonus (foil=+3, holo=+1)
+    × finish_mult (polychrome=×1.5)
+    × sticker_mult (red=×2)
+    × condition_mult (glass=×2)
+    (boss modifier zeroing: vowel_lock/consonant_lock)
+  letter_scores[i] = final_letter_value
+
+Phase 2: Word Form Ignition
+  form_id = WordFormService.detect(slots)
+  form_base = form.base_damage + grimoire_level × 2
+  form_mult = form.base_multiplier + grimoire_level × 0.1
+  length_mult = length_multiplier(len(word))
+  total_after_form = (Σ letter_scores + form_base) × length_mult × form_mult
+
+Phase 3: Artisan Cascade
+  artisan_flat = 0, artisan_xmult = 1.0
+  for artisan in rail (slot 0→4), left-to-right:
+    if trigger matches (word, slots, letter_scores, form_data, pack):
+      flat_power: artisan_flat += effect.value
+      x_mult:     artisan_xmult *= effect.value
+  total_after_artisans = (total_after_form + artisan_flat) × artisan_xmult
+
+Phase 4: Runic Blast
+  damage = roundi(total_after_artisans) + flat_bonus_damage
 ```
 
 ### Length Multiplier
@@ -212,6 +254,22 @@ word_damage = round(sum(letter_base + abilities) * length_multiplier) + flat_bon
 | 5 | 1.6 |
 | 6 | 2.0 |
 | 7+ | 2.5 |
+
+### Word Forms
+
+Word Forms are detected automatically (like poker hands) — no player selection. Pattern priority: Mirror (palindrome) > Double-Tap (adjacent duplicate) > Consonant Core (3+ of V/K/X/J/Q/Z) > length-based. Special patterns win over length forms at the same length.
+
+| Form | Pattern | Base Damage | Base Mult |
+|---|---|---|---|
+| Trio | 3 letters, any | 0 | ×1.0 |
+| Quartet | 4 letters, any | 4 | ×1.3 |
+| Quintet | 5 letters, any | 8 | ×1.6 |
+| Hexagram | 6+ letters, any | 12 | ×2.0 |
+| Double-Tap | 3+ letters with adjacent duplicate | 6 | ×1.5 |
+| Mirror Word | 3+ letters palindrome | 10 | ×2.0 |
+| Consonant Core | 3+ of V K X J Q Z | 5 | ×1.5 |
+
+Grimoires raise a form's level: each level adds `+2 base damage` and `+0.1 multiplier`. Levels stored in `GameState.word_form_levels`.
 
 ### Ability Contributions (per tile)
 
@@ -267,21 +325,23 @@ Every 3rd round a boss appears with extra HP and a modifier:
 | `no_repeats` | Same letter cannot appear twice in one word |
 | `silence` | Abilities, finishes, stickers, conditions disabled |
 
-## Cherry MX Switch Packs
+## Switch Packs
+
+Five thematic Switch Packs replace the old Cherry MX packs. Each carries conditional passives evaluated via `PackService.evaluate_conditionals()`:
 
 | Pack | Effect |
 |---|---|
-| MX Red | +1 draw per turn |
-| MX Blue | +2 power per tile used |
-| MX Brown | +1 power per tile used, start with +$5 |
-| MX Black | +3 power per tile used, -1 draw per turn |
-| MX Speed | Draw 6 tiles per turn (overrides base) |
+| Clicky | Rare consonants (V,K,X,J,Q,Z) deal +50% damage; -1 redraw token |
+| Linear | +1 draw per turn; short words (≤3) deal -20% damage |
+| Tactile | 5-letter words trigger ×1.5 X-Mult; first 3 key presses double base power |
+| Heavy Tactile | Min 4-letter words; 6+ letter words trigger ×2.5 X-Mult |
+| Silent | -10% base word points; immune to Boss Silence debuffs |
 
 ## Starter Bags
 
 | Bag | Tiles | Start Money |
 |---|---|---|
-| Standard | E T A O I N S R (8) | 0 |
+| Standard | E T A O I N S R D L C M P H (14) | 0 |
 | Vowel Explorer | E E A A I O U ~ (8) | 0 |
 | Consonant Heavy | T N S R V K X J Q Z (10) | 0 |
 | Minimalist | E T A O I R (6) | 15 |
@@ -300,6 +360,81 @@ Every 3rd round a boss appears with extra HP and a modifier:
 | Bigger Bag | +1 draw per turn | $6 | ×2 each level |
 | Extra Turn | +1 turn per round | $8 | ×2 each level |
 | Extra Redraw | +1 redraw per round | $5 | ×2 each level |
+
+### Workshop Blueprints
+
+| Blueprint | Effect | Price |
+|---|---|---|
+| Anti-Ghosting Matrix | +1 tile drawn per turn permanently | $10 |
+| Silicone Dampener | Immune to Boss Silence debuffs | $12 |
+| Group-Buy Pass | 20% discount on all shop items | $8 |
+
+Blueprints are one-shot permanent run upgrades stored in `GameState.active_blueprints`. Each is purchasable once.
+
+### Grab Bags
+
+Random packs of pick-N items offered in the shop, generated by `ShopService.generate_grab_bag(pack_type, choices, pick)`:
+- **Artisan Grab Bag** — 3-pick-1 from artisan pool
+- **Toolkit** — tarot consumables
+- **Black Box** — spectral consumables
+- **Grimoire** — word-form leveling items
+
+## Artisan Keycap Rail
+
+A 5-slot macro rail (Balatro-style Joker row) above the word strip. Artisans equip into fixed slots and trigger left-to-right each word played — position on the rail matters.
+
+| Archetype | Behavior |
+|---|---|
+| Flat Power | +N flat damage when triggered |
+| X-Mult | ×N multiplier when triggered |
+| Synergy | Trigger off word properties (form, vowels, letter patterns) |
+| Economy | Money / bag-scaling triggers |
+
+Trigger types: `word_length` (min/max), `no_redraws_used`, `rare_consonant`, `unused_redraws`, `more_vowels_than_consonants`, `word_form`, `leftover_turns`, `consecutive_start_letter`. Equip/unequip via `ArtisanRailManager.equip(slot, artisan)` / `unequip(slot)`; the cascade runs in `CombatService` Phase 3.
+
+## Consumables
+
+Three classes of one-shot consumables, applied via `ConsumableService.apply(item)`:
+
+### Modder's Toolkit (Tarot — bag sculpting)
+
+| Item | Effect |
+|---|---|
+| Keycap Puller | Remove 1 selected tile from the bag |
+| Hot-Swap Tool | Duplicate 1 target letter tile |
+| Laser Engraver | Convert 1 tile into a full wildcard |
+| Lube Pen | Lubed status: tile scores twice |
+
+### Cursed Hardware (Spectral — high risk/reward)
+
+| Item | Effect |
+|---|---|
+| Short Circuit | Destroy 3 random tiles, gain $25 |
+| Overclock | Polychrome 1 random tile, -1 max redraw |
+| Ghost Wire | Transform 2 hand tiles into full wildcards |
+
+### Lexicon Grimoires (Word Form leveling)
+
+| Item | Effect |
+|---|---|
+| Trio Codex | Trio: +5 base damage, +1 mult |
+| Quartet Scroll | Quartet: +5 base damage, +1 mult |
+| Mirror Tome | Mirror: +10 base damage, +2 mult |
+| Double-Tap Tome | Double-Tap: +10 base damage, +2 mult |
+
+All consumable bag mutations emit `on_bag_mutated` through EffectPipeline.
+
+## Depths Progression
+
+Three-stage encounter scaling (replaces flat round scaling):
+
+| Stage | Pool | Notes |
+|---|---|---|
+| 0 | Vanguard | Entry encounters |
+| 1 | Sentry | Mid-depth encounters |
+| 2+ | Bosses | Boss monsters with modifiers |
+
+`DepthService.generate_encounter(stage)` picks from the stage pool. Every 3rd round is a boss round and advances `depth_stage`. Firmware Tags (e.g. Free Grab Bag, Bonus Turns, Double Interest) can be earned by skipping encounters — stored in `GameState.skip_tags`.
 
 ## Victory & Economy
 
@@ -320,12 +455,18 @@ Every 3rd round a boss appears with extra HP and a modifier:
 All JSON under `data/`, ships inside exported pck:
 
 | File | Purpose |
-|---|---|
+|---|---|---|
 | `data/words.json` | Word dictionary (~370k words, 3+ letters, enriched with POS bitmask + definition) |
 | `data/key_caps.json` | Shop pool tiles (letter + abilities + modifiers) |
 | `data/monsters.json` | Normal + boss monster definitions (unified `modifier` field, `drop_table_id`) |
-| `data/packs.json` | Cherry MX pack modifiers |
+| `data/packs.json` | Switch Pack modifiers + conditional passives |
 | `data/starter_bags.json` | Starting bag loadouts |
+| `data/word_forms.json` | Word Form definitions (base damage, multiplier per form) |
+| `data/artisans.json` | Artisan Keycap definitions (4 archetypes, trigger + effect) |
+| `data/consumables.json` | Toolkit (tarot), Cursed Hardware (spectral), Grimoire definitions |
+| `data/blueprints.json` | Workshop Blueprint definitions |
+| `data/firmware_tags.json` | Firmware Tag definitions |
+| `data/depths.json` | Depth encounter tables (Vanguard/Sentry/Boss pools) |
 | `data/secret_words.json` | Rare words flagged `is_secret: true` in metadata (future: scoring bonus) |
 | `data/drop_tables.json` | Weighted loot tables keyed by `drop_table_id` on monsters |
 
@@ -335,12 +476,15 @@ All JSON under `data/`, ships inside exported pck:
 - Redraw costs 1 token per action (any number of tiles), not per tile
 - Victory money held back until Continue button pressed
 - No player HP, no shield, no healing
-- No discard pile — tiles return to bag at turn end
+- **Play-and-refill bag** — played tiles go to the discard pile (a cooldown tray, not a strategic resource); unused tiles persist in hand across turns; discard reshuffles into bag when the bag empties
 - All UI responsive via Containers — no fixed positions
 - Debug hotkeys gated behind `OS.is_debug_build()`: F1 toggles DebugOverlay, F12 saves screenshot to `res://screenshots/`
-- `EffectPipeline` provides 7 hook points: on_draw, on_letter_slotted, on_word_validated, on_score_calculated, on_monster_damaged, on_monster_defeated, on_turn_end
+- `EffectPipeline` provides 11 hook points: on_draw, on_letter_slotted, on_word_validated, on_score_calculated, on_monster_damaged, on_monster_defeated, on_turn_end, on_word_form_evaluated, on_artisan_triggered, on_shop_opened, on_bag_mutated
 - Monster modifiers unified under single `modifier` field (replaces separate `boss_modifier`)
 - Secret words from `data/secret_words.json` flagged in metadata; gameplay effects pending
+- Word Forms are detected, not selected — pattern identification is automatic (like poker hands)
+- Artisan cascade is strictly left-to-right — rail position orders trigger resolution
+- Altar Rune socket and dual-stage audio hooks deferred (stubs exist); AudioManager is out of scope
 
 ## KeyCap 3-Layer Mechanical Sandwich Architecture
 
@@ -353,16 +497,16 @@ Each `KeyCapElement` tile is a context-aware stack rendering from back to front.
 |---|---|---|---|
 | **Root** | `Control` (48×54) | — | KeycapButton root bounding box, `mouse_filter = PASS`. Holds SocketShadow (embedded only) + SwitchBase (bottom) + CapLayer (top). |
 | **SocketShadow** | `ColorRect` (38×3 at 5,46) | — | Dark recessed socket slit `Color(0.08, 0.10, 0.14, 0.95)`, `visible` only in embedded mode. Reads as the carved slot the switch plugs into. |
-| **SwitchBase** | `TextureRect` | `keycap_kit_6.png` Row 3 (switches) | Cherry MX transparent housing + colored cross-stem. Standalone: position (5,22), size 38×28, full uncropped atlas. Embedded: position (5,26), size 38×22, cropped **duplicate** of the atlas (`region.size.y *= 0.79`). Atlas key = `"switches"` + `GameState.active_pack_id` (mx_red/mx_blue/mx_brown/mx_black/mx_speed). Always visible, fixed position — never moves. |
+| **SwitchBase** | `TextureRect` | `keycap_kit_6.png` Row 3 (switches) | Cherry MX transparent housing + colored cross-stem. Standalone: position (5,22), size 38×28, full uncropped atlas. Embedded: position (5,26), size 38×22, cropped **duplicate** of the atlas (`region.size.y *= 0.79`). Atlas key = `"switches"` + `GameState.active_pack_id` (clicky/linear/tactile/heavy_tactile/silent). Always visible, fixed position — never moves. |
 | **CapLayer** | `Control` (48×40 at 0,0) | — | Wraps CapTexture, OverlayTexture, LegendContainer, MarkFrame, and PowerLabel as a single movable unit. `position.y` is animated for press/release. |
-| **CapTexture** | `TextureRect` (full rect, child of CapLayer) | `keycap_kit_6.png` Row 1/2 | The movable keycap. `cap_unpressed` (Y=0) or `cap_pressed` (Y=5px, squashed sprite). |
+| **CapTexture** | `TextureRect` (full rect, child of CapLayer) | `keycap_kit_6.png` Row 1/2 | The movable keycap. Only `cap_unpressed` is used — press is a rigid 2px translate, no squashed sprite swap. |
 | **OverlayTexture** | `TextureRect` (full rect, child of CapLayer) | `keycap_kit_6.png` Row 4 | Finish/condition/sticker overlays (foil, holographic, glass, sticker_gold). |
 
 **Layer ordering** (back to front): `SocketShadow → SwitchBase → CapLayer (CapTexture → OverlayTexture → LegendContainer → MarkFrame → PowerLabel)`.
 
 **Embedding logic** (`@export var embedded_mode: bool = false`, setter `set_embedded_mode(enabled)`): `_apply_switch_base()` branches on the flag. Embedded: `SocketShadow.visible = true`; the switch atlas is **duplicated** (`base_atlas.duplicate()`) and `cropped.region.size.y *= 0.79` before assignment — the crop is proportional (~21%) because the switch slice is 262×258 source px (a literal 6px crop would remove only ~0.7 display px). The duplicate guarantees the shared cached atlas used by standalone/Shop tiles is never mutated. Embedded geometry: SwitchBase `position (5,26)`, `size (38,22)`. Standalone: `SocketShadow.visible = false`, full atlas, `position (5,22)`, `size (38,28)`. `SwitchBase` uses `mouse_filter = 2` (ignore) so it never intercepts clicks, `expand_mode = 1` (EXPAND_IGNORE_SIZE), and `stretch_mode = 5` (STRETCH_KEEP_ASPECT_CENTERED). The switch housing is always at the same Y position — only the CapLayer moves on press/release.
 
-**CapLayer** is a `Control` (48×40 at (0,0)) that wraps CapTexture, OverlayTexture, LegendContainer, MarkFrame, and PowerLabel as a single movable unit. On press/release, `CapLayer.position.y` is animated from `UNPRESSED_CAP_Y` (0.0, floating high as in image-2) to `PRESSED_CAP_Y` (5.0, squashed as in image-3), plunging the entire keycap down to rest solidly on the fixed switch base and cover the top of the stem.
+**CapLayer** is a `Control` (48×40 at (0,0)) that wraps CapTexture, OverlayTexture, LegendContainer, MarkFrame, and PowerLabel as a single movable unit. On press/release, `CapLayer.position.y` is animated from `UNPRESSED_CAP_Y` (0.0, floating high as in image-2) to `PRESSED_CAP_Y` (2.0, rigid 2-3px plunge as in image-3), plunging the entire keycap down to rest solidly on the fixed switch base and cover the top of the stem. The 2px plunge replaces the old 5px squash/stretch — no `cap_pressed` sprite swap, translation only.
 
 ## Stone Altar Safe Area & Hand Keyboard Calibration
 
@@ -394,9 +538,9 @@ Both real-time mouse-down press and latched (word-strip) state share identical v
 
 | Aspect | Behavior |
 |---|---|
-| **Sprite** | `cap_pressed` atlas texture (squashed perspective) |
-| **Vertical offset** | 5px downward (`PRESSED_CAP_Y` from `UNPRESSED_CAP_Y` 0.0) |
+| **Sprite** | `cap_unpressed` atlas texture always (no squashed sprite on press) |
+| **Vertical offset** | 2px downward (`PRESSED_CAP_Y` from `UNPRESSED_CAP_Y` 0.0), tweened rigid — no squash/stretch |
 | **Color tint** | `Color(0.85, 0.88, 0.95, 1.0)` — slight tactile shading |
-| **CapLayer offset** | Entire CapLayer shifts 5px down, plunging keycap flush onto fixed SwitchBase |
+| **CapLayer offset** | Entire CapLayer shifts 2px down, plunging keycap flush onto fixed SwitchBase |
 
 On mouse-button release, the keycap **never pops up** — it remains in the pressed position. CombatScreen then either calls `set_latched(true)` (seamless stay-down) or the next interaction pops it up. This eliminates the 1-frame jitter where the keycap would bounce up before being latched back down.

@@ -7,8 +7,12 @@
 ### Core Architecture
 - [x] Autoload singletons: EventBus, GameState, PackService, KeyCapService, ShopService, WordService, CombatService, ResolutionManager
 - [x] DebugManager autoload (F1 overlay, F12 screenshot, scene routing, state injection, time-scale, mechanic triggers)
-- [x] EffectPipeline autoload (hook registry: 7 combat lifecycle events)
+- [x] EffectPipeline autoload (hook registry: 11 combat lifecycle events)
 - [x] LootService autoload (drop table rolls from monster drop_table_id)
+- [x] WordFormService autoload (Word Form detection + grimoire level tracking)
+- [x] ArtisanRailManager autoload (5-slot Artisan rail, cascade dispatch)
+- [x] DepthService autoload (3-stage encounter generation)
+- [x] ConsumableService autoload (tarot/spectral/grimoire effects, bag mutations)
 - [x] GameRoot state machine: MENU → RUN_SETUP → COMBAT → SHOP → GAME_OVER
 - [x] GameRoot routing hooks: route_to(), inject_state(), trigger_mechanic(), jump_boss_round()
 - [x] EventBus signal-driven screen transitions
@@ -21,15 +25,21 @@
 - [x] `data/drop_tables.json` — weighted loot tables keyed by drop_table_id
 - [x] `data/monsters.json` — unified `modifier` field + `drop_table_id`, added Shielded Goblin + Raging Orcs
 - [x] `data/key_caps.json` — shop pool letter tiles with abilities, finishes, stickers, conditions
-- [x] `data/monsters.json` — normal + boss monsters with modifiers
-- [x] `data/packs.json` — 5 Cherry MX packs with draw/score/start-money modifiers
-- [x] `data/starter_bags.json` — 4 starter bag loadouts (Standard, Vowel Explorer, Consonant Heavy, Minimalist)
+- [x] `data/packs.json` — 5 Switch Packs with conditional passives (Clicky/Linear/Tactile/Heavy Tactile/Silent)
+- [x] `data/starter_bags.json` — 4 starter bag loadouts (Standard 14 tiles, Vowel Explorer, Consonant Heavy, Minimalist)
+- [x] `data/word_forms.json` — Word Form definitions (Trio/Quartet/Quintet/Hexagram/Double-Tap/Mirror/Consonant Core)
+- [x] `data/artisans.json` — 12 Artisan Keycap definitions across 4 archetypes (flat_power/x_mult/synergy/economy)
+- [x] `data/consumables.json` — Modder's Toolkit (4 tarot), Cursed Hardware (3 spectral), Lexicon Grimoires (4)
+- [x] `data/blueprints.json` — 3 Workshop Blueprints (Anti-Ghosting, Silicone Dampener, Group-Buy Pass)
+- [x] `data/firmware_tags.json` — 3 Firmware Tags (Free Grab Bag, Bonus Turns, Double Interest)
+- [x] `data/depths.json` — Depth encounter tables (Vanguard/Sentry/Boss pools)
 
 ### Services
 - [x] `WordService` — dictionary load/lookup, word length multiplier, `get_word_meta()` with POS/definition/vowel/consonant counts
-- [x] `CombatService` — round setup, validate_word, calculate_word, commit_word, monster damage/win-lose, EffectPipeline hook integration, unified `_current_modifier()` dispatch
-- [x] `ShopService` — tile buy/sell/reroll, run upgrades (Bigger Bag, Extra Turn, Extra Redraw)
-- [x] `PackService` — pack lookup for draw/score modifiers
+- [x] `CombatService` — round setup, validate_word, 4-phase calculate_word, commit_word (tiles → discard), monster damage/win-lose, EffectPipeline hook integration, unified `_current_modifier()` dispatch
+- [x] `ShopService` — tile buy/sell/reroll, run upgrades (Bigger Bag, Extra Turn, Extra Redraw), Blueprint purchases, Grab Bag generation
+- [x] `PackService` — pack lookup for draw/score modifiers, `evaluate_conditionals()` for Switch Pack passives
+- [x] `KeyCapService` — play-and-refill draw_hand(), vowel safeguard, discard reshuffle, resolve_ability, starter bag loaders
 
 ### Screens
 - [x] `MainMenuScreen` — title + Start Run button (simplified, no pack list)
@@ -65,6 +75,20 @@
 - [x] MSDF font rendering with theme variations
 - [x] Safe area margins (top 96, bottom 64-80)
 
+### V3 Milestone — Balatro-Style Mechanics & Bag Optimization (2026-09-13)
+
+Design doc: `docs/superpowers/specs/2026-09-13-letter-rogue-v3-balatro-bag-optimization-design.md`
+
+- [x] **M1 Bag & Draw Overhaul** — play-and-refill (used tiles → discard, unused stay in hand), discard reshuffle on empty bag, standard bag expanded 8→14 tiles (added D, L, C, M, P, H), vowel safeguard (≥2 vowels/wildcards per hand)
+- [x] **M2 Word Form Engine** — `WordFormService.detect()` pattern priority Mirror > Double-Tap > Consonant Core > length; per-form base damage + multiplier; grimoire levels tracked in `GameState.word_form_levels`
+- [x] **M3 4-Phase Scoring Pipeline** — `calculate_word()` = Tile Hops → Word Form Ignition → Artisan Cascade → Runic Blast; `length_mult × form_mult` applied in Phase 2; flat bonus in Phase 4; CombatScreen banner animates all 4 phases
+- [x] **M4 Artisan Keycap Rail** — 5-slot rail, left-to-right cascade, 12 artisan definitions across 4 archetypes, trigger evaluation (word_length/no_redraws_used/rare_consonant/unused_redraws/more_vowels/word_form/leftover_turns)
+- [x] **M5 Switch Packs Rewrite** — 5 thematic packs with conditional passives (Clicky/Linear/Tactile/Heavy Tactile/Silent), `PackService.evaluate_conditionals()`, switch atlas mappings for new pack ids
+- [x] **M5a KeyCapElement Rigid Plunge & Dual Perspective** — removed squash/stretch sprite, rigid 2px tweened plunge, dual-perspective embedded/standalone modes
+- [x] **M6 Consumables, Depths & Shop Expansion** — Modder's Toolkit (4 tarot), Cursed Hardware (3 spectral), Lexicon Grimoires (4), Workshop Blueprints (3), Grab Bags, Firmware Tags, 3-stage Depth progression, Blueprint shop section
+- [x] **Banner display fix** — scoring banner shows full pipeline result: BASE = Σ letter scores + form base, MULT = length_mult × form_mult, TOTAL = pipeline damage (fixes HUME=25 display mismatch)
+- [x] **Web export + deploy** — `./tools/deploy-web.ps1` (fixed `$ProjectRoot` double-Split-Path bug + artifact-check guard), deployed to `T:\letter-rogue`
+
 ## Current Active Tasks
 
 ### Layout & Responsiveness
@@ -91,7 +115,8 @@
 
 ### Testing & Quality
 - [x] Headless test suite: run_tests.gd runner + 4 test suites (lexicon, word, monster_modifier, scenario)
-- [x] All 4 test suites passing
+- [x] V3 headless tests: test_bag_expansion, test_play_refill, test_word_form_detection, test_scoring_pipeline, test_artisan_rail, test_switch_packs, test_consumables_depths
+- [x] All 11 test suites passing
 - [ ] **Edge cases** — empty bag, empty hand, zero turns left boundary, wildcard with no letters in picker
 - [ ] **Bag overflow** — bag larger than hand draw size (already handled via `mini()`)
 
@@ -100,7 +125,9 @@
 ### Content Expansion
 - [ ] **More boss variations** — additional boss modifiers beyond the current 4
 - [ ] **More shop items** — additional upgrades, consumables, special tiles
-- [ ] **Additional Cherry MX packs** — more pack variety
+- [ ] **Additional Switch Packs** — more pack variety
+- [ ] **Artisan rail UI in CombatScreen** — ArtisanSlot.tscn component (ArtisanRailManager service complete; UI display pending)
+- [ ] **Altar Rune socket** — communal tile persisting across turns (deferred from M1)
 - [ ] **Pack unlock progression** — stake/difficulty system (Balatro-style)
 - [ ] **Endless mode** — continue past boss rounds with escalating difficulty
 - [ ] **Achievements** — track milestones, word stats, longest word
