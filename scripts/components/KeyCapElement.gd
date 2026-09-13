@@ -24,7 +24,7 @@ var skin_id: String = "slate"
 var _pressed: bool = false
 var is_latched: bool = false
 const UNPRESSED_CAP_Y: float = 0.0
-const PRESSED_CAP_Y: float = 5.0
+const PRESSED_CAP_Y: float = 2.0
 
 
 func setup(data: Dictionary):
@@ -116,7 +116,6 @@ func set_redraw_marked(marked: bool) -> void:
 
 func set_latched(latched: bool, animated: bool = true) -> void:
 	is_latched = latched
-	_apply_skin("cap_pressed" if latched else "cap_unpressed")
 	if animated:
 		var tween := create_tween().set_parallel(true)
 		var target_y := PRESSED_CAP_Y if latched else UNPRESSED_CAP_Y
@@ -131,7 +130,6 @@ func _depressed_color() -> Color:
 	return Color(0.85, 0.88, 0.95, 1.0)
 
 func _update_visual_state(depressed: bool) -> void:
-	_apply_skin("cap_pressed" if depressed else "cap_unpressed")
 	cap_layer.position.y = PRESSED_CAP_Y if depressed else UNPRESSED_CAP_Y
 	modulate = _depressed_color() if depressed else Color.WHITE
 
