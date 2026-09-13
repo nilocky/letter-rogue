@@ -499,7 +499,15 @@ func _play_score_animation() -> void:
 			]
 			word_meta_label.show()
 
-	# Phase B: Multiplier ignition
+	# Phase B: Multiplier ignition (form base lands first, then mult ramps)
+	var form_base: int = form_data.get("base_damage", 0)
+	if form_base > 0:
+		current_base += float(form_base)
+		base_score_label.text = "%d" % roundi(current_base)
+		var form_punch := create_tween()
+		form_punch.tween_property(base_score_label, "scale", Vector2(1.3, 1.3), 0.08)
+		form_punch.tween_property(base_score_label, "scale", Vector2(1.0, 1.0), 0.12) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	if _skip_anim:
 		mult_score_label.text = "×%.1f" % final_mult
 	else:
