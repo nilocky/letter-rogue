@@ -57,10 +57,9 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 	var pack := PackService.pack_by_id(GameState.active_pack_id)
 	var per_tile: int = int(pack.get("score_modifier", 0)) if not pack.is_empty() else 0
 
-	var total := 0.0
-	var flat := 0
-	var money := 0
+	# Phase 1: Tile Hops
 	var letter_scores: Array = []
+	var total_base: float = 0.0
 	for s in slots:
 		var cap: Dictionary = s["cap"]
 		var letter: String = str(s["letter"])
@@ -73,39 +72,71 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 			var ability := KeyCapService.resolve_ability(cap)
 			contribution += float(ability.get("score", 0))
 			contribution *= float(ability.get("score_multiplier", 1.0))
-			money += int(ability.get("money", 0))
-			flat += int(ability.get("bonus", 0))
 			match str(cap.get("finish", "")):
-				"foil":
-					contribution += 3.0
-				"holographic":
-					contribution += 1.0
-				"polychrome":
-					contribution *= 1.5
+				"foil": contribution += 3.0
+				"holographic": contribution += 1.0
+				"polychrome": contribution *= 1.5
 			if str(cap.get("sticker", "")) == "red":
 				contribution *= 2.0
-			elif str(cap.get("sticker", "")) == "gold":
-				money += 2
 			if str(cap.get("condition", "")) == "glass":
 				contribution *= 2.0
 		if modifier == "vowel_lock" and not is_vowel:
 			contribution = 0.0
 		elif modifier == "consonant_lock" and is_vowel:
 			contribution = 0.0
-		total += contribution
+		total_base += contribution
 		letter_scores.append(contribution)
-	var mult: float = WordService.length_multiplier(slots.size())
-	var damage: int = int(round(total * mult)) + flat
+	EffectPipeline.trigger("on_score_calculated", [{"letter_scores": letter_scores}])
+
+	# Phase 2: Word Form Ignition
+	var word := ""
+	for s in slots:
+		word += str(s["letter"])
+	var form_data: Dictionary = {}
+	if word.length() >= 3:
+		form_data = WordFormService.detect(slots)
+	EffectPipeline.trigger("on_word_form_evaluated", [
+		form_data.get("form_id", ""),
+		form_data.get("base_damage", 0),
+		form_data.get("base_multiplier", 1.0)
+	])
+
+	var length_mult: float = WordService.length_multiplier(slots.size())
+	var form_base: int = form_data.get("base_damage", 0)
+	var form_mult: float = form_data.get("base_multiplier", 1.0)
+	var total_after_form: float = (total_base + float(form_base)) * length_mult * form_mult
+
+	# Phase 3: Artisan Cascade (stub — populated by ArtisanRailManager in Task 5)
+	var artisan_flat: int = 0
+	var artisan_xmult: float = 1.0
+
+	# Phase 4: Runic Blast — apply flat bonuses from abilities
+	var total_after_artisans: float = (total_after_form + float(artisan_flat)) * artisan_xmult
+	var flat_bonus: int = 0
+	var money: int = 0
+	for s in slots:
+		var cap: Dictionary = s["cap"]
+		if not disabled:
+			var ability := KeyCapService.resolve_ability(cap)
+			flat_bonus += int(ability.get("bonus", 0))
+			money += int(ability.get("money", 0))
+			if str(cap.get("sticker", "")) == "gold":
+				money += 2
+
+	var damage: int = roundi(total_after_artisans) + flat_bonus
+
 	if log:
-		var word := ""
-		for s in slots:
-			word += str(s["letter"])
-		print("[score] word=\"%s\" (mult x%.1f, %d letters)" % [word, mult, slots.size()])
-		for i in range(slots.size()):
-			print("[score]   %s: %.1f power" % [str(slots[i]["letter"]), float(letter_scores[i])])
-		print("[score]   total=%.1f x mult -> %d dmg (+%d bonus) +$%d" % [total, damage, flat, money])
-	var result: Dictionary = {"damage": damage, "money": money, "letter_scores": letter_scores}
-	EffectPipeline.trigger("on_score_calculated", [result])
+		print("[score] word=\"%s\" form=%s len=%d" % [word, form_data.get("form_id", "none"), slots.size()])
+		print("[score]   base=%.1f form_base=%d length_mult=%.1f form_mult=%.1f artisan_flat=%d artisan_xmult=%.1f" % [total_base, form_base, length_mult, form_mult, artisan_flat, artisan_xmult])
+		print("[score]   total=%.1f -> %d dmg (+%d flat) +$%d" % [total_after_artisans, damage, flat_bonus, money])
+
+	var result: Dictionary = {
+		"damage": damage,
+		"money": money,
+		"letter_scores": letter_scores,
+		"form_data": form_data,
+		"flat_bonus": flat_bonus
+	}
 	return result
 
 

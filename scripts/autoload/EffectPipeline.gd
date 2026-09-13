@@ -4,6 +4,10 @@ signal on_draw(hand)
 signal on_letter_slotted(cap, index)
 signal on_word_validated(word, valid)
 signal on_score_calculated(result)
+signal on_word_form_evaluated(form_id: String, base: int, mult: float)
+signal on_artisan_triggered(artisan_id: String, slot: int, effect: Dictionary)
+signal on_shop_opened
+signal on_bag_mutated(mutation_type: String, affected_tiles: Array)
 signal on_monster_damaged(monster, damage, remaining)
 signal on_monster_defeated(monster, summary)
 signal on_turn_end(turns_left)
@@ -57,6 +61,14 @@ func _emit_hook_signal(hook: String, args: Array) -> void:
 			on_word_validated.emit(args[0], args[1])
 		"on_score_calculated":
 			on_score_calculated.emit(args[0])
+		"on_word_form_evaluated":
+			on_word_form_evaluated.emit(args[0], args[1], args[2])
+		"on_artisan_triggered":
+			on_artisan_triggered.emit(args[0], args[1], args[2])
+		"on_shop_opened":
+			on_shop_opened.emit()
+		"on_bag_mutated":
+			on_bag_mutated.emit(args[0], args[1])
 		"on_monster_damaged":
 			on_monster_damaged.emit(args[0], args[1], args[2])
 		"on_monster_defeated":
