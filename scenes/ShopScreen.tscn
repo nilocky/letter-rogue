@@ -142,6 +142,19 @@ unique_name_in_owner = true
 size_flags_horizontal = 3
 theme_override_constants/separation = 16
 
+[node name="BlueprintLabel" type="Label" parent="SafeArea/VBox/Scroll/Content"]
+theme_type_variation = &"HeaderLabel"
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+text = "Workshop Blueprints"
+
+[node name="BlueprintPanel" type="PanelContainer" parent="SafeArea/VBox/Scroll/Content"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="BlueprintBox" type="VBoxContainer" parent="SafeArea/VBox/Scroll/Content/BlueprintPanel"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
 [node name="FightButton" type="Button" parent="SafeArea/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 50)

@@ -1,0 +1,19 @@
+{
+  "tarot": [
+    {"id": "keycap_puller", "name": "Keycap Puller", "description": "Permanently remove 1 selected tile from the bag.", "effect_type": "remove_tile", "effect_params": {}, "price": 6},
+    {"id": "hot_swap_tool", "name": "Hot-Swap Tool", "description": "Duplicate 1 target letter tile onto another in the bag.", "effect_type": "duplicate_tile", "effect_params": {}, "price": 8},
+    {"id": "laser_engraver", "name": "Laser Engraver", "description": "Convert 1 tile into a wildcard.", "effect_type": "wildcard_tile", "effect_params": {"wild_type": "full"}, "price": 10},
+    {"id": "lube_pen", "name": "Lube Pen", "description": "Applies Lubed status: tile scores twice.", "effect_type": "lube_tile", "effect_params": {}, "price": 7}
+  ],
+  "spectral": [
+    {"id": "short_circuit", "name": "Short Circuit", "description": "Destroy 3 random tiles. Gain $25.", "effect_type": "destroy_random", "effect_params": {"count": 3}, "price": 12},
+    {"id": "overclock", "name": "Overclock", "description": "Polychrome 1 random tile. Lose 1 max redraw.", "effect_type": "overclock_tile", "effect_params": {}, "price": 14},
+    {"id": "ghost_wire", "name": "Ghost Wire", "description": "Transform 2 random hand tiles into full wildcards.", "effect_type": "ghost_wire", "effect_params": {"count": 2}, "price": 16}
+  ],
+  "grimoire": [
+    {"id": "trio_codex", "name": "Trio Codex", "description": "Trio words: +5 base damage, +1 mult.", "effect_type": "level_word_form", "effect_params": {"form_id": "trio", "damage_bonus": 5, "mult_bonus": 1}, "price": 8},
+    {"id": "quartet_scroll", "name": "Quartet Scroll", "description": "Quartet words: +5 base damage, +1 mult.", "effect_type": "level_word_form", "effect_params": {"form_id": "quartet", "damage_bonus": 5, "mult_bonus": 1}, "price": 8},
+    {"id": "mirror_tome", "name": "Mirror Tome", "description": "Mirror words: +10 base damage, +2 mult.", "effect_type": "level_word_form", "effect_params": {"form_id": "mirror", "damage_bonus": 10, "mult_bonus": 2}, "price": 12},
+    {"id": "double_tap_tome", "name": "Double-Tap Tome", "description": "Double-Tap words: +10 base damage, +2 mult.", "effect_type": "level_word_form", "effect_params": {"form_id": "double_tap", "damage_bonus": 10, "mult_bonus": 2}, "price": 10}
+  ]
+}

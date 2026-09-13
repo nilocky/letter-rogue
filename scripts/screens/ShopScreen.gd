@@ -6,6 +6,7 @@ extends Control
 @onready var reroll_button: Button = %RerollButton
 @onready var fight_button: Button = %FightButton
 @onready var upgrade_box: VBoxContainer = %UpgradeBox
+@onready var blueprint_box: VBoxContainer = %BlueprintBox
 @onready var buy_dialog: ConfirmationDialog = %BuyDialog
 @onready var sell_dialog: ConfirmationDialog = %SellDialog
 
@@ -26,6 +27,7 @@ func _ready() -> void:
 	EventBus.shop_inventory_generated.connect(_on_inventory_generated)
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
 	_build_upgrade_buttons()
+	_build_blueprint_buttons()
 	_refresh_ui()
 
 
@@ -219,6 +221,43 @@ func _build_upgrade_buttons() -> void:
 		row.add_child(info)
 		row.add_child(buy_btn)
 		upgrade_box.add_child(row)
+
+
+func _build_blueprint_buttons() -> void:
+	for child in blueprint_box.get_children():
+		child.queue_free()
+	for bp in ShopService.blueprint_defs():
+		var row := HBoxContainer.new()
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var info := VBoxContainer.new()
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var name_lbl := Label.new()
+		var owned: bool = ShopService.owned_blueprint(str(bp["id"]))
+		name_lbl.text = "%s%s" % [str(bp["name"]), " (owned)" if owned else ""]
+		name_lbl.theme_type_variation = &"BodyLabel"
+		name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var desc_lbl := Label.new()
+		desc_lbl.text = str(bp["description"])
+		desc_lbl.theme_type_variation = &"MicroLabel"
+		desc_lbl.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8))
+		desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		info.add_child(name_lbl)
+		info.add_child(desc_lbl)
+		var buy_btn := Button.new()
+		buy_btn.text = "Owned" if owned else "$%d" % int(bp["base_price"])
+		buy_btn.disabled = owned
+		buy_btn.custom_minimum_size = Vector2(100, 60)
+		var bp_data: Dictionary = bp
+		buy_btn.pressed.connect(func() -> void:
+			if ShopService.purchase_blueprint(bp_data):
+				_build_blueprint_buttons()
+				_refresh_money()
+			else:
+				print("cannot afford blueprint")
+		)
+		row.add_child(info)
+		row.add_child(buy_btn)
+		blueprint_box.add_child(row)
 
 
 func _on_upgrade_purchased(_id: String, _level: int) -> void:

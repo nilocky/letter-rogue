@@ -52,6 +52,12 @@ func _on_fight_pressed() -> void:
 
 
 func _fight_or_boss() -> void:
+	if not GameState.skip_tags.is_empty():
+		var tag: String = GameState.skip_tags.pop_front()
+		if tag == "skip":
+			GameState.round_number += 1
+			_on_shop_requested()
+			return
 	var boss_round: bool = GameState.round_number % 3 == 0
 	var list: Array = _monster_list_for("bosses" if boss_round else "normal")
 	if list.is_empty():
@@ -64,7 +70,23 @@ func _fight_or_boss() -> void:
 	CombatService.start_round()
 
 
+func _fight_or_boss_depths() -> void:
+	var stage: int = GameState.depth_stage
+	var entry: Dictionary = DepthService.generate_encounter(stage)
+	if entry.is_empty():
+		_fight_or_boss()
+		return
+	entry["hp_remaining"] = _scaled_hp(entry, GameState.round_number)
+	GameState.current_monster = entry
+	current_state = State.COMBAT
+	_show(COMBAT_SCENE)
+	CombatService.start_round()
+
+
 func _on_shop_requested() -> void:
+	if GameState.round_number % 3 == 0:
+		GameState.depth_stage += 1
+		EventBus.depth_advanced.emit(GameState.depth_stage)
 	GameState.round_number += 1
 	ShopService.new_shop()
 	current_state = State.SHOP

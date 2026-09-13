@@ -109,6 +109,50 @@ func reroll() -> bool:
 	return true
 
 
+func generate_grab_bag(pack_type: String, choices: int, pick: int) -> Array:
+	var pool: Array = []
+	match pack_type:
+		"artisan":
+			var text := FileAccess.get_file_as_string("res://data/artisans.json")
+			var data: Variant = JSON.parse_string(text)
+			pool = data.get("artisans", [])
+		"grimoire":
+			pool = ConsumableService.get_grimoires()
+		"toolkit":
+			pool = ConsumableService.get_tarot()
+		"black_box":
+			pool = ConsumableService.get_spectral()
+	if pool.is_empty():
+		return []
+	pool.shuffle()
+	var options: Array = pool.slice(0, choices)
+	for opt in options:
+		opt["price"] = int(opt.get("price", 6))
+	return options
+
+
+func blueprint_defs() -> Array:
+	var text := FileAccess.get_file_as_string("res://data/blueprints.json")
+	var data: Variant = JSON.parse_string(text)
+	if typeof(data) == TYPE_DICTIONARY:
+		return data.get("blueprints", [])
+	return []
+
+
+func purchase_blueprint(bp: Dictionary) -> bool:
+	var price: int = int(bp.get("base_price", 0))
+	if GameState.money < price:
+		return false
+	GameState.money -= price
+	GameState.active_blueprints[str(bp.get("id", ""))] = true
+	EventBus.blueprint_purchased.emit(bp)
+	return true
+
+
+func owned_blueprint(id: String) -> bool:
+	return GameState.active_blueprints.has(id)
+
+
 func upgrade_defs() -> Array:
 	return UPGRADES
 

@@ -1,0 +1,7 @@
+{
+  "blueprints": [
+    {"id": "anti_ghosting", "name": "Anti-Ghosting Matrix", "description": "+1 tile drawn per turn permanently.", "effect_type": "draw_bonus", "effect_value": 1, "base_price": 10},
+    {"id": "silicone_dampener", "name": "Silicone Dampener", "description": "Immune to Boss Silence debuffs.", "effect_type": "silence_immunity", "effect_value": 1, "base_price": 12},
+    {"id": "group_buy_pass", "name": "Group-Buy Pass", "description": "20% discount on all shop items.", "effect_type": "shop_discount", "effect_value": 0.2, "base_price": 8}
+  ]
+}

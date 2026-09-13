@@ -1,0 +1,7 @@
+{
+  "tags": [
+    {"id": "free_grab_bag", "name": "Free Grab Bag", "description": "Open a free Artisan Grab Bag.", "effect_type": "free_grab_bag"},
+    {"id": "bonus_turns", "name": "Bonus Turns", "description": "+3 turn reserve for next combat.", "effect_type": "bonus_turns", "value": 3},
+    {"id": "double_interest", "name": "Double Interest", "description": "Double money earned next combat.", "effect_type": "double_interest"}
+  ]
+}

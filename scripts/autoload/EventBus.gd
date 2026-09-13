@@ -27,3 +27,6 @@ signal cap_purchased(cap: Dictionary)
 signal cap_sold(cap: Dictionary)
 signal shop_rerolled
 signal upgrade_purchased(upgrade_id: String, level: int)
+signal blueprint_purchased(bp: Dictionary)
+signal consumable_purchased(item: Dictionary)
+signal depth_advanced(stage: int)

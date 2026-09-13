@@ -1,0 +1,14 @@
+{
+  "vanguard": [
+    {"id": "vanguard_goblin", "name": "Goblin Scout", "hp": 8, "modifier": "", "is_boss": false},
+    {"id": "vanguard_slime", "name": "Slime Puddle", "hp": 6, "modifier": "", "is_boss": false}
+  ],
+  "sentry": [
+    {"id": "sentry_skeleton", "name": "Skeleton Guard", "hp": 15, "modifier": "", "is_boss": false},
+    {"id": "sentry_orc", "name": "Orc Sentry", "hp": 18, "modifier": "", "is_boss": false}
+  ],
+  "bosses": [
+    {"id": "vowel_witch", "name": "Vowel Witch", "hp": 30, "modifier": "vowel_lock", "is_boss": true},
+    {"id": "consonant_king", "name": "Consonant King", "hp": 30, "modifier": "consonant_lock", "is_boss": true}
+  ]
+}
