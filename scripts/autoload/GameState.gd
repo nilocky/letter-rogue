@@ -24,6 +24,14 @@ var upgrade_turns: int = 0
 var upgrade_redraws: int = 0
 var next_draw_bonus: int = 0
 
+var discard_pile: Array = []
+var altar_rune: Dictionary = {}
+var word_form_levels: Dictionary = {}
+var artisan_rail: Array = []
+var active_blueprints: Dictionary = {}
+var skip_tags: Array = []
+var depth_stage: int = 0
+
 
 func reset() -> void:
 	money = 10
@@ -40,6 +48,13 @@ func reset() -> void:
 	upgrade_turns = 0
 	upgrade_redraws = 0
 	next_draw_bonus = 0
+	discard_pile = []
+	altar_rune = {}
+	word_form_levels = {}
+	artisan_rail = []
+	active_blueprints = {}
+	skip_tags = []
+	depth_stage = 0
 
 
 func round_turn_budget() -> int:

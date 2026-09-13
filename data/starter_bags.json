@@ -13,7 +13,13 @@
         {"letter": "I", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
         {"letter": "N", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
         {"letter": "S", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
-        {"letter": "R", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false}
+        {"letter": "R", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "D", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "L", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "C", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "M", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "P", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false},
+        {"letter": "H", "ability_id": "bonus_points", "rarity": "Normal", "ability_strength": 1, "is_symbol": false}
       ]
     },
     {
