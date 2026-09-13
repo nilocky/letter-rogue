@@ -3,18 +3,67 @@ extends Node
 ## Also resolves a tile's ability into scoring effects.
 
 func draw_hand() -> void:
-	GameState.hand.clear()
-	# Consume the blue-sticker bonus AFTER computing the draw size.
-	var target: int = mini(GameState.draw_size(), GameState.bag.size())
+	var target: int = mini(GameState.draw_size(), GameState.bag.size() + GameState.hand.size())
+	var already: int = GameState.hand.size()
+	var need: int = maxi(0, target - already)
 	GameState.next_draw_bonus = 0
-	if target == 0:
+	if need == 0:
+		EventBus.hand_drawn.emit(GameState.hand)
+		return
+	if GameState.bag.is_empty() and not GameState.discard_pile.is_empty():
+		_reshuffle_from_discard()
+	if GameState.bag.is_empty():
 		EventBus.hand_drawn.emit(GameState.hand)
 		return
 	var pool := range(GameState.bag.size())
 	pool.shuffle()
-	for i in range(target):
+	for i in range(mini(need, pool.size())):
 		GameState.hand.append(GameState.bag[pool[i]])
+	_vowel_safeguard()
 	EventBus.hand_drawn.emit(GameState.hand)
+
+
+func _reshuffle_from_discard() -> void:
+	GameState.bag = GameState.discard_pile.duplicate()
+	GameState.discard_pile.clear()
+	EventBus.bag_reshuffled.emit()
+
+
+func _vowel_safeguard() -> void:
+	const VOWELS := "AEIOU"
+	var vowel_count := 0
+	var wild_vowel_count := 0
+	for cap in GameState.hand:
+		var letter: String = str(cap.get("letter", ""))
+		if VOWELS.contains(letter):
+			vowel_count += 1
+		elif letter == "~" or letter == "*":
+			wild_vowel_count += 1
+	if vowel_count + wild_vowel_count >= 2:
+		return
+	var to_swap: Array = []
+	for i in range(GameState.hand.size()):
+		var cap: Dictionary = GameState.hand[i]
+		var letter: String = str(cap.get("letter", ""))
+		if not VOWELS.contains(letter) and letter != "~" and letter != "*":
+			to_swap.append(i)
+	var vowel_pool: Array = []
+	for i in range(GameState.bag.size()):
+		var cap: Dictionary = GameState.bag[i]
+		var letter: String = str(cap.get("letter", ""))
+		if VOWELS.contains(letter) or letter == "~" or letter == "*":
+			vowel_pool.append(i)
+	vowel_pool.shuffle()
+	for idx in to_swap:
+		if vowel_pool.is_empty():
+			break
+		if vowel_count + wild_vowel_count >= 2:
+			break
+		var vi: int = vowel_pool.pop_back()
+		GameState.bag.append(GameState.hand[idx])
+		GameState.hand[idx] = GameState.bag[vi]
+		GameState.bag.remove_at(vi)
+		vowel_count += 1
 
 
 func hand_size() -> int:

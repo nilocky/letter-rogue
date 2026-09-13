@@ -1,5 +1,9 @@
 extends Node
 
+signal tiles_consumed(used: Array, discarded: Array)
+signal bag_reshuffled
+signal hand_refilled(hand: Array)
+
 signal run_setup_requested
 signal run_setup_cancelled
 signal run_started(pack_id: String, starter_bag_id: String)

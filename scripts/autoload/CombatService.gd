@@ -13,6 +13,8 @@ func start_round() -> void:
 	GameState.redraws_left = GameState.round_redraw_budget()
 	GameState.next_draw_bonus = 0
 	GameState.current_monster["hp_remaining"] = GameState.monster_hp_scaled()
+	GameState.hand.clear()
+	GameState.discard_pile.clear()
 	EventBus.turn_started.emit(GameState.turns_left, GameState.redraws_left)
 	KeyCapService.draw_hand()
 	EffectPipeline.trigger("on_draw", [GameState.hand])
@@ -120,8 +122,10 @@ func commit_word(slots: Array) -> void:
 
 	var lucky_extra_damage := 0
 	var money_gain: int = res["money"]
+	var used_caps: Array = []
 	for s in slots:
 		var cap: Dictionary = s["cap"]
+		used_caps.append(cap)
 		var disabled: bool = _current_modifier() == "silence"
 		if disabled:
 			continue
@@ -135,6 +139,12 @@ func commit_word(slots: Array) -> void:
 				lucky_extra_damage += 10
 			if randf() < 0.0667:
 				money_gain += 10
+
+	# Move played tiles to discard pile instead of returning to bag
+	GameState.discard_pile.append_array(used_caps)
+	for cap in used_caps:
+		GameState.hand.erase(cap)
+	EventBus.tiles_consumed.emit(used_caps, GameState.discard_pile)
 
 	_apply_monster_damage(int(res["damage"]) + lucky_extra_damage, money_gain)
 
