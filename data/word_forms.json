@@ -1,0 +1,11 @@
+{
+  "forms": [
+    {"id": "trio", "name": "Trio", "min_length": 3, "max_length": 3, "pattern": "any", "base_damage": 0, "base_multiplier": 1.0},
+    {"id": "quartet", "name": "Quartet", "min_length": 4, "max_length": 4, "pattern": "any", "base_damage": 4, "base_multiplier": 1.3},
+    {"id": "quintet", "name": "Quintet", "min_length": 5, "max_length": 5, "pattern": "any", "base_damage": 8, "base_multiplier": 1.6},
+    {"id": "hexagram", "name": "Hexagram", "min_length": 6, "max_length": 99, "pattern": "any", "base_damage": 12, "base_multiplier": 2.0},
+    {"id": "double_tap", "name": "Double-Tap", "min_length": 3, "max_length": 99, "pattern": "adjacent_duplicate", "base_damage": 6, "base_multiplier": 1.5},
+    {"id": "mirror", "name": "Mirror Word", "min_length": 3, "max_length": 99, "pattern": "palindrome", "base_damage": 10, "base_multiplier": 2.0},
+    {"id": "consonant_core", "name": "Consonant Core", "min_length": 3, "max_length": 99, "pattern": "consonant_rich", "base_damage": 5, "base_multiplier": 1.5}
+  ]
+}
