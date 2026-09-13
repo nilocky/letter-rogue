@@ -92,7 +92,7 @@ func route_to(state: String) -> void:
 			_fight_or_boss()
 		"shop":
 			if GameState.active_pack_id == "":
-				GameState.active_pack_id = "mx_red"
+				GameState.active_pack_id = "clicky"
 				GameState.bag = KeyCapService.load_starter_bag("standard")
 			_on_shop_requested()
 		"boss":

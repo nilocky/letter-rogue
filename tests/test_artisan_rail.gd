@@ -6,7 +6,7 @@ func _init() -> void:
 	var arm: Node = root.get_node("ArtisanRailManager")
 	var ps: Node = root.get_node("PackService")
 
-	gs.active_pack_id = "mx_red"
+	gs.active_pack_id = "clicky"
 	gs.word_form_levels = {}
 	gs.redraws_left = 3
 	gs.turns_left = 3

@@ -26,6 +26,11 @@ const SLICES = {
 		"mx_brown": Rect2(1245, 868, 262, 258),
 		"mx_black": Rect2(1625, 868, 262, 258),
 		"mx_speed": Rect2(2025, 868, 263, 258),
+		"clicky": Rect2(866, 868, 261, 258),
+		"linear": Rect2(477, 868, 262, 258),
+		"tactile": Rect2(1245, 868, 262, 258),
+		"heavy_tactile": Rect2(1625, 868, 262, 258),
+		"silent": Rect2(2025, 868, 263, 258),
 	},
 	"overlays": {
 		"holographic": Rect2(576, 1201, 304, 281),

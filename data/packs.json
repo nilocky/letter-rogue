@@ -1,9 +1,9 @@
 {
   "packs": [
-    {"id": "mx_red", "name": "MX Red", "desc": "+1 tile drawn per turn", "draw_modifier": 1, "score_modifier": 0, "base_draw": 0, "start_money": 0},
-    {"id": "mx_blue", "name": "MX Blue", "desc": "+2 power per tile used in a word", "draw_modifier": 0, "score_modifier": 2, "base_draw": 0, "start_money": 0},
-    {"id": "mx_brown", "name": "MX Brown", "desc": "+1 power per tile used; start with +$5", "draw_modifier": 0, "score_modifier": 1, "base_draw": 0, "start_money": 5},
-    {"id": "mx_black", "name": "MX Black", "desc": "+3 power per tile used, -1 tile drawn per turn", "draw_modifier": -1, "score_modifier": 3, "base_draw": 0, "start_money": 0},
-    {"id": "mx_speed", "name": "MX Speed", "desc": "Draw 6 tiles per turn", "draw_modifier": 0, "score_modifier": 0, "base_draw": 6, "start_money": 0}
+    {"id": "clicky", "name": "Clicky Pack", "desc": "Rare consonants deal +50% damage. -1 redraw token.", "draw_modifier": 0, "score_modifier": 0, "base_draw": 0, "start_money": 0, "conditionals": [{"type": "rare_consonant_mult", "value": 1.5}, {"type": "redraw_penalty", "value": -1}]},
+    {"id": "linear", "name": "Linear Pack", "desc": "+1 Hand per turn. Short words (<=3) deal -20% damage.", "draw_modifier": 1, "score_modifier": 0, "base_draw": 0, "start_money": 0, "conditionals": [{"type": "short_word_penalty", "max_len": 3, "mult": 0.8}]},
+    {"id": "tactile", "name": "Tactile Pack", "desc": "5-letter words trigger x1.5 X-Mult.", "draw_modifier": 0, "score_modifier": 0, "base_draw": 0, "start_money": 0, "conditionals": [{"type": "length_xmult", "len": 5, "value": 1.5}]},
+    {"id": "heavy_tactile", "name": "Heavy Tactile Pack", "desc": "Min 4-letter words. 6+ letter words trigger x2.5 X-Mult.", "draw_modifier": 0, "score_modifier": 0, "base_draw": 0, "start_money": 0, "conditionals": [{"type": "min_word_length", "value": 4}, {"type": "length_xmult", "len": 6, "value": 2.5}]},
+    {"id": "silent", "name": "Silent Pack", "desc": "-10% base word points. Immune to Boss Silence debuffs.", "draw_modifier": 0, "score_modifier": 0, "base_draw": 0, "start_money": 0, "conditionals": [{"type": "base_penalty", "mult": 0.9}, {"type": "silence_immunity"}]}
   ]
 }

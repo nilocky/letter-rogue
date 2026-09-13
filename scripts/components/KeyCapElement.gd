@@ -54,10 +54,10 @@ func set_embedded_mode(enabled: bool) -> void:
 func _apply_switch_base() -> void:
 	if not KeyCapSkinService:
 		return
-	var pack_id: String = GameState.active_pack_id.to_lower() if "active_pack_id" in GameState else "mx_red"
+	var pack_id: String = GameState.active_pack_id.to_lower() if "active_pack_id" in GameState else "clicky"
 	var base_atlas: AtlasTexture = KeyCapSkinService.get_atlas("switches", pack_id)
 	if not base_atlas:
-		base_atlas = KeyCapSkinService.get_atlas("switches", "mx_red")
+		base_atlas = KeyCapSkinService.get_atlas("switches", "clicky")
 	if not base_atlas:
 		return
 	if embedded_mode:

@@ -6,7 +6,7 @@ func _init() -> void:
 	var ks: Node = root.get_node("KeyCapService")
 	gs.bag = ks.load_starter_bag("standard")
 	assert(gs.bag.size() == 14)
-	gs.active_pack_id = "mx_red"
+	gs.active_pack_id = "clicky"
 	gs.hand.clear()
 	gs.discard_pile.clear()
 

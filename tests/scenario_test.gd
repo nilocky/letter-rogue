@@ -6,7 +6,7 @@ func _init() -> void:
 	var cs: Node = root.get_node("CombatService")
 	var failures := 0
 	gs.reset()
-	gs.setup_new_run("mx_red", "standard")
+	gs.setup_new_run("clicky", "standard")
 	gs.current_monster = {"name": "Test", "hp": 10, "modifier": "", "hp_remaining": 10}
 	cs.start_round()
 	var slots: Array = [{"cap": {"letter": "C", "is_symbol": false, "finish": "", "sticker": "", "condition": ""}, "letter": "C"},

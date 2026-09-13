@@ -11,6 +11,13 @@ const REWARD_BASE := 5
 func start_round() -> void:
 	GameState.turns_left = GameState.round_turn_budget()
 	GameState.redraws_left = GameState.round_redraw_budget()
+	# Apply pack redraw penalties
+	var pack: Dictionary = PackService.pack_by_id(GameState.active_pack_id)
+	if not pack.is_empty():
+		var conds: Array = pack.get("conditionals", [])
+		for c in conds:
+			if str(c.get("type", "")) == "redraw_penalty":
+				GameState.redraws_left = maxi(0, GameState.redraws_left + int(c.get("value", 0)))
 	GameState.next_draw_bonus = 0
 	GameState.current_monster["hp_remaining"] = GameState.monster_hp_scaled()
 	GameState.hand.clear()

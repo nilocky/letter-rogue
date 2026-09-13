@@ -6,7 +6,7 @@ func _init() -> void:
 	var cs: Node = root.get_node("CombatService")
 	var ps: Node = root.get_node("PackService")
 
-	gs.active_pack_id = "mx_red"
+	gs.active_pack_id = "clicky"
 	gs.word_form_levels = {}
 	gs.current_monster = {"name": "Test", "hp": 10, "modifier": "", "hp_remaining": 10}
 
