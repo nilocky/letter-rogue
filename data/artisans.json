@@ -1,0 +1,16 @@
+{
+  "artisans": [
+    {"id": "caps_lock", "name": "Caps Lock", "archetype": "flat_power", "rarity": "Common", "price": 6, "trigger": {"type": "word_length", "min": 4}, "effect": {"type": "add_flat", "value": 8}},
+    {"id": "spacebar", "name": "The Spacebar", "archetype": "flat_power", "rarity": "Common", "price": 5, "trigger": {"type": "word_length", "max": 3}, "effect": {"type": "add_flat", "value": 12}},
+    {"id": "touch_typist", "name": "Touch Typist", "archetype": "flat_power", "rarity": "Common", "price": 6, "trigger": {"type": "no_redraws_used"}, "effect": {"type": "add_flat", "value": 4}},
+    {"id": "clicky_zealot", "name": "Clicky Zealot", "archetype": "x_mult", "rarity": "Uncommon", "price": 10, "trigger": {"type": "rare_consonant", "per": true}, "effect": {"type": "multiply", "value": 1.5}},
+    {"id": "rotary_knob", "name": "Rotary Knob", "archetype": "x_mult", "rarity": "Uncommon", "price": 10, "trigger": {"type": "unused_redraws"}, "effect": {"type": "multiply_per_redraw", "value": 1.3}},
+    {"id": "nkey_rollover", "name": "N-Key Rollover", "archetype": "x_mult", "rarity": "Rare", "price": 14, "trigger": {"type": "word_length", "min": 6}, "effect": {"type": "multiply", "value": 2.5}},
+    {"id": "alliteration", "name": "Alliteration", "archetype": "synergy", "rarity": "Rare", "price": 12, "trigger": {"type": "consecutive_start_letter"}, "effect": {"type": "multiply", "value": 3.0}},
+    {"id": "vocalist", "name": "Vocalist", "archetype": "synergy", "rarity": "Uncommon", "price": 9, "trigger": {"type": "more_vowels_than_consonants"}, "effect": {"type": "retrigger_tiles"}},
+    {"id": "mirroring", "name": "Mirroring", "archetype": "synergy", "rarity": "Epic", "price": 18, "trigger": {"type": "word_form", "form": "mirror"}, "effect": {"type": "multiply", "value": 4.0}},
+    {"id": "golden_lube", "name": "Golden Lube", "archetype": "economy", "rarity": "Uncommon", "price": 8, "trigger": {"type": "leftover_turns", "min": 2}, "effect": {"type": "money", "value": 6}},
+    {"id": "typewriter_ribbon", "name": "Typewriter Ribbon", "archetype": "economy", "rarity": "Rare", "price": 14, "trigger": {"type": "unprecedented_word"}, "effect": {"type": "permanent_base_damage", "value": 2}},
+    {"id": "artisan_puller", "name": "Artisan Puller", "archetype": "economy", "rarity": "Epic", "price": 20, "trigger": {"type": "boss_defeated"}, "effect": {"type": "trash_cheapest_tile"}}
+  ]
+}

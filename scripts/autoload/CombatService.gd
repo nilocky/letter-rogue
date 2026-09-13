@@ -106,9 +106,12 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 	var form_mult: float = form_data.get("base_multiplier", 1.0)
 	var total_after_form: float = (total_base + float(form_base)) * length_mult * form_mult
 
-	# Phase 3: Artisan Cascade (stub — populated by ArtisanRailManager in Task 5)
-	var artisan_flat: int = 0
-	var artisan_xmult: float = 1.0
+	# Phase 3: Artisan Cascade
+	var artisan_result: Dictionary = ArtisanRailManager.cascade(
+		word, slots, letter_scores, form_data, pack
+	)
+	var artisan_flat: int = artisan_result.get("flat", 0)
+	var artisan_xmult: float = artisan_result.get("xmult", 1.0)
 
 	# Phase 4: Runic Blast — apply flat bonuses from abilities
 	var total_after_artisans: float = (total_after_form + float(artisan_flat)) * artisan_xmult
