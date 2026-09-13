@@ -455,6 +455,8 @@ func _play_score_animation() -> void:
 	# Phase A: Sequential letter power accumulation
 	var current_base: float = 0.0
 	var mult: float = WordService.length_multiplier(word_len)
+	var form_data: Dictionary = res.get("form_data", {})
+	var final_mult: float = mult * float(form_data.get("base_multiplier", 1.0))
 
 	for i in range(tiles.size()):
 		var pts: float = float(scores[i]) if i < scores.size() else 0.0
@@ -499,7 +501,7 @@ func _play_score_animation() -> void:
 
 	# Phase B: Multiplier ignition
 	if _skip_anim:
-		mult_score_label.text = "×%.1f" % mult
+		mult_score_label.text = "×%.1f" % final_mult
 	else:
 		await get_tree().create_timer(0.25).timeout
 		# AudioManager.play("mult_ignite")
@@ -512,7 +514,7 @@ func _play_score_animation() -> void:
 
 		if word_len >= 3:
 			var ramp := create_tween()
-			ramp.tween_method(_ramp_mult_display, 1.0, mult, MULT_RAMP_TIME) \
+			ramp.tween_method(_ramp_mult_display, 1.0, final_mult, MULT_RAMP_TIME) \
 				.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 			await ramp.finished
 		else:
@@ -520,7 +522,7 @@ func _play_score_animation() -> void:
 		await get_tree().create_timer(0.3).timeout
 
 	# Phase C: Final resolution
-	var final_damage: int = roundi(current_base * mult) + int(res.get("flat", 0))
+	var final_damage: int = int(res["damage"])
 	if _skip_anim:
 		total_shelf.show()
 		total_damage_label.text = "= %d DMG" % final_damage
