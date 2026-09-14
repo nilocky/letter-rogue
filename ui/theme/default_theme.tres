@@ -1,8 +1,24 @@
-[gd_resource type="Theme" load_steps=5 format=3]
+[gd_resource type="Theme" load_steps=6 format=3]
 
 [ext_resource type="FontFile" uid="uid://obxbtq4a4566" path="res://assets/fonts/monogram.ttf" id="1_mono"]
 [ext_resource type="FontFile" uid="uid://j7xvbouxwbf5" path="res://assets/fonts/m5x7.ttf" id="2_m57"]
 [ext_resource type="FontFile" uid="uid://doyyuryme11xx" path="res://assets/fonts/Kenney Pixel.ttf" id="3_px"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pixel"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.09, 0.08, 0.13, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.03, 0.02, 0.05, 1)
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
 
 [resource]
 default_font = ExtResource("3_px")
@@ -32,3 +48,5 @@ MicroLabel/base_type = &"Label"
 MicroLabel/fonts/font = ExtResource("2_m57")
 MicroLabel/font_sizes/font_size = 13
 MicroLabel/colors/font_color = Color(0.72, 0.74, 0.8, 1)
+PixelPanel/base_type = &"PanelContainer"
+PixelPanel/styles/panel = SubResource("StyleBoxFlat_pixel")

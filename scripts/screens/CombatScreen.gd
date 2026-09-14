@@ -6,6 +6,7 @@ const BAG_MODAL := preload("res://scenes/components/BagModal.tscn")
 const VICTORY_MODAL := preload("res://scenes/components/VictoryModal.tscn")
 const KB_FONT := preload("res://assets/fonts/Kenney Blocks.ttf")
 const KB_PX_FONT := preload("res://assets/fonts/Kenney Pixel.ttf")
+const ParticleBurstFx := preload("res://scripts/components/ParticleBurst.gd")
 
 const TILE_HOP_TIME := 0.15
 const TILE_LAND_TIME := 0.18
@@ -17,7 +18,7 @@ const PROJECTILE_TIME := 0.35
 
 @onready var monster_label: Label = %MonsterNameLabel
 @onready var monster_sprite: TextureRect = %MonsterSprite
-@onready var hp_bar: ProgressBar = %MonsterHPBar
+@onready var hp_bar: TextureProgressBar = %MonsterHPBar
 @onready var hp_label: Label = %HpLabel
 @onready var turns_label: Label = %TurnRoundLabel
 @onready var money_label: Label = %MoneyLabel
@@ -70,6 +71,12 @@ func _ready() -> void:
 	_start_idle_anim()
 
 
+func _flash_hp_bar() -> void:
+	hp_bar.modulate = Color(1.6, 1.6, 1.6, 1.0)
+	var tw := create_tween()
+	tw.tween_property(hp_bar, "modulate", Color.WHITE, 0.18).set_trans(Tween.TRANS_LINEAR)
+
+
 func _start_idle_anim() -> void:
 	if _idle_tween and _idle_tween.is_valid():
 		_idle_tween.kill()
@@ -87,10 +94,10 @@ func _squash_hit() -> void:
 	_idle_tween = null
 	monster_sprite.scale = Vector2(1.0, 1.0)
 	var tw := create_tween()
-	tw.tween_property(monster_sprite, "scale", Vector2(1.25, 0.75), 0.12) \
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(monster_sprite, "scale", Vector2(1.0, 1.0), 0.3) \
-		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(monster_sprite, "scale", Vector2(1.25, 0.75), 0.06) \
+		.set_trans(Tween.TRANS_LINEAR)
+	tw.tween_property(monster_sprite, "scale", Vector2.ONE, 0.12) \
+		.set_trans(Tween.TRANS_LINEAR)
 	tw.tween_callback(_start_idle_anim)
 
 
@@ -146,6 +153,7 @@ func _on_monster_damaged(remaining: int, max_hp: int) -> void:
 	hp_bar.max_value = max_hp
 	hp_bar.value = maxi(remaining, 0)
 	hp_label.text = "HP %d/%d" % [maxi(remaining, 0), max_hp]
+	_flash_hp_bar()
 
 
 func _on_round_won(_summary: Dictionary) -> void:
@@ -403,9 +411,12 @@ func _do_redraw() -> void:
 			marked.append(_hand_elements[i])
 	var tw := create_tween()
 	tw.set_parallel(true)
-	for el: Control in marked:
-		tw.tween_property(el, "position", el.position + Vector2(0, 60), 0.2)
-		tw.tween_property(el, "modulate:a", 0.0, 0.2)
+	for k in range(marked.size()):
+		var el: Control = marked[k]
+		tw.tween_property(el, "position", el.position + Vector2(0, 60), 0.2) \
+			.set_delay(k * 0.05) \
+			.set_trans(Tween.TRANS_LINEAR)
+		tw.tween_property(el, "modulate:a", 0.0, 0.2).set_delay(k * 0.05)
 	await tw.finished
 	if not KeyCapService.redraw_tiles(indices):
 		for el: Control in marked:
@@ -422,12 +433,18 @@ func _do_redraw() -> void:
 			incoming.append(_hand_elements[i])
 	var tw2 := create_tween()
 	tw2.set_parallel(true)
-	for el: Control in incoming:
+	for k in range(incoming.size()):
+		var el: Control = incoming[k]
 		var target := el.position
+		var delay: float = k * 0.05
 		tw2.tween_property(el, "position", target, 0.25) \
 			.from(target + Vector2(0, 60)) \
-			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		tw2.tween_property(el, "modulate:a", 1.0, 0.25).from(0.0)
+			.set_delay(delay) \
+			.set_trans(Tween.TRANS_LINEAR)
+		tw2.tween_property(el, "modulate:a", 1.0, 0.25).from(0.0).set_delay(delay)
+		tw2.tween_property(el, "scale", Vector2.ONE, 0.25) \
+			.from(Vector2(1.15, 1.15)) \
+			.set_delay(delay)
 	await tw2.finished
 	_animating = false
 	_set_controls_enabled(true)
@@ -472,9 +489,8 @@ func _play_score_animation() -> void:
 		base_score_label.text = "%d" % roundi(current_base)
 
 		var punch := create_tween()
-		punch.tween_property(base_score_label, "scale", Vector2(1.35, 1.35), 0.08)
-		punch.tween_property(base_score_label, "scale", Vector2(1.0, 1.0), 0.12) \
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		base_score_label.scale = Vector2(1.3, 1.3)
+		punch.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
 		# AudioManager.play("score_chip")
 
 		var cap: Dictionary = _slots[i].get("cap", {})
@@ -505,25 +521,23 @@ func _play_score_animation() -> void:
 		current_base += float(form_base)
 		base_score_label.text = "%d" % roundi(current_base)
 		var form_punch := create_tween()
-		form_punch.tween_property(base_score_label, "scale", Vector2(1.3, 1.3), 0.08)
-		form_punch.tween_property(base_score_label, "scale", Vector2(1.0, 1.0), 0.12) \
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		form_punch.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
+		base_score_label.scale = Vector2(1.3, 1.3)
 	if _skip_anim:
 		mult_score_label.text = "×%.1f" % final_mult
 	else:
 		await get_tree().create_timer(0.25).timeout
 		# AudioManager.play("mult_ignite")
 		var scale_pulse := create_tween()
-		scale_pulse.tween_property(mult_panel, "scale", Vector2(1.25, 1.25), 0.1)
-		scale_pulse.tween_property(mult_panel, "scale", Vector2(1.0, 1.0), 0.15) \
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		mult_panel.scale = Vector2(1.25, 1.25)
+		scale_pulse.tween_property(mult_panel, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_LINEAR)
 		mult_score_label.add_theme_color_override("font_color", Color(1, 0.34, 0.13, 1))
 		mult_sub_label.add_theme_color_override("font_color", Color(1, 0.6, 0.3, 1))
 
 		if word_len >= 3:
 			var ramp := create_tween()
 			ramp.tween_method(_ramp_mult_display, 1.0, final_mult, MULT_RAMP_TIME) \
-				.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+				.set_trans(Tween.TRANS_LINEAR)
 			await ramp.finished
 		else:
 			mult_score_label.text = "×1.0"
@@ -538,18 +552,17 @@ func _play_score_animation() -> void:
 		total_shelf.show()
 		total_damage_label.text = "= %d DMG" % final_damage
 		var flash := create_tween()
-		flash.tween_property(total_damage_label, "scale", Vector2(1.4, 1.4), 0.08)
-		flash.tween_property(total_damage_label, "scale", Vector2(1.0, 1.0), 0.22) \
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		total_damage_label.scale = Vector2(1.4, 1.4)
+		flash.tween_property(total_damage_label, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_LINEAR)
 		# AudioManager.play("slam_impact")
 
 		# Base + Mult pulse in sync
 		var sync_pulse := create_tween()
 		sync_pulse.set_parallel(true)
-		sync_pulse.tween_property(base_score_label, "scale", Vector2(1.15, 1.15), 0.06)
-		sync_pulse.tween_property(mult_score_label, "scale", Vector2(1.15, 1.15), 0.06)
-		sync_pulse.tween_property(base_score_label, "scale", Vector2(1.0, 1.0), 0.12)
-		sync_pulse.tween_property(mult_score_label, "scale", Vector2(1.0, 1.0), 0.12)
+		base_score_label.scale = Vector2(1.15, 1.15)
+		mult_score_label.scale = Vector2(1.15, 1.15)
+		sync_pulse.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
+		sync_pulse.tween_property(mult_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
 
 		await get_tree().create_timer(0.35).timeout
 
@@ -563,7 +576,7 @@ func _play_score_animation() -> void:
 	var hp_from: float = hp_bar.value
 	var hp_tween := create_tween()
 	hp_tween.tween_method(func(v: float) -> void: hp_bar.value = v, hp_from, float(hp_new), HP_DROP_TIME) \
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		.set_trans(Tween.TRANS_LINEAR)
 
 	_spawn_damage_float(final_damage)
 	await hp_tween.finished
@@ -617,7 +630,7 @@ func _spawn_floating_text(anchor: Control, text: String) -> void:
 	var ft := lbl.create_tween()
 	ft.set_parallel(true)
 	ft.tween_property(lbl, "global_position", lbl.global_position + Vector2(0, -24), 0.5) \
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		.set_trans(Tween.TRANS_LINEAR)
 	ft.tween_property(lbl, "modulate:a", 0.0, 0.5)
 	ft.chain().tween_callback(lbl.queue_free)
 
@@ -636,7 +649,7 @@ func _spawn_damage_float(dmg: int) -> void:
 	var ft := lbl.create_tween()
 	ft.set_parallel(true)
 	ft.tween_property(lbl, "global_position", lbl.global_position + Vector2(0, -48), 0.6) \
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		.set_trans(Tween.TRANS_LINEAR)
 	ft.tween_property(lbl, "modulate:a", 0.0, 0.6)
 	ft.chain().tween_callback(lbl.queue_free)
 
@@ -649,15 +662,16 @@ func _hop_tile(tile: Control, pts: float) -> void:
 	var origin: Vector2 = tile.global_position
 	var hop := create_tween()
 	hop.tween_property(tile, "global_position", origin + Vector2(0, -20), TILE_HOP_TIME) \
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		.set_trans(Tween.TRANS_LINEAR)
 	hop.tween_property(tile, "global_position", origin, TILE_LAND_TIME) \
-		.set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+		.set_trans(Tween.TRANS_LINEAR)
 	_spawn_tile_score(tile, pts)
 
 
 func _spawn_tile_score(tile: Control, pts: float) -> void:
 	if pts <= 0.0:
 		return
+	ParticleBurstFx.burst(self, tile.global_position + Vector2(0, -20), Color(1, 0.9, 0.3), 10, {"vel_min": 80, "vel_max": 160, "lifetime": 0.45})
 	var lbl := Label.new()
 	lbl.text = _fmt_pts(pts)
 	lbl.add_theme_font_override("font", KB_FONT)
@@ -671,7 +685,7 @@ func _spawn_tile_score(tile: Control, pts: float) -> void:
 	var ft := lbl.create_tween()
 	ft.set_parallel(true)
 	ft.tween_property(lbl, "global_position", lbl.global_position + Vector2(0, -32), 0.5) \
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		.set_trans(Tween.TRANS_LINEAR)
 	ft.tween_property(lbl, "modulate:a", 0.0, 0.5)
 	ft.chain().tween_callback(lbl.queue_free)
 
@@ -688,8 +702,8 @@ func _banner_show() -> void:
 	scoring_banner.scale = Vector2(0.9, 0.9)
 	var tw := create_tween()
 	tw.tween_property(scoring_banner, "modulate:a", 1.0, BANNER_FADE_TIME)
-	tw.tween_property(scoring_banner, "scale", Vector2(1.0, 1.0), BANNER_FADE_TIME) \
-		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(scoring_banner, "scale", Vector2.ONE, BANNER_FADE_TIME) \
+		.set_trans(Tween.TRANS_LINEAR)
 	total_shelf.hide()
 	base_score_label.text = "0"
 	base_score_label.scale = Vector2(1, 1)
@@ -735,16 +749,19 @@ func _projectile_to_monster(dmg: int) -> void:
 	var target: Vector2 = hp_bar.global_position + Vector2(hp_bar.size.x / 2, 0)
 	var tw := create_tween()
 	tw.tween_property(ghost, "global_position", target, PROJECTILE_TIME) \
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		.set_trans(Tween.TRANS_LINEAR)
 	tw.tween_callback(ghost.queue_free)
+
+	ParticleBurstFx.burst(self, target, Color(1, 0.25, 0.15), 18, {"vel_min": 90, "vel_max": 200, "lifetime": 0.5})
 
 	# On impact
 	var shake := create_tween()
 	var monster_box: Control = %MonsterDisplayArea
 	var orig: Vector2 = monster_box.position
 	for j in range(4):
-		shake.tween_property(monster_box, "position", orig + Vector2(randf_range(-6, 6), randf_range(-4, 4)), 0.05)
-	shake.tween_property(monster_box, "position", orig, 0.05)
+		shake.tween_callback(monster_box.set_position.bind(orig + Vector2(randi_range(-6, 6), randi_range(-4, 4))))
+		shake.tween_interval(0.05)
+	shake.tween_callback(monster_box.set_position.bind(orig))
 
 	var flash_m := create_tween()
 	flash_m.tween_property(monster_label, "modulate", Color(3, 3, 3, 1), 0.06)

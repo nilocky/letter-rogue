@@ -1,5 +1,7 @@
 extends Control
 
+const ParticleBurstFx := preload("res://scripts/components/ParticleBurst.gd")
+
 @onready var title: Label = %Title
 @onready var receipt: VBoxContainer = %Receipt
 @onready var total_label: Label = %TotalLabel
@@ -44,6 +46,9 @@ func open(summary: Dictionary) -> void:
 
 	total_label.text = "TOTAL CASH: +$0"
 	_animate_total()
+	await get_tree().process_frame
+	var confetti := 48 if is_boss else 26
+	ParticleBurstFx.burst(self, title.global_position + Vector2(title.size.x / 2, 30), Color(1, 0.85, 0.3), confetti, {"gravity": Vector2(0, 260), "lifetime": 1.2, "vel_min": 120, "vel_max": 320, "spread": 360.0})
 
 
 func _add_receipt_line(label: String, amount: int) -> void:
@@ -63,7 +68,7 @@ func _add_receipt_line(label: String, amount: int) -> void:
 func _animate_total() -> void:
 	var tw := create_tween()
 	_animated_total = 0
-	tw.tween_method(_on_total_tick, 0.0, float(_total), 1.5).set_ease(Tween.EASE_OUT)
+	tw.tween_method(_on_total_tick, 0.0, float(_total), 1.5)
 	await tw.finished
 	_animated_total = _total
 	total_label.text = "TOTAL CASH: +$%d" % _total

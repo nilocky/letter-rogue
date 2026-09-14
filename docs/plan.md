@@ -106,6 +106,10 @@ Design doc: `docs/superpowers/specs/2026-09-13-letter-rogue-v3-balatro-bag-optim
 - [x] **Plate-mounted socket masking for Cherry MX switch (image.jpg black-mask match)** — SwitchSocketContainer (`clip_contents = true`, 38×22 at (5,14)) clips the bottom 6px (~19%) of the SwitchBase (38×28, STRETCH_KEEP native top-left) so the switch appears socketed/embedded into the stone altar plate; StoneSocketSlot ColorRect (40×6 at (4,30), dark `Color(0.1,0.12,0.16,0.9)`) adds the recessed slot shadow/bevel line at the base.
 - [x] **Restore visible switch base underneath keycaps (image-2/image-3 match)** — previous socket container (Y=14..36) was fully covered by the opaque 44px cap; flattened hierarchy: root 48×54 mouse_filter PASS, CapLayer (0,0) 48×40, SwitchBase direct child standalone (5,22) 38×28 full atlas extending ~10px below cap skirt (5px projection when cap plunges to PRESSED_CAP_Y 5.0); CombatScreen `_refresh_hand()` tile_size (48,54) so runtime tiles match the root.
 - [x] **Context-aware keycap switch embedding (Combat embedded vs Shop standalone)** — `@export embedded_mode: bool = false`; `set_embedded_mode(enabled)` re-applies skin; CombatScreen `_instantiate_tile()` sets `embedded_mode = true`. Embedded: `SocketShadow` ColorRect (38×3 at (5,46), `Color(0.08,0.10,0.14,0.95)`) visible, SwitchBase (5,26) 38×22 with **cropped duplicate** atlas (`region.size.y *= 0.79`, proportional ~21% because the switch slice is 262×258 source px — literal `-= 6.0` would crop only ~0.7 display px). Standalone (ShopScreen/RunSetupScreen): SocketShadow hidden, full uncropped switch (5,22) 38×28. Crop applied on `duplicate()` so the shared cached atlas is never mutated.
+- [x] **Scene transition system** — `SceneTransition.gd` static Node, 5 shader styles (bayer dither, pixelate, diamond grid, scanline shutter, radial wipe), two-phase play_out/play_in, no-flash guarantee, stutter protection via 1-frame await
+- [x] **ParticleBurst system** — `ParticleBurst.gd` static class, CPUParticles2D one-shot bursts, cached 6×6 pixel texture, used for score bursts, button presses, projectile impact, victory confetti
+- [x] **PixelHPBar** — custom `_draw()` segmented retro HP bar with color transitions (green→yellow→red) and top highlight line
+- [x] **MainMenuScreen overhaul** — added Achievements/Collection/Settings buttons, hover scale+tint effects, particle burst on press, new bg_main_menu_2.jpg background
 - [ ] **SFX Audio Manager** — hook audio calls (commented-out `AudioManager.play()` calls in CombatScreen) with a simple autoload AudioManager that plays from `res://assets/audio/`
 - [ ] **Particle effects** — add particle emitters for tile score bursts, damage impact, victory celebration
 - [ ] **Redraw animation polish** — ensure smooth in/out tweens for swapped tiles
@@ -114,8 +118,8 @@ Design doc: `docs/superpowers/specs/2026-09-13-letter-rogue-v3-balatro-bag-optim
 - [ ] **HP bar styling** — add gradient/color transitions for damage
 
 ### Testing & Quality
-- [x] Headless test suite: run_tests.gd runner + 4 test suites (lexicon, word, monster_modifier, scenario)
-- [x] V3 headless tests: test_bag_expansion, test_play_refill, test_word_form_detection, test_scoring_pipeline, test_artisan_rail, test_switch_packs, test_consumables_depths
+- [x] Test suite: run_tests.gd runner + 4 test suites (lexicon, word, monster_modifier, scenario)
+- [x] V3 tests: test_bag_expansion, test_play_refill, test_word_form_detection, test_scoring_pipeline, test_artisan_rail, test_switch_packs, test_consumables_depths
 - [x] All 11 test suites passing
 - [ ] **Edge cases** — empty bag, empty hand, zero turns left boundary, wildcard with no letters in picker
 - [ ] **Bag overflow** — bag larger than hand draw size (already handled via `mini()`)

@@ -8,8 +8,7 @@ letter-rogue/
 ├── project.godot              Godot project config: 540x960 viewport, 441x784 window override,
 │                               canvas_items stretch, portrait locked, 16 autoloads, custom theme
 │
-├── AGENTS.md                  Agent instructions (Godot MCP, Outline wiki, code conventions,
-│                               headless verification harness procedure)
+├── AGENTS.md                  Agent instructions (Godot MCP, Outline wiki, code conventions)
 ├── README.md
 │
 ├── data/                      # Gameplay data as JSON, ships in exported pck
@@ -29,7 +28,8 @@ letter-rogue/
 │
 ├── scripts/
 │   ├── game_root.gd           Top-level state machine: MENU → RUN_SETUP → COMBAT → SHOP → GAME_OVER.
-│   │                           Instantiates/destroys screen scenes. F1 debug shortcut.
+│   │                           Instantiates/destroys screen scenes via SceneTransition.
+│   │                           F1 debug shortcut.
 │   │
 │   ├── autoload/              # Singletons (registered in project.godot)
 │   │   ├── EventBus.gd        Signal definitions: navigation, combat, shop, upgrades, bag/draw,
@@ -85,13 +85,22 @@ letter-rogue/
 │       │                        (spring-physics width, Hermite smoothstep proximity, cyan glow). On drop:
 │       │                        queue_free()s spacer, emits item_dropped(from_slot, to_pure_index). Rebuilds
 │       │                        _slots from live tree — zero manual array surgery.
+│       ├── ParticleBurst.gd   Static class: one-shot CPUParticles2D burst with cached 6×6 pixel texture.
+│       │                        Used for score bursts, button presses, projectile impact, victory confetti.
+│       ├── PixelHPBar.gd      TextureProgressBar subclass: custom _draw() segmented retro HP bar with
+│       │                        color transitions (green→yellow→red) and top highlight line.
+│       ├── SceneTransition.gd Static Node: two-phase screen transition via CanvasLayer 128 + ShaderMaterial.
+│       │                        5 shader styles (bayer dither, pixelate, diamond grid, scanline, radial wipe).
+│       │                        No-flash guarantee, stutter protection via 1-frame await.
 │       ├── BagModal.gd        Bag inspector overlay: per-letter frequency counts, vowel/consonant ratio
-│       ├── VictoryModal.gd    Itemized reward receipt with counting-up total animation, loot drops display, Continue button
+│       ├── VictoryModal.gd    Itemized reward receipt with counting-up total animation, loot drops display,
+│       │                        particle burst confetti, Continue button
 │       └── OverlayHint.gd     Reusable labeled translucent rect for UI sandbox annotations
 │
 ├── scenes/
 │   ├── GameRoot.tscn          Empty by design — runtime-only Node, screens instantiated dynamically
-│   ├── MainMenuScreen.tscn    Background + SafeArea + Title + StartButton
+│   ├── MainMenuScreen.tscn    Background (bg_main_menu_2.jpg) + SettingsButton + StartButton +
+│   │                           AchievementsButton + CollectionButton. Hover scale+tint effects.
 │   ├── RunSetupScreen.tscn    Pack cards, bag buttons grid, bag preview, Start/Back
 │   ├── CombatScreen.tscn      TopBar (monster/HP/turns/bag/money) + MidZone (word strip) +
 │   │                           BottomZone (Redraw/Play buttons) + HandTileContainer (absolute child of
@@ -122,11 +131,14 @@ letter-rogue/
 │
 ├── assets/
 │   ├── fonts/                 Kenney Blocks/Pixel/Mini/High/Future + monogram + m5x7
+│   ├── shaders/
+│   │   └── transitions/       5 transition shader styles (bayer_dither, pixelate_darken,
+│   │                            diamond_grid, scanline_shutter, radial_wipe)
 │   └── textures/
-│       └── backgrounds/       bg_main_menu.jpg, bg_main_menu_low.jpg, bg_combat_2.jpg,
-│                              bg_combat_2_keyboard_safe.jpg (safe-area mask reference)
+│       └── backgrounds/       bg_main_menu.jpg, bg_main_menu_low.jpg, bg_main_menu_2.jpg,
+│                              bg_combat_2.jpg, bg_combat_2_keyboard_safe.jpg (safe-area mask reference)
 │
-├── tests/                     # Headless test suite (extends SceneTree)
+├── tests/                     # Test suite
 │   ├── run_tests.gd           Test runner (shells out to godot per suite)
 │   ├── lexicon_test.gd        WordService.get_word_meta assertions
 │   ├── word_test.gd           is_word, length_multiplier, word_count

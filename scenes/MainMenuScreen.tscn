@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/MainMenuScreen.gd" id="1_abcdef"]
-[ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_main_menu.jpg" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_main_menu_2.jpg" id="2_bg"]
 
 [node name="MainMenuScreen" type="Control"]
 anchors_preset = 15
@@ -22,37 +22,38 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="SafeArea" type="MarginContainer" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 60
-theme_override_constants/margin_top = 168
-theme_override_constants/margin_right = 60
-theme_override_constants/margin_bottom = 68
-
-[node name="VBoxContainer" type="VBoxContainer" parent="SafeArea"]
-alignment = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 16
-
-[node name="StartButton" type="Button" parent="SafeArea/VBoxContainer"]
+[node name="SettingsButton" type="Button" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 56)
-text = "Start Run"
-theme_override_font_sizes/font_size = 24
-size_flags_horizontal = 4
+offset_left = 446.0
+offset_top = 13.0
+offset_right = 525.0
+offset_bottom = 92.0
+flat = true
+text = ""
 
-[node name="CollectionButton" type="Button" parent="SafeArea/VBoxContainer"]
-custom_minimum_size = Vector2(320, 56)
-text = "Collection"
-theme_override_font_sizes/font_size = 24
-size_flags_horizontal = 4
+[node name="StartButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 96.0
+offset_top = 554.0
+offset_right = 443.0
+offset_bottom = 631.0
+flat = true
+text = ""
 
-[node name="SettingsButton" type="Button" parent="SafeArea/VBoxContainer"]
-custom_minimum_size = Vector2(320, 56)
-text = "Settings"
-theme_override_font_sizes/font_size = 24
-size_flags_horizontal = 4
+[node name="AchievementsButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 96.0
+offset_top = 650.0
+offset_right = 443.0
+offset_bottom = 727.0
+flat = true
+text = ""
+
+[node name="CollectionButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 96.0
+offset_top = 747.0
+offset_right = 443.0
+offset_bottom = 824.0
+flat = true
+text = ""

@@ -26,8 +26,6 @@ func _ready() -> void:
 	sell_dialog.add_theme_font_override("font", M57_FONT)
 	EventBus.shop_inventory_generated.connect(_on_inventory_generated)
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
-	_build_upgrade_buttons()
-	_build_blueprint_buttons()
 	_refresh_ui()
 
 
@@ -208,12 +206,13 @@ func _build_upgrade_buttons() -> void:
 		info.add_child(name_lbl)
 		info.add_child(desc_lbl)
 		var buy_btn := Button.new()
-		buy_btn.text = "$%d" % ShopService.upgrade_cost(u["id"])
+		var cost: int = ShopService.upgrade_cost(u["id"])
+		buy_btn.text = "$%d" % cost
+		buy_btn.disabled = GameState.money < cost
 		buy_btn.custom_minimum_size = Vector2(100, 60)
 		var uid: String = str(u["id"])
 		buy_btn.pressed.connect(func() -> void:
 			if ShopService.purchase_upgrade(uid):
-				_build_upgrade_buttons()
 				_refresh_money()
 			else:
 				print("cannot afford upgrade")
@@ -244,13 +243,13 @@ func _build_blueprint_buttons() -> void:
 		info.add_child(name_lbl)
 		info.add_child(desc_lbl)
 		var buy_btn := Button.new()
-		buy_btn.text = "Owned" if owned else "$%d" % int(bp["base_price"])
-		buy_btn.disabled = owned
+		var price: int = int(bp["base_price"])
+		buy_btn.text = "Owned" if owned else "$%d" % price
+		buy_btn.disabled = owned or GameState.money < price
 		buy_btn.custom_minimum_size = Vector2(100, 60)
 		var bp_data: Dictionary = bp
 		buy_btn.pressed.connect(func() -> void:
 			if ShopService.purchase_blueprint(bp_data):
-				_build_blueprint_buttons()
 				_refresh_money()
 			else:
 				print("cannot afford blueprint")
@@ -261,8 +260,10 @@ func _build_blueprint_buttons() -> void:
 
 
 func _on_upgrade_purchased(_id: String, _level: int) -> void:
-	_build_upgrade_buttons()
+	_refresh_money()
 
 
 func _refresh_money() -> void:
 	money_label.text = "$%d" % GameState.money
+	_build_upgrade_buttons()
+	_build_blueprint_buttons()

@@ -4,13 +4,15 @@ extends Node
 enum State { MENU, RUN_SETUP, COMBAT, SHOP, GAME_OVER }
 
 var current_state: State = State.MENU
-var current_screen: Node = null
+var current_screen: Control = null
+var _transitioning: bool = false
 
 const MENU_SCENE := preload("res://scenes/MainMenuScreen.tscn")
 const RUN_SETUP_SCENE := preload("res://scenes/RunSetupScreen.tscn")
 const COMBAT_SCENE := preload("res://scenes/CombatScreen.tscn")
 const SHOP_SCENE := preload("res://scenes/ShopScreen.tscn")
 const GAME_OVER_SCENE := preload("res://scenes/GameOverScreen.tscn")
+const SCENE_TRANSITION := preload("res://scripts/components/SceneTransition.gd")
 
 var _monsters_cache: Dictionary = {}
 
@@ -66,7 +68,7 @@ func _fight_or_boss() -> void:
 	entry["hp_remaining"] = _scaled_hp(entry, GameState.round_number)
 	GameState.current_monster = entry
 	current_state = State.COMBAT
-	_show(COMBAT_SCENE)
+	await _show(COMBAT_SCENE)
 	CombatService.start_round()
 
 
@@ -79,7 +81,7 @@ func _fight_or_boss_depths() -> void:
 	entry["hp_remaining"] = _scaled_hp(entry, GameState.round_number)
 	GameState.current_monster = entry
 	current_state = State.COMBAT
-	_show(COMBAT_SCENE)
+	await _show(COMBAT_SCENE)
 	CombatService.start_round()
 
 
@@ -99,7 +101,7 @@ func _on_game_complete() -> void:
 
 func _on_game_over(reached_round: int) -> void:
 	current_state = State.GAME_OVER
-	_show(GAME_OVER_SCENE)
+	await _show(GAME_OVER_SCENE)
 	if current_screen.has_method("show_game_over"):
 		current_screen.show_game_over(reached_round)
 
@@ -150,10 +152,17 @@ func jump_boss_round() -> void:
 
 
 func _show(scene: PackedScene) -> void:
-	if current_screen:
-		current_screen.queue_free()
+	if _transitioning:
+		return
+	_transitioning = true
+	var old := current_screen
+	if old:
+		await SCENE_TRANSITION.play_out(old)
+		old.queue_free()
 	current_screen = scene.instantiate()
 	add_child(current_screen)
+	await SCENE_TRANSITION.play_in(current_screen)
+	_transitioning = false
 
 
 func _monster_list_for(pool: String) -> Array:

@@ -27,6 +27,7 @@ anchor_right = 0.92
 anchor_bottom = 0.88
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"PixelPanel"
 
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 anchors_preset = 15

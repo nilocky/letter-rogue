@@ -80,9 +80,9 @@ Web constraints:
 
 | Scene | Purpose |
 |---|---|---|
-| `MainMenuScreen` | Title + Start Run button |
+| `MainMenuScreen` | Title + Start/Achievements/Collection/Settings buttons, hover scale+tint effects, particle burst on press |
 | `RunSetupScreen` | Switch Pack (5) + Starter Bag (4) selection |
-| `CombatScreen` | Word builder: hand tiles with deep-travel latched state, WordRuneSlot magical rune display strip, Artisan rail display, damage preview, 4-phase scoring banner, BagModal, VictoryModal |
+| `CombatScreen` | Word builder: hand tiles with deep-travel latched state, WordRuneSlot magical rune display strip, Artisan rail display, damage preview, 4-phase scoring banner, BagModal, VictoryModal, ParticleBurst score bursts, PixelHPBar monster HP |
 | `ShopScreen` | Buyable tiles grid, sell/reroll, upgrade column, Workshop Blueprints |
 | `GameOverScreen` | Round reached + money display, restart |
 
@@ -544,3 +544,46 @@ Both real-time mouse-down press and latched (word-strip) state share identical v
 | **CapLayer offset** | Entire CapLayer shifts 2px down, plunging keycap flush onto fixed SwitchBase |
 
 On mouse-button release, the keycap **never pops up** — it remains in the pressed position. CombatScreen then either calls `set_latched(true)` (seamless stay-down) or the next interaction pops it up. This eliminates the 1-frame jitter where the keycap would bounce up before being latched back down.
+
+## Scene Transitions (Pixel-Art Retro)
+
+`SceneTransition` (`scripts/components/SceneTransition.gd`) is a static Node providing two-phase screen transitions via CanvasLayer 128 with a ShaderMaterial overlay:
+
+- **play_out(screen)** — fades out the current screen using a randomly chosen shader style (0.45s)
+- **play_in(screen)** — reveals the new screen by unwinding the same shader pattern (0.45s)
+- **No-flash guarantee** — at progress 1.0 the overlay is fully opaque; the old screen is freed / new screen added while progress stays at 1.0
+- **Stutter protection** — `play_in` awaits one frame so the new screen's heavy `_ready()` finishes before the reveal tween starts
+
+5 shader styles, preloaded at script load time:
+
+| Shader | Effect |
+|---|---|
+| `bayer_dither.gdshader` | Ordered dither dissolve (4x4 Bayer matrix), pixel clusters dissolve to black |
+| `pixelate_darken.gdshader` | Pixelate & darken: block sizes step 1→2→4→8→16→32 while each block fills from center |
+| `diamond_grid.gdshader` | Diamond grid tile wipe, Manhattan distance metric, chunky retro edges |
+| `scanline_shutter.gdshader` | Interlaced shutter bands, random vertical/horizontal orientation |
+| `radial_wipe.gdshader` | Stepped radial iris wipe, chunky pixelated edge (cell_size=8) |
+
+All shaders share `progress` uniform (0.0 = fully transparent, 1.0 = fully opaque) and `transition_color` uniform (default black).
+
+`GameRoot._show()` wraps screen instantiation in `SceneTransition.play_out(old) → old.queue_free() → current_screen = scene.instantiate() → add_child() → SceneTransition.play_in(current_screen)`. `_transitioning` flag prevents re-entrance.
+
+## Particle System
+
+`ParticleBurst` (`scripts/components/ParticleBurst.gd`) is a static class using `CPUParticles2D` for one-shot effects:
+
+- `ParticleBurst.burst(parent, global_pos, color, amount, opts)` — creates, emits, and self-frees a CPU particle burst
+- Uses a cached 6×6 pixel texture with edge lightening for a chunky retro look
+- Opacity: `lifetime`, `vel_min/max`, `gravity`, `spread`, `scale_min/max`
+- Used for: tile score bursts (CombatScreen), button press effects (MainMenuScreen), damage projectile impact, victory confetti (VictoryModal)
+
+## Custom HP Bar
+
+`PixelHPBar` (`scripts/components/PixelHPBar.gd`) is a `TextureProgressBar` subclass with custom `_draw()` for segmented retro HP display:
+
+- `segments` (default 20): number of HP segments
+- `gap` (default 2): pixel gap between segments
+- `fill_color` / `warn_color` / `crit_color`: color transitions at 55% / 25% thresholds
+- `empty_color` / `border_color`: empty segment and border colors
+- Segmented bar draws filled segments with a top highlight line for retro depth
+- Connected to `changed` signal for auto-redraw
