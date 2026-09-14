@@ -1,0 +1,50 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvpqihnv2f7io"]
+
+[ext_resource type="Script" path="res://scripts/components/ArtisanSlot.gd" id="1_abcdef"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.047, 0.063, 0.106, 0.902)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.4, 0.5, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 4
+content_margin_top = 4
+content_margin_right = 4
+content_margin_bottom = 4
+
+[node name="ArtisanSlot" type="PanelContainer"]
+custom_minimum_size = Vector2(80, 80)
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+script = ExtResource("1_abcdef")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="IconRect" type="TextureRect" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+size_flags_horizontal = 4
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="VBox"]
+unique_name_in_owner = true
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EmptyPlaceholder" type="Label" parent="VBox"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "—"

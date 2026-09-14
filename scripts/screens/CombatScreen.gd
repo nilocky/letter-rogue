@@ -45,6 +45,7 @@ const PROJECTILE_TIME := 0.35
 @onready var total_shelf: PanelContainer = %TotalDamageShelf
 @onready var total_damage_label: Label = %TotalDamageLabel
 @onready var word_meta_label: Label = %WordMetaLabel
+@onready var artisan_rail: ArtisanRailDisplay = %ArtisanRail
 
 var _slots: Array = []
 var _pending_redraw: Array = []
@@ -111,6 +112,7 @@ func _setup_hand_container_geometry() -> void:
 func show_round() -> void:
 	_refresh_header()
 	_refresh_hand()
+	artisan_rail.refresh()
 
 
 func _refresh_header() -> void:

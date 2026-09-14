@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/ArtisanRailDisplay.gd" id="1_abcdef"]
+
+[node name="ArtisanRailDisplay" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 90)
+theme_override_constants/separation = 8
+alignment = 1
+script = ExtResource("1_abcdef")
