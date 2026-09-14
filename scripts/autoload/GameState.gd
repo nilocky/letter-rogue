@@ -5,6 +5,7 @@ signal state_changed
 
 const BASE_TURNS := 3
 const BASE_REDRAWS := 3
+const BASE_HINTS := 3
 const BASE_DRAW := 5
 
 var money: int = 10
@@ -32,6 +33,12 @@ var active_blueprints: Dictionary = {}
 var skip_tags: Array = []
 var depth_stage: int = 0
 
+var unlocked_key_slots: int = 8
+var active_grimoires: Array = []
+var hint_quality: int = 1
+var hints_remaining: int = 0
+var upgrade_hints: int = 0
+
 
 func reset() -> void:
 	money = 10
@@ -55,6 +62,11 @@ func reset() -> void:
 	active_blueprints = {}
 	skip_tags = []
 	depth_stage = 0
+	unlocked_key_slots = 8
+	active_grimoires.clear()
+	hint_quality = 1
+	hints_remaining = 0
+	upgrade_hints = 0
 
 
 func round_turn_budget() -> int:
@@ -63,6 +75,10 @@ func round_turn_budget() -> int:
 
 func round_redraw_budget() -> int:
 	return BASE_REDRAWS + upgrade_redraws
+
+
+func round_hint_budget() -> int:
+	return BASE_HINTS + upgrade_hints
 
 
 func draw_size() -> int:
