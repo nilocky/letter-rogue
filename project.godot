@@ -38,6 +38,7 @@ MCPRuntimeProbe="*uid://bsg12huaf1u5i"
 DebugManager="*res://scripts/autoload/DebugManager.gd"
 EffectPipeline="*res://scripts/autoload/EffectPipeline.gd"
 LootService="*res://scripts/autoload/LootService.gd"
+AudioManager="*res://scripts/autoload/AudioManager.gd"
 
 [display]
 
