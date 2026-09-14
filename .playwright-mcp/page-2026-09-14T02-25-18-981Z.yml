@@ -1,0 +1,630 @@
+- generic [active] [ref=f21e1]:
+  - main [ref=f21e4]:
+    - 'heading "Guide: Activation Sequence" [level=1] [ref=f21e5]'
+    - generic [ref=f21e6]:
+      - generic [ref=f21e9]:
+        - text: (Redirected from
+        - link "Scoring" [ref=f21e10] [cursor=pointer]:
+          - /url: /w/Scoring?redirect=no
+        - text: )
+      - link "Jump to navigation" [ref=f21e11] [cursor=pointer]:
+        - /url: "#mw-head"
+      - link "Jump to search" [ref=f21e12] [cursor=pointer]:
+        - /url: "#searchInput"
+      - generic [ref=f21e14]:
+        - generic [ref=f21e15]:
+          - figure [ref=f21e16]:
+            - link [ref=f21e17] [cursor=pointer]:
+              - /url: /w/File:Scholar.png
+          - generic [ref=f21e19]:
+            - text: This article is a
+            - link "Guide" [ref=f21e20] [cursor=pointer]:
+              - /url: /w/Category:Guides
+            - text: .
+          - generic [ref=f21e21]: This guide has been created by wiki members as a helpful resource, and is not official.
+          - generic [ref=f21e22]:
+            - text: If there is any missing, incorrect, or out of date information, please help by
+            - link "editing this page" [ref=f21e23] [cursor=pointer]:
+              - /url: https://balatrowiki.org/w/Guide:_Activation_Sequence?action=edit
+            - text: .
+        - paragraph [ref=f21e24]: Activation sequence is a core mechanic of Balatro and its understanding can be crucial to strategy building and optimization.
+        - navigation [ref=f21e25]:
+          - button "Hide the table of contents" [ref=f21e26]
+          - generic [ref=f21e27]:
+            - heading "Contents" [level=2] [ref=f21e28]
+            - generic [ref=f21e29]:
+              - text: "["
+              - generic [ref=f21e30] [cursor=pointer]: hide
+              - text: "]"
+          - list [ref=f21e31]:
+            - listitem [ref=f21e32]:
+              - link "Hand Sequence" [ref=f21e33] [cursor=pointer]:
+                - /url: "#Hand_Sequence"
+            - listitem [ref=f21e35]:
+              - link "Strategic Card Arrangement" [ref=f21e36] [cursor=pointer]:
+                - /url: "#Strategic_Card_Arrangement"
+              - list [ref=f21e38]:
+                - listitem [ref=f21e39]:
+                  - link "Additive Mult - Multiplicative Mult Order" [ref=f21e40] [cursor=pointer]:
+                    - /url: "#Additive_Mult_-_Multiplicative_Mult_Order"
+                - listitem [ref=f21e42]:
+                  - link "Other Arrangements" [ref=f21e43] [cursor=pointer]:
+                    - /url: "#Other_Arrangements"
+        - generic [ref=f21e45]:
+          - heading "Hand Sequence" [level=2] [ref=f21e46]
+          - generic [ref=f21e47]:
+            - text: "["
+            - link "edit" [ref=f21e48] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?section=1&veaction=edit
+            - text: "|"
+            - link "edit source" [ref=f21e49] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?action=edit&section=1
+            - text: "]"
+        - paragraph [ref=f21e50]:
+          - text: "When a hand is played, effects will activate in the following orders. (Some Jokers may have different parts trigger at different stages: for example,"
+          - link [ref=f21e53] [cursor=pointer]:
+            - /url: /w/Wee_Joker
+          - link "Wee Joker" [ref=f21e55] [cursor=pointer]:
+            - /url: /w/Wee_Joker
+          - text: gain chips 'on scored' and adds chips to total 'independently').
+        - list [ref=f21e57]:
+          - listitem [ref=f21e58]:
+            - text: Boss
+            - link "blind" [ref=f21e59] [cursor=pointer]:
+              - /url: /w/Blinds
+            - text: "effects: Boss blinds such as"
+            - link [ref=f21e62] [cursor=pointer]:
+              - /url: /w/The_Flint
+            - link "The Flint" [ref=f21e64] [cursor=pointer]:
+              - /url: /w/The_Flint
+            - text: or
+            - link [ref=f21e68] [cursor=pointer]:
+              - /url: /w/The_Arm
+            - link "The Arm" [ref=f21e70] [cursor=pointer]:
+              - /url: /w/The_Arm
+            - text: will activate.
+          - listitem [ref=f21e72]:
+            - link "'On played'" [ref=f21e73] [cursor=pointer]:
+              - /url: /w/Activation_Type
+            - text: "Jokers: Jokers that activate when a hand is played, and before any scoring happens. Examples include"
+            - link [ref=f21e76] [cursor=pointer]:
+              - /url: /w/Green_Joker
+            - link "Green Joker" [ref=f21e78] [cursor=pointer]:
+              - /url: /w/Green_Joker
+            - text: "'s scaling,"
+            - link [ref=f21e82] [cursor=pointer]:
+              - /url: /w/DNA
+            - link "DNA" [ref=f21e84] [cursor=pointer]:
+              - /url: /w/DNA
+            - text: ", and"
+            - link [ref=f21e88] [cursor=pointer]:
+              - /url: /w/To_Do_List
+            - link "To Do List" [ref=f21e90] [cursor=pointer]:
+              - /url: /w/To_Do_List
+            - text: .
+          - listitem [ref=f21e92]:
+            - text: "Played cards scoring: Cards played and scored activate from left to right. For each card, its effects activate in the following order:"
+            - list [ref=f21e93]:
+              - listitem [ref=f21e94]: "Base effect (Chips): The card activates its base effect, giving the accorded amount of Chips. Bonus chips are included in this value."
+              - listitem [ref=f21e95]:
+                - link "Card modifiers" [ref=f21e96] [cursor=pointer]:
+                  - /url: /w/Card_modifiers
+                - text: ": Card modifiers activate in the following order: enhancements, then seals (currently only"
+                - generic [ref=f21e98]:
+                  - link [ref=f21e101] [cursor=pointer]:
+                    - /url: /w/Gold_Seal
+                  - link [ref=f21e104] [cursor=pointer]:
+                    - /url: /w/Gold_Seal
+                - link "Gold Seal" [ref=f21e105] [cursor=pointer]:
+                  - /url: /w/Gold_Seal
+                - text: ), then editions.
+              - listitem [ref=f21e107]:
+                - link "'On scored'" [ref=f21e108] [cursor=pointer]:
+                  - /url: /w/Activation_Type
+                - text: "Jokers: Jokers that activate on a played and scored card will activate their effects. When multiple Jokers are triggered by the same card, they activate from left to right. Examples include"
+                - link [ref=f21e111] [cursor=pointer]:
+                  - /url: /w/Wee_Joker
+                - link "Wee Joker" [ref=f21e113] [cursor=pointer]:
+                  - /url: /w/Wee_Joker
+                - text: "'s scaling,"
+                - link [ref=f21e117] [cursor=pointer]:
+                  - /url: /w/Smiley_Face
+                - link "Smiley Face" [ref=f21e119] [cursor=pointer]:
+                  - /url: /w/Smiley_Face
+                - text: ", and"
+                - link [ref=f21e123] [cursor=pointer]:
+                  - /url: /w/Triboulet
+                - link "Triboulet" [ref=f21e125] [cursor=pointer]:
+                  - /url: /w/Triboulet
+                - text: .
+              - listitem [ref=f21e127]:
+                - text: "Retriggers: Each retrigger repeats the previous activation sequence (from base effects to scored card dependent Jokers) one more time. Multiple retriggers stack additively."
+                - generic [ref=f21e129]:
+                  - link [ref=f21e132] [cursor=pointer]:
+                    - /url: /w/Red_Seal
+                  - link [ref=f21e135] [cursor=pointer]:
+                    - /url: /w/Red_Seal
+                - link "Red Seal" [ref=f21e136] [cursor=pointer]:
+                  - /url: /w/Red_Seal
+                - text: would go first, followed by retriggering Jokers from left to right.
+          - listitem [ref=f21e138]:
+            - text: "Held in hand abilities: Cards in hand are checked from left to right if they can activate in-hand abilities. The sequence for each card is similar to scored cards."
+            - list [ref=f21e139]:
+              - listitem [ref=f21e140]:
+                - link "Enhancement" [ref=f21e141] [cursor=pointer]:
+                  - /url: /w/Card_modifiers
+                - text: (
+                - link [ref=f21e144] [cursor=pointer]:
+                  - /url: /w/Steel_cards
+                - link "Steel cards" [ref=f21e146] [cursor=pointer]:
+                  - /url: /w/Steel_cards
+                  - generic [ref=f21e147]: Steel card
+                  - text: s
+                - text: "): Currently Steel is the only card modifier to activate in-hand for each hand."
+              - listitem [ref=f21e148]:
+                - link "'On held'" [ref=f21e149] [cursor=pointer]:
+                  - /url: /w/Activation_Type
+                - text: "Jokers: Jokers that activate on cards still held in hand will activate their effects. When multiple Jokers are triggered by a single card, they activate from left to right. Examples include"
+                - link [ref=f21e152] [cursor=pointer]:
+                  - /url: /w/Raised_Fist
+                - link "Raised Fist" [ref=f21e154] [cursor=pointer]:
+                  - /url: /w/Raised_Fist
+                - text: ","
+                - link [ref=f21e158] [cursor=pointer]:
+                  - /url: /w/Shoot_the_Moon
+                - link "Shoot the Moon" [ref=f21e160] [cursor=pointer]:
+                  - /url: /w/Shoot_the_Moon
+                - text: ", and"
+                - link [ref=f21e164] [cursor=pointer]:
+                  - /url: /w/Baron
+                - link "Baron" [ref=f21e166] [cursor=pointer]:
+                  - /url: /w/Baron
+                - text: .
+              - listitem [ref=f21e168]:
+                - text: "Retriggers: Same as those of scored cards, retriggers of cards in hand stack additively."
+                - generic [ref=f21e170]:
+                  - link [ref=f21e173] [cursor=pointer]:
+                    - /url: /w/Red_Seal
+                  - link [ref=f21e176] [cursor=pointer]:
+                    - /url: /w/Red_Seal
+                - link "Red Seal" [ref=f21e177] [cursor=pointer]:
+                  - /url: /w/Red_Seal
+                - text: will activate first, then
+                - link [ref=f21e181] [cursor=pointer]:
+                  - /url: /w/Mime
+                - link "Mime" [ref=f21e183] [cursor=pointer]:
+                  - /url: /w/Mime
+                - text: and any other Joker copying its effect from left to right.
+          - listitem [ref=f21e185]:
+            - text: Joker
+            - link "Editions" [ref=f21e186] [cursor=pointer]:
+              - /url: /w/Card_modifiers#Editions
+            - text: and
+            - link "'Independent'" [ref=f21e187] [cursor=pointer]:
+              - /url: /w/Activation_Type
+            - text: "Jokers: Jokers are checked from left to right to score any Edition ("
+            - link [ref=f21e190] [cursor=pointer]:
+              - /url: /w/Foil
+            - link "Foil" [ref=f21e192] [cursor=pointer]:
+              - /url: /w/Foil
+            - text: ","
+            - link [ref=f21e197] [cursor=pointer]:
+              - /url: /w/Holographic
+            - link "Holographic" [ref=f21e199] [cursor=pointer]:
+              - /url: /w/Holographic
+            - text: and
+            - link [ref=f21e204] [cursor=pointer]:
+              - /url: /w/Polychrome
+            - link "Polychrome" [ref=f21e206] [cursor=pointer]:
+              - /url: /w/Polychrome
+            - text: ") and activate Independent abilities:"
+            - list [ref=f21e209]:
+              - listitem [ref=f21e210]: Foil or holographic bonus.
+              - listitem [ref=f21e211]:
+                - link "'Independent'" [ref=f21e212] [cursor=pointer]:
+                  - /url: /w/Activation_Type
+                - text: "Jokers: Jokers that trigger after all the playing cards are scored will activate their base ability. These do not get affected by retriggers. Examples include"
+                - link [ref=f21e215] [cursor=pointer]:
+                  - /url: /w/Fortune_Teller
+                - link "Fortune Teller" [ref=f21e217] [cursor=pointer]:
+                  - /url: /w/Fortune_Teller
+                - text: ","
+                - link [ref=f21e221] [cursor=pointer]:
+                  - /url: /w/The_Duo
+                - link "The Duo" [ref=f21e223] [cursor=pointer]:
+                  - /url: /w/The_Duo
+                - text: ", and"
+                - link [ref=f21e227] [cursor=pointer]:
+                  - /url: /w/Blackboard
+                - link "Blackboard" [ref=f21e229] [cursor=pointer]:
+                  - /url: /w/Blackboard
+                - text: .
+              - listitem [ref=f21e231]:
+                - text: Jokers dependent
+                - link "on other Jokers" [ref=f21e232] [cursor=pointer]:
+                  - /url: /w/Activation_Type
+                - text: (currently, only
+                - link [ref=f21e235] [cursor=pointer]:
+                  - /url: /w/Baseball_Card
+                - link "Baseball Card" [ref=f21e237] [cursor=pointer]:
+                  - /url: /w/Baseball_Card
+                - text: ).
+              - listitem [ref=f21e239]: Polychrome bonus.
+          - listitem [ref=f21e240]:
+            - text: "Consumables: When the"
+            - link [ref=f21e243] [cursor=pointer]:
+              - /url: /w/Observatory
+            - link "Observatory" [ref=f21e245] [cursor=pointer]:
+              - /url: /w/Observatory
+            - link "Voucher" [ref=f21e247] [cursor=pointer]:
+              - /url: /w/Vouchers
+            - text: has been purchased,
+            - link "planet cards" [ref=f21e248] [cursor=pointer]:
+              - /url: /w/Planet_cards
+            - text: give X1.5
+            - link "Mult" [ref=f21e249] [cursor=pointer]:
+              - /url: /w/XMult
+            - text: ", activating from left to right."
+          - listitem [ref=f21e250]:
+            - text: "Plasma Deck balance: Lastly, if using the"
+            - link [ref=f21e253] [cursor=pointer]:
+              - /url: /w/Plasma_Deck
+            - link "Plasma Deck" [ref=f21e255] [cursor=pointer]:
+              - /url: /w/Plasma_Deck
+            - text: ", Chips and Mult are balanced."
+        - paragraph [ref=f21e257]:
+          - text: See
+          - link "Activation Type" [ref=f21e258] [cursor=pointer]:
+            - /url: /w/Activation_Type
+          - text: for a full list of when different Jokers activate.
+        - generic [ref=f21e259]:
+          - heading "Strategic Card Arrangement" [level=2] [ref=f21e260]
+          - generic [ref=f21e261]:
+            - text: "["
+            - link "edit" [ref=f21e262] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?section=2&veaction=edit
+            - text: "|"
+            - link "edit source" [ref=f21e263] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?action=edit&section=2
+            - text: "]"
+        - generic [ref=f21e264]:
+          - heading "Additive Mult - Multiplicative Mult Order" [level=3] [ref=f21e265]
+          - generic [ref=f21e266]:
+            - text: "["
+            - link "edit" [ref=f21e267] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?section=3&veaction=edit
+            - text: "|"
+            - link "edit source" [ref=f21e268] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?action=edit&section=3
+            - text: "]"
+        - paragraph [ref=f21e269]:
+          - text: Almost all card arrangement problems stem from the order of additive Mult and multiplicative Mult. According to the law of distribution, the +Mult activating before the xMult gives a higher score. For example, a hand normally scoring 40 x 4 is played and a +4
+          - link "Mult" [ref=f21e270] [cursor=pointer]:
+            - /url: /w/Mult
+          - link [ref=f21e273] [cursor=pointer]:
+            - /url: /w/Joker
+          - link "Joker" [ref=f21e275] [cursor=pointer]:
+            - /url: /w/Joker
+          - text: and a X2
+          - link "Mult" [ref=f21e277] [cursor=pointer]:
+            - /url: /w/XMult
+          - link [ref=f21e280] [cursor=pointer]:
+            - /url: /w/Ramen
+          - link "Ramen" [ref=f21e282] [cursor=pointer]:
+            - /url: /w/Ramen
+          - text: "is present. If the Joker is on the left of Ramen, the hand will score 40 x ((4+4)x2) = 640 chips whereas the reversed placement will only score 40 x ((4x2)+4) = 480 chips. This concept applies to the order of cards played and in hand as well as Jokers. For a higher score, the player may arrange in the following ways:"
+        - list [ref=f21e284]:
+          - listitem [ref=f21e285]:
+            - text: Put Jokers with additive Mult to the left of multiplicative Mult of the same
+            - link "Activation Type" [ref=f21e286] [cursor=pointer]:
+              - /url: /w/Activation_Type
+            - text: type. E.g. Joker left of Ramen,
+            - link [ref=f21e289] [cursor=pointer]:
+              - /url: /w/Lusty_Joker
+            - link "Lusty Joker" [ref=f21e291] [cursor=pointer]:
+              - /url: /w/Lusty_Joker
+            - text: left of
+            - link [ref=f21e295] [cursor=pointer]:
+              - /url: /w/Bloodstone
+            - link "Bloodstone" [ref=f21e297] [cursor=pointer]:
+              - /url: /w/Bloodstone
+            - text: ","
+            - link [ref=f21e301] [cursor=pointer]:
+              - /url: /w/Raised_Fist
+            - link "Raised Fist" [ref=f21e303] [cursor=pointer]:
+              - /url: /w/Raised_Fist
+            - text: left of
+            - link [ref=f21e307] [cursor=pointer]:
+              - /url: /w/Baron
+            - link "Baron" [ref=f21e309] [cursor=pointer]:
+              - /url: /w/Baron
+            - text: .
+          - listitem [ref=f21e311]:
+            - text: For cards about to be played, put those that give +Mult (e.g.
+            - link [ref=f21e314] [cursor=pointer]:
+              - /url: /w/Mult_cards
+            - link "Mult cards" [ref=f21e316] [cursor=pointer]:
+              - /url: /w/Mult_cards
+              - generic [ref=f21e317]: Mult card
+              - text: s
+            - text: ", cards with"
+            - generic [ref=f21e318]:
+              - link "Card Suits" [ref=f21e320] [cursor=pointer]:
+                - /url: /w/Card_Suits#Diamond_suit
+              - link "Diamond" [ref=f21e322] [cursor=pointer]:
+                - /url: /w/Card_Suits#Diamond_suit
+            - text: suit with
+            - link [ref=f21e326] [cursor=pointer]:
+              - /url: /w/Greedy_Joker
+            - link "Greedy Joker" [ref=f21e328] [cursor=pointer]:
+              - /url: /w/Greedy_Joker
+            - text: ) left of those that give xMult (e.g.
+            - link [ref=f21e332] [cursor=pointer]:
+              - /url: /w/Glass_cards
+            - link "Glass cards" [ref=f21e334] [cursor=pointer]:
+              - /url: /w/Glass_cards
+              - generic [ref=f21e335]: Glass card
+              - text: s
+            - text: ","
+            - link [ref=f21e338] [cursor=pointer]:
+              - /url: /w/Polychrome
+            - link "Polychrome" [ref=f21e340] [cursor=pointer]:
+              - /url: /w/Polychrome
+            - text: cards, cards selected by
+            - link [ref=f21e345] [cursor=pointer]:
+              - /url: /w/The_Idol
+            - link "The Idol" [ref=f21e347] [cursor=pointer]:
+              - /url: /w/The_Idol
+            - text: ).
+          - listitem [ref=f21e349]:
+            - text: For cards about to be kept in hand, put +Mult on the left of xMult. E.g. Queens with
+            - link [ref=f21e352] [cursor=pointer]:
+              - /url: /w/Shoot_the_Moon
+            - link "Shoot the Moon" [ref=f21e354] [cursor=pointer]:
+              - /url: /w/Shoot_the_Moon
+            - text: left of
+            - link [ref=f21e358] [cursor=pointer]:
+              - /url: /w/Steel_cards
+            - link "Steel cards" [ref=f21e360] [cursor=pointer]:
+              - /url: /w/Steel_cards
+              - generic [ref=f21e361]: Steel card
+              - text: s
+            - text: .
+        - paragraph [ref=f21e362]: In case the player wanted a lower score for purposes like scaling Jokers, they may put +Mult to the right of xMult.
+        - generic [ref=f21e363]:
+          - heading "Other Arrangements" [level=3] [ref=f21e364]
+          - generic [ref=f21e365]:
+            - text: "["
+            - link "edit" [ref=f21e366] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?section=4&veaction=edit
+            - text: "|"
+            - link "edit source" [ref=f21e367] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?action=edit&section=4
+            - text: "]"
+        - paragraph [ref=f21e368]: Some cards with special abilities can give different outcomes when arranged differently.
+        - list [ref=f21e369]:
+          - listitem [ref=f21e370]:
+            - text: Putting
+            - link [ref=f21e373] [cursor=pointer]:
+              - /url: /w/Midas_Mask
+            - link "Midas Mask" [ref=f21e375] [cursor=pointer]:
+              - /url: /w/Midas_Mask
+            - text: to the left of
+            - link [ref=f21e379] [cursor=pointer]:
+              - /url: /w/Vampire
+            - link "Vampire" [ref=f21e381] [cursor=pointer]:
+              - /url: /w/Vampire
+            - text: ensures the bigger boost to Vampire. The reversed placement provides less Vampire scaling but leaves
+            - link [ref=f21e385] [cursor=pointer]:
+              - /url: /w/Gold_cards
+            - link "Gold cards" [ref=f21e387] [cursor=pointer]:
+              - /url: /w/Gold_cards
+              - generic [ref=f21e388]: Gold card
+              - text: s
+            - text: in the deck.
+      - generic [ref=f21e390]:
+        - link "Category" [ref=f21e391] [cursor=pointer]:
+          - /url: /w/Special:Categories
+        - text: ":"
+        - list [ref=f21e392]:
+          - listitem [ref=f21e393]:
+            - link "Guides" [ref=f21e394] [cursor=pointer]:
+              - /url: /w/Category:Guides
+  - generic:
+    - heading "Navigation menu" [level=2] [ref=f21e395]
+    - generic [ref=f21e396]:
+      - navigation "Personal tools" [ref=f21e397]:
+        - list [ref=f21e399]:
+          - listitem [ref=f21e400]:
+            - link "Create account" [ref=f21e401] [cursor=pointer]:
+              - /url: /w/Special:CreateAccount?returnto=Guide%3A+Activation+Sequence
+          - listitem [ref=f21e402]:
+            - link "Log in" [ref=f21e403] [cursor=pointer]:
+              - /url: /w/Special:UserLogin?returnto=Guide%3A+Activation+Sequence
+      - navigation "associated-pages" [ref=f21e405]:
+        - list [ref=f21e406]:
+          - listitem [ref=f21e407]:
+            - link "Page" [ref=f21e408] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence
+          - listitem [ref=f21e409]:
+            - link "Discussion" [ref=f21e410] [cursor=pointer]:
+              - /url: /w/Talk:Guide:_Activation_Sequence?action=edit&redlink=1
+      - generic [ref=f21e411]:
+        - navigation "Views" [ref=f21e412]:
+          - list [ref=f21e413]:
+            - listitem [ref=f21e414]:
+              - link "Edit" [ref=f21e415] [cursor=pointer]:
+                - /url: /w/Guide:_Activation_Sequence?veaction=edit
+            - listitem [ref=f21e416]:
+              - link "Edit source" [ref=f21e417] [cursor=pointer]:
+                - /url: /w/Guide:_Activation_Sequence?action=edit
+            - listitem [ref=f21e418]:
+              - link "View history" [ref=f21e419] [cursor=pointer]:
+                - /url: /w/Guide:_Activation_Sequence?action=history
+        - navigation "More" [ref=f21e420] [cursor=pointer]:
+          - button "More" [ref=f21e421]
+        - search [ref=f21e424]:
+          - generic [ref=f21e427]:
+            - searchbox "Search Balatro Wiki" [ref=f21e430]
+            - button "Search" [ref=f21e431] [cursor=pointer]
+    - generic [ref=f21e432]:
+      - banner [ref=f21e433]:
+        - link "Visit the main page" [ref=f21e434] [cursor=pointer]:
+          - /url: /
+      - navigation "Discord" [ref=f21e435]:
+        - list [ref=f21e437]:
+          - listitem [ref=f21e438]:
+            - link "Chat on Discord" [ref=f21e439] [cursor=pointer]:
+              - /url: https://discord.gg/wDsqUuUN3W
+      - navigation [ref=f21e440]:
+        - heading "Navigation" [level=3] [ref=f21e441]
+        - list [ref=f21e443]:
+          - listitem [ref=f21e444]:
+            - link "Main page" [ref=f21e445] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f21e446]:
+            - link "Recent changes" [ref=f21e447] [cursor=pointer]:
+              - /url: /w/Special:RecentChanges
+          - listitem [ref=f21e448]:
+            - link "Random page" [ref=f21e449] [cursor=pointer]:
+              - /url: /w/Special:Random
+      - navigation [ref=f21e450]:
+        - heading "Jokers" [level=3] [ref=f21e451]
+        - list [ref=f21e453]:
+          - listitem [ref=f21e454]:
+            - link "All Jokers" [ref=f21e455] [cursor=pointer]:
+              - /url: /w/Jokers#List_of_Jokers
+          - listitem [ref=f21e456]:
+            - link "Common" [ref=f21e457] [cursor=pointer]:
+              - /url: /w/Common_Jokers
+          - listitem [ref=f21e458]:
+            - link "Uncommon" [ref=f21e459] [cursor=pointer]:
+              - /url: /w/Uncommon_Jokers
+          - listitem [ref=f21e460]:
+            - link "Rare" [ref=f21e461] [cursor=pointer]:
+              - /url: /w/Rare_Jokers
+          - listitem [ref=f21e462]:
+            - link "Legendary" [ref=f21e463] [cursor=pointer]:
+              - /url: /w/Legendary_Jokers
+      - navigation [ref=f21e464]:
+        - heading "Consumables" [level=3] [ref=f21e465]
+        - list [ref=f21e467]:
+          - listitem [ref=f21e468]:
+            - link "Tarot cards" [ref=f21e469] [cursor=pointer]:
+              - /url: /w/Tarot_cards
+          - listitem [ref=f21e470]:
+            - link "Planet cards" [ref=f21e471] [cursor=pointer]:
+              - /url: /w/Planet_cards
+          - listitem [ref=f21e472]:
+            - link "Spectral cards" [ref=f21e473] [cursor=pointer]:
+              - /url: /w/Spectral_cards
+      - navigation [ref=f21e474]:
+        - heading "Collection" [level=3] [ref=f21e475]
+        - list [ref=f21e477]:
+          - listitem [ref=f21e478]:
+            - link "Decks" [ref=f21e479] [cursor=pointer]:
+              - /url: /w/Decks
+          - listitem [ref=f21e480]:
+            - link "Vouchers" [ref=f21e481] [cursor=pointer]:
+              - /url: /w/Vouchers
+          - listitem [ref=f21e482]:
+            - link "Card modifiers" [ref=f21e483] [cursor=pointer]:
+              - /url: /w/Card_modifiers
+          - listitem [ref=f21e484]:
+            - link "Booster Packs" [ref=f21e485] [cursor=pointer]:
+              - /url: /w/Booster_Packs
+          - listitem [ref=f21e486]:
+            - link "Tags" [ref=f21e487] [cursor=pointer]:
+              - /url: /w/Tags
+          - listitem [ref=f21e488]:
+            - link "Blinds & Antes" [ref=f21e489] [cursor=pointer]:
+              - /url: /w/Blinds_and_Antes
+      - navigation [ref=f21e490]:
+        - heading "More Balatro" [level=3] [ref=f21e491]
+        - list [ref=f21e493]:
+          - listitem [ref=f21e494]:
+            - link "Stakes" [ref=f21e495] [cursor=pointer]:
+              - /url: /w/Stakes
+          - listitem [ref=f21e496]:
+            - link "Poker hands" [ref=f21e497] [cursor=pointer]:
+              - /url: /w/Poker_hands
+          - listitem [ref=f21e498]:
+            - link "The Shop" [ref=f21e499] [cursor=pointer]:
+              - /url: /w/The_Shop
+          - listitem [ref=f21e500]:
+            - link "Collection" [ref=f21e501] [cursor=pointer]:
+              - /url: /w/Collection
+          - listitem [ref=f21e502]:
+            - link "Achievements" [ref=f21e503] [cursor=pointer]:
+              - /url: /w/Achievements
+          - listitem [ref=f21e504]:
+            - link "Updates" [ref=f21e505] [cursor=pointer]:
+              - /url: /w/Updates
+          - listitem [ref=f21e506]:
+            - link "Game mechanics" [ref=f21e507] [cursor=pointer]:
+              - /url: /w/Category:Game_Mechanics
+      - navigation [ref=f21e508]:
+        - heading "Tools" [level=3] [ref=f21e509]
+        - list [ref=f21e511]:
+          - listitem [ref=f21e512]:
+            - link "What links here" [ref=f21e513] [cursor=pointer]:
+              - /url: /w/Special:WhatLinksHere/Guide:_Activation_Sequence
+          - listitem [ref=f21e514]:
+            - link "Related changes" [ref=f21e515] [cursor=pointer]:
+              - /url: /w/Special:RecentChangesLinked/Guide:_Activation_Sequence
+          - listitem [ref=f21e516]:
+            - link "Printable version" [ref=f21e517] [cursor=pointer]:
+              - /url: javascript:print();
+          - listitem [ref=f21e518]:
+            - link "Permanent link" [ref=f21e519] [cursor=pointer]:
+              - /url: https://balatrowiki.org/w/Guide:_Activation_Sequence?oldid=27309#Hand_Sequence
+          - listitem [ref=f21e520]:
+            - link "Page information" [ref=f21e521] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?action=info
+          - listitem [ref=f21e522]:
+            - link "Special pages" [ref=f21e523] [cursor=pointer]:
+              - /url: /w/Special:SpecialPages
+          - listitem [ref=f21e524]:
+            - link "View buckets" [ref=f21e525] [cursor=pointer]:
+              - /url: /w/Guide:_Activation_Sequence?action=bucket
+  - contentinfo [ref=f21e526]:
+    - list [ref=f21e527]:
+      - listitem [ref=f21e528]: This page was last edited on 7 August 2026, at 17:28.
+      - listitem [ref=f21e529]:
+        - text: Content on this site is licensed under
+        - link "CC BY-NC-SA 3.0" [ref=f21e530] [cursor=pointer]:
+          - /url: https://creativecommons.org/licenses/by-nc-sa/3.0/
+        - text: ;
+        - link "additional terms may apply" [ref=f21e531] [cursor=pointer]:
+          - /url: https://meta.weirdgloop.org/w/Licensing
+        - text: .
+    - list:
+      - listitem [ref=f21e532]:
+        - link "Privacy policy" [ref=f21e533] [cursor=pointer]:
+          - /url: https://weirdgloop.org/privacy
+      - listitem [ref=f21e534]:
+        - link "About Balatro Wiki" [ref=f21e535] [cursor=pointer]:
+          - /url: /w/Balatro_Wiki:About
+      - listitem [ref=f21e536]:
+        - link "Disclaimers" [ref=f21e537] [cursor=pointer]:
+          - /url: /w/Balatro_Wiki:General_disclaimer
+      - listitem [ref=f21e538]:
+        - link "Terms of Use" [ref=f21e539] [cursor=pointer]:
+          - /url: https://weirdgloop.org/terms
+      - listitem [ref=f21e540]:
+        - link "Contact Weird Gloop" [ref=f21e541] [cursor=pointer]:
+          - /url: /w/Special:Contact
+      - listitem [ref=f21e542]:
+        - link "Mobile view" [ref=f21e543] [cursor=pointer]:
+          - /url: https://balatrowiki.org/w/Guide:_Activation_Sequence?mobileaction=toggle_view_mobile#Hand_Sequence
+    - list [ref=f21e544]:
+      - listitem [ref=f21e545]:
+        - link [ref=f21e546] [cursor=pointer]:
+          - /url: https://creativecommons.org/licenses/by-nc-sa/3.0/
+          - img "CC BY-NC-SA 3.0" [ref=f21e547]
+      - listitem [ref=f21e548]:
+        - link [ref=f21e549] [cursor=pointer]:
+          - /url: https://weirdgloop.org
+          - img "Hosted by Weird Gloop" [ref=f21e550]
+  - generic:
+    - list

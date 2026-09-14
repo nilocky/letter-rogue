@@ -1,0 +1,274 @@
+- generic [active] [ref=e1]:
+  - navigation "Fandom top navigation" [ref=e2]:
+    - link "Fandom homepage" [ref=e3] [cursor=pointer]:
+      - /url: https://www.fandom.com/
+    - textbox "Search" [ref=e8]
+    - generic [ref=e11]:
+      - link "Sign In" [ref=e13] [cursor=pointer]:
+        - /url: https://auth.fandom.com/signin?source=mw&redirect=https%3A%2F%2Fbalatrogame.fandom.com%2Fwiki%2FScoring&metadata=header-signin-button
+      - link "Create a Free Account" [ref=e15] [cursor=pointer]:
+        - /url: https://auth.fandom.com/register?source=mw&redirect=https%3A%2F%2Fbalatrogame.fandom.com%2Fwiki%2FScoring&metadata=header-registration-button
+  - generic "Community navigation" [ref=e16]:
+    - link "Fandom homepage" [ref=e18] [cursor=pointer]:
+      - /url: https://www.fandom.com/
+    - link [ref=e21] [cursor=pointer]:
+      - /url: https://balatrogame.fandom.com/wiki/Balatro_Wiki
+      - img "Balatro Wiki" [ref=e22]
+    - navigation [ref=e23]:
+      - list [ref=e24]:
+        - listitem [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27] [cursor=pointer]: Explore
+            - img "Expand" [ref=e31]
+        - listitem [ref=e33]:
+          - generic [ref=e34]:
+            - link "Jokers" [ref=e35] [cursor=pointer]:
+              - /url: https://balatrogame.fandom.com/wiki/Jokers
+            - img "Expand" [ref=e37]
+        - listitem [ref=e39]:
+          - generic [ref=e40]:
+            - link "Decks" [ref=e41] [cursor=pointer]:
+              - /url: https://balatrogame.fandom.com/wiki/Decks
+            - img "Expand" [ref=e43]
+        - listitem [ref=e45]:
+          - generic [ref=e46]:
+            - link "Balatro" [ref=e47] [cursor=pointer]:
+              - /url: https://balatrogame.fandom.com/wiki/Balatro
+            - img "Expand" [ref=e49]
+        - listitem [ref=e51]:
+          - generic [ref=e52]:
+            - generic [ref=e53] [cursor=pointer]: Other
+            - img "Expand" [ref=e55]
+    - button "Open searchbar" [ref=e58] [cursor=pointer]
+    - generic [ref=e61]:
+      - link "Discuss" [ref=e62] [cursor=pointer]:
+        - /url: /f
+      - link "Switch to Light Theme" [ref=e63] [cursor=pointer]:
+        - /url: "#"
+    - link "Sign In" [ref=e66] [cursor=pointer]:
+      - /url: https://auth.fandom.com/signin?source=mw&redirect=https%3A%2F%2Fbalatrogame.fandom.com%2Fwiki%2FScoring&metadata=header-signin-button
+  - generic [ref=e68]:
+    - navigation "Fandom navigation" [ref=e70]:
+      - generic [ref=e71]:
+        - link "Home" [ref=e74] [cursor=pointer]:
+          - /url: https://www.fandom.com/
+        - button "Explore" [ref=e81] [cursor=pointer]
+        - link "Saved" [ref=e90] [cursor=pointer]:
+          - /url: https://www.fandom.com/saved
+        - link "Progress" [ref=e98] [cursor=pointer]:
+          - /url: https://www.fandom.com/progress
+        - button "History" [ref=e105] [cursor=pointer]
+        - link "Utilities" [ref=e113] [cursor=pointer]:
+          - /url: https://www.fandom.com/utilities
+    - navigation "Fandom navigation" [ref=e120]:
+      - button "More" [ref=e122] [cursor=pointer]
+  - generic [ref=e128]:
+    - generic [ref=e130]:
+      - link "Skip to content" [ref=e131] [cursor=pointer]:
+        - /url: "#page-header"
+      - banner [ref=e133]:
+        - link [ref=e134] [cursor=pointer]:
+          - /url: https://balatrogame.fandom.com/wiki/Balatro_Wiki
+          - img "Balatro Wiki" [ref=e135]
+        - generic [ref=e136]:
+          - link "Balatro Wiki" [ref=e138] [cursor=pointer]:
+            - /url: https://balatrogame.fandom.com/wiki/Balatro_Wiki
+          - generic [ref=e139]:
+            - generic [ref=e140]: "241"
+            - generic [ref=e141]: pages
+          - generic [ref=e142]:
+            - link "Discuss" [ref=e143] [cursor=pointer]:
+              - /url: /f
+            - link "Switch to Light Theme" [ref=e144] [cursor=pointer]:
+              - /url: "#"
+        - navigation [ref=e145]:
+          - list [ref=e146]:
+            - listitem [ref=e147]:
+              - generic [ref=e148]:
+                - generic [ref=e149] [cursor=pointer]: Explore
+                - img "Expand" [ref=e153]
+            - listitem [ref=e155]:
+              - generic [ref=e156]:
+                - link "Jokers" [ref=e157] [cursor=pointer]:
+                  - /url: https://balatrogame.fandom.com/wiki/Jokers
+                - img "Expand" [ref=e159]
+            - listitem [ref=e161]:
+              - generic [ref=e162]:
+                - link "Decks" [ref=e163] [cursor=pointer]:
+                  - /url: https://balatrogame.fandom.com/wiki/Decks
+                - img "Expand" [ref=e165]
+            - listitem [ref=e167]:
+              - generic [ref=e168]:
+                - link "Balatro" [ref=e169] [cursor=pointer]:
+                  - /url: https://balatrogame.fandom.com/wiki/Balatro
+                - img "Expand" [ref=e171]
+            - listitem [ref=e173]:
+              - generic [ref=e174]:
+                - generic [ref=e175] [cursor=pointer]: Other
+                - img "Expand" [ref=e177]
+      - generic [ref=e179]:
+        - main [ref=e180]:
+          - heading "Scoring" [level=1] [ref=e184]
+          - paragraph [ref=e188]:
+            - text: There is currently no text in this page. You can
+            - link "search for this page title" [ref=e189] [cursor=pointer]:
+              - /url: /wiki/Special:Search/Scoring
+            - text: in other pages, or
+            - link "search the related logs" [ref=e191] [cursor=pointer]:
+              - /url: https://balatrogame.fandom.com/wiki/Special:Log?page=Scoring
+            - text: ", but you do not have permission to create this page."
+          - generic [ref=e193]:
+            - text: Community content is available under
+            - link "CC-BY-SA" [ref=e194] [cursor=pointer]:
+              - /url: https://www.fandom.com/licensing
+            - text: unless otherwise noted.
+        - complementary [ref=e195]:
+          - generic [ref=e208]:
+            - generic [ref=e209]:
+              - heading "New to Fandom? Let's make it official." [level=2] [ref=e210]
+              - paragraph [ref=e211]: Create your free account and dive into the worlds you love with fans who love them too.
+            - generic [ref=e212]:
+              - iframe [ref=e214]:
+                - generic [ref=f1e1]:
+                  - main [ref=f1e3]:
+                    - button [ref=f1e5] [cursor=pointer]
+                  - alert [ref=f1e12]
+                  - generic: Cookies Settings
+              - link "Continue with Email" [ref=e215] [cursor=pointer]:
+                - /url: https://auth.fandom.com/register?redirect=https%3A%2F%2Fbalatrogame.fandom.com%2Fwiki%2FScoring&uselang=en&metadata=right-rail-registration-button
+            - paragraph [ref=e216]:
+              - text: By continuing, you agree to Fandom's
+              - link "Terms of Use" [ref=e217] [cursor=pointer]:
+                - /url: https://www.fandom.com/terms-of-use
+              - text: and
+              - link "Privacy Policy" [ref=e218] [cursor=pointer]:
+                - /url: https://www.fandom.com/privacy-policy
+              - text: .
+    - contentinfo [ref=e219]:
+      - generic [ref=e220]:
+        - generic [ref=e221]:
+          - heading [level=2] [ref=e222]:
+            - link "Fandom homepage" [ref=e223] [cursor=pointer]:
+              - /url: https://www.fandom.com/
+              - img "Fandom logo" [ref=e224]
+          - generic [ref=e225]:
+            - heading "Explore properties" [level=3] [ref=e226]
+            - list [ref=e227]:
+              - listitem [ref=e228]:
+                - link "Fandom" [ref=e229] [cursor=pointer]:
+                  - /url: https://www.fandom.com/
+              - listitem [ref=e230]:
+                - link "Fanatical" [ref=e231] [cursor=pointer]:
+                  - /url: https://www.fanatical.com/
+              - listitem [ref=e232]:
+                - link "GameSpot" [ref=e233] [cursor=pointer]:
+                  - /url: https://www.gamespot.com/
+              - listitem [ref=e234]:
+                - link "Metacritic" [ref=e235] [cursor=pointer]:
+                  - /url: https://www.metacritic.com/
+              - listitem [ref=e236]:
+                - link "TV Guide" [ref=e237] [cursor=pointer]:
+                  - /url: https://www.tvguide.com/
+              - listitem [ref=e238]:
+                - link "Honest Entertainment" [ref=e239] [cursor=pointer]:
+                  - /url: https://www.youtube.com/user/screenjunkies
+          - generic [ref=e240]:
+            - heading "Follow Us" [level=3] [ref=e241]
+            - list [ref=e242]:
+              - listitem [ref=e243]:
+                - link "Follow Fandom on Facebook" [ref=e244] [cursor=pointer]:
+                  - /url: https://www.facebook.com/getfandom
+              - listitem [ref=e247]:
+                - link "Follow Fandom on Twitter" [ref=e248] [cursor=pointer]:
+                  - /url: https://twitter.com/getfandom
+              - listitem [ref=e251]:
+                - link "Follow Fandom on Youtube" [ref=e252] [cursor=pointer]:
+                  - /url: https://www.youtube.com/fandomentertainment
+              - listitem [ref=e255]:
+                - link "Follow Fandom on Instagram" [ref=e256] [cursor=pointer]:
+                  - /url: https://www.instagram.com/getfandom/
+              - listitem [ref=e259]:
+                - link "Follow Fandom on LinkedIn" [ref=e260] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/157252
+        - generic [ref=e264]:
+          - heading "Overview" [level=3] [ref=e265]
+          - list [ref=e266]:
+            - listitem [ref=e267]:
+              - link "What is Fandom?" [ref=e268] [cursor=pointer]:
+                - /url: https://www.fandom.com/what-is-fandom
+            - listitem [ref=e269]:
+              - link "Essentials" [ref=e270] [cursor=pointer]:
+                - /url: https://www.fandom.com/essentials
+            - listitem [ref=e271]:
+              - link "About" [ref=e272] [cursor=pointer]:
+                - /url: https://www.fandom.com/about
+            - listitem [ref=e273]:
+              - link "Careers" [ref=e274] [cursor=pointer]:
+                - /url: https://www.fandom.com/careers
+            - listitem [ref=e275]:
+              - link "Press" [ref=e276] [cursor=pointer]:
+                - /url: https://www.fandom.com/press
+            - listitem [ref=e277]:
+              - link "Contact" [ref=e278] [cursor=pointer]:
+                - /url: https://www.fandom.com/about#contact
+            - listitem [ref=e279]:
+              - link "Terms of Use" [ref=e280] [cursor=pointer]:
+                - /url: https://www.fandom.com/terms-of-use
+            - listitem [ref=e281]:
+              - link "Privacy Policy" [ref=e282] [cursor=pointer]:
+                - /url: https://www.fandom.com/privacy-policy
+            - listitem [ref=e283]:
+              - link "Digital Services Act" [ref=e284] [cursor=pointer]:
+                - /url: https://www.fandom.com/digital-services-act
+            - listitem [ref=e285]:
+              - link "Global Sitemap" [ref=e286] [cursor=pointer]:
+                - /url: //community.fandom.com/Sitemap
+            - listitem [ref=e287]:
+              - link "Local Sitemap" [ref=e288] [cursor=pointer]:
+                - /url: /wiki/Local_Sitemap
+            - listitem [ref=e289]:
+              - button "Cookies Settings" [ref=e290]
+        - generic [ref=e291]:
+          - generic [ref=e292]:
+            - heading "Community" [level=3] [ref=e293]
+            - list [ref=e294]:
+              - listitem [ref=e295]:
+                - link "Community Central" [ref=e296] [cursor=pointer]:
+                  - /url: //community.fandom.com/wiki/Community_Central
+              - listitem [ref=e297]:
+                - link "Support" [ref=e298] [cursor=pointer]:
+                  - /url: https://fandom.zendesk.com/
+              - listitem [ref=e299]:
+                - link "Help" [ref=e300] [cursor=pointer]:
+                  - /url: //community.fandom.com/wiki/Help:Contents
+              - listitem [ref=e301]:
+                - link "Accessibility Statement" [ref=e302] [cursor=pointer]:
+                  - /url: https://community.fandom.com/wiki/Fandom_accessibility_statement
+          - generic [ref=e303]:
+            - heading "Advertise" [level=3] [ref=e304]
+            - list [ref=e305]:
+              - listitem [ref=e306]:
+                - link "Media Kit" [ref=e307] [cursor=pointer]:
+                  - /url: https://about.fandom.com/mediakit
+              - listitem [ref=e308]:
+                - link "Contact" [ref=e309] [cursor=pointer]:
+                  - /url: https://about.fandom.com/mediakit#contact
+        - generic [ref=e310]:
+          - generic [ref=e311]:
+            - heading "Fandom Apps" [level=3] [ref=e312]
+            - text: Take your favorite fandoms with you and never miss a beat.
+          - generic [ref=e313]:
+            - img "Fandom App logo" [ref=e314]
+            - list [ref=e315]:
+              - listitem [ref=e316]:
+                - link "Fandom's Apple Store" [ref=e317] [cursor=pointer]:
+                  - /url: https://apps.apple.com/us/app/fandom-videos-news-reviews/id1230063803
+                  - img "Store icon" [ref=e318]
+              - listitem [ref=e319]:
+                - link "Fandom's Google Play" [ref=e320] [cursor=pointer]:
+                  - /url: https://play.google.com/store/apps/details?id=com.fandom.app&referrer=utm_source%3Dwikia%26utm_medium%3Dglobalfooter
+                  - img "Store icon" [ref=e321]
+      - generic [ref=e322]:
+        - generic [ref=e323]: Balatro Wiki is a Fandom Games Community.
+        - button "View Mobile Site" [ref=e325]
+  - generic: Cookies Settings

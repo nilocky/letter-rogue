@@ -53,7 +53,7 @@ var _redraw_mode: bool = false
 var _wildcard_pending: Dictionary = {}
 var _hand_elements: Array = []
 var _animating: bool = false
-var _skip_anim: bool = false
+var _skip_requested: bool = false
 var _idle_tween: Tween = null
 
 
@@ -454,55 +454,36 @@ func _do_redraw() -> void:
 
 func _play_score_animation() -> void:
 	_animating = true
-	_skip_anim = false
+	_skip_requested = false
 	_set_controls_enabled(false)
 
 	var res: Dictionary = CombatService.calculate_word(_slots, false)
-	var scores: Array = res.get("letter_scores", [])
+	var trace: Array = res.get("trace", [])
 	var tiles: Array = []
 	for c in word_strip.get_children():
 		if c is WordRuneSlot:
 			tiles.append(c)
-	var word_len: int = _slots.size()
 
-	# Banner entrance
 	_banner_show()
-
-	if not _skip_anim:
+	if not _skip_requested:
 		await get_tree().create_timer(0.2).timeout
 
-	# Phase A: Sequential letter power accumulation
-	var current_base: float = 0.0
-	var mult: float = WordService.length_multiplier(word_len)
-	var form_data: Dictionary = res.get("form_data", {})
-	var final_mult: float = mult * float(form_data.get("base_multiplier", 1.0))
+	# Drive animation from trace events
+	var last_hop_index: int = -1
+	for evt in trace:
+		var step: String = evt["step_type"]
 
-	for i in range(tiles.size()):
-		var pts: float = float(scores[i]) if i < scores.size() else 0.0
-		var tile: Control = tiles[i] as Control
-
-		if _skip_anim:
-			current_base += pts
-			continue
-
-		await _hop_tile(tile, pts)
-
-		current_base += pts
-		base_score_label.text = "%d" % roundi(current_base)
-
-		var punch := create_tween()
-		base_score_label.scale = Vector2(1.3, 1.3)
-		punch.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
-		# AudioManager.play("score_chip")
-
-		var cap: Dictionary = _slots[i].get("cap", {})
-		if pts > 0.0 and _has_ability_modifier(cap):
-			_spawn_floating_text(tile, _ability_float_text(cap, pts))
-			await get_tree().create_timer(0.25).timeout
-
-		await get_tree().create_timer(BETWEEN_TILE_PAUSE).timeout
-	if _skip_anim:
-		base_score_label.text = "%d" % roundi(current_base)
+		if step == "tile_hop":
+			last_hop_index = evt["source_index"]
+			await _animate_tile_hop(evt, tiles, res)
+		elif step == "tile_retrigger":
+			await _animate_tile_retrigger(evt, tiles)
+		elif step == "form_ignite":
+			await _animate_form_ignite(evt, res)
+		elif step == "artisan_trigger":
+			await _animate_artisan_trigger(evt)
+		elif step == "clash_resolve":
+			await _animate_clash(evt, res)
 
 	# Word metadata subtitle
 	var word := ""
@@ -517,81 +498,229 @@ func _play_score_animation() -> void:
 			]
 			word_meta_label.show()
 
-	# Phase B: Multiplier ignition (form base lands first, then mult ramps)
-	var form_base: int = form_data.get("base_damage", 0)
+	# Hitstop & HP drop
+	var final_damage: int = int(res["damage"])
+	await _monster_hitstop(final_damage)
+
+	# Fade banner
+	if not _skip_requested:
+		var fade := create_tween()
+		fade.tween_property(scoring_banner, "modulate:a", 0.0, 0.2)
+		await fade.finished
+
+	# Commit & cleanup
+	CombatService.commit_word(_slots)
+	_banner_reset()
+
+
+func _animate_tile_hop(evt: Dictionary, tiles: Array, res: Dictionary) -> void:
+	var i: int = evt["source_index"]
+	var pts: float = evt["delta_chips"]
+	var tile: Control = tiles[i] as Control
+
+	if _skip_requested:
+		base_score_label.text = "%d" % roundi(evt["running_chips"])
+		return
+
+	await _hop_tile(tile, pts)
+
+	base_score_label.text = "%d" % roundi(evt["running_chips"])
+	var punch := create_tween()
+	base_score_label.scale = Vector2(1.3, 1.3)
+	punch.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
+
+	if Engine.has_singleton("AudioManager"):
+		AudioManager.play("score_chip")
+
+	var cap: Dictionary = _slots[i].get("cap", {})
+	if pts > 0.0 and _has_ability_modifier(cap):
+		_spawn_floating_text(tile, _ability_float_text(cap, pts))
+		await get_tree().create_timer(0.25).timeout
+
+	await get_tree().create_timer(BETWEEN_TILE_PAUSE).timeout
+
+
+func _animate_tile_retrigger(evt: Dictionary, tiles: Array) -> void:
+	if _skip_requested:
+		base_score_label.text = "%d" % roundi(evt["running_chips"])
+		return
+
+	var tile: Control = tiles[evt["source_index"]] as Control
+	var hop := create_tween()
+	hop.tween_property(tile, "scale", Vector2(1.3, 1.3), 0.08)
+	hop.tween_property(tile, "scale", Vector2.ONE, 0.1)
+	_spawn_floating_text(tile, evt["annotation"])
+
+	base_score_label.text = "%d" % roundi(evt["running_chips"])
+	var punch := create_tween()
+	base_score_label.scale = Vector2(1.3, 1.3)
+	punch.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
+
+	if Engine.has_singleton("AudioManager"):
+		AudioManager.play("score_chip", 0.85)
+
+	await get_tree().create_timer(0.15).timeout
+
+
+func _animate_form_ignite(evt: Dictionary, res: Dictionary) -> void:
+	var form_base: float = evt["delta_chips"]
+	var running_mult: float = evt["running_mult"]
+	var form_data: Dictionary = res.get("form_data", {})
+
+	if _skip_requested:
+		if form_base > 0:
+			base_score_label.text = "%d" % roundi(evt["running_chips"])
+		mult_score_label.text = "×%.1f" % running_mult
+		return
+
 	if form_base > 0:
-		current_base += float(form_base)
-		base_score_label.text = "%d" % roundi(current_base)
+		base_score_label.text = "%d" % roundi(evt["running_chips"])
 		var form_punch := create_tween()
 		form_punch.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
 		base_score_label.scale = Vector2(1.3, 1.3)
-	if _skip_anim:
-		mult_score_label.text = "×%.1f" % final_mult
+
+		var lbl: String = evt["label"]
+		if lbl != "":
+			var flabel := Label.new()
+			flabel.text = "%s +%d" % [lbl, form_base]
+			flabel.add_theme_font_override("font", KB_PX_FONT)
+			flabel.add_theme_font_size_override("font_size", 14)
+			flabel.add_theme_color_override("font_color", Color(1, 0.6, 0.3, 1))
+			flabel.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+			flabel.add_theme_constant_override("outline_size", 2)
+			flabel.z_index = 100
+			flabel.position = base_panel.global_position + Vector2(0, -32)
+			add_child(flabel)
+			var ft := flabel.create_tween()
+			ft.set_parallel(true)
+			ft.tween_property(flabel, "global_position", flabel.global_position + Vector2(0, -24), 0.5)
+			ft.tween_property(flabel, "modulate:a", 0.0, 0.5)
+			ft.chain().tween_callback(flabel.queue_free)
+
+		await get_tree().create_timer(0.2).timeout
+
+	# Mult ramp
+	await get_tree().create_timer(0.15).timeout
+	if Engine.has_singleton("AudioManager"):
+		AudioManager.play("mult_ignite")
+	var scale_pulse := create_tween()
+	mult_panel.scale = Vector2(1.25, 1.25)
+	scale_pulse.tween_property(mult_panel, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_LINEAR)
+	mult_score_label.add_theme_color_override("font_color", Color(1, 0.34, 0.13, 1))
+	mult_sub_label.add_theme_color_override("font_color", Color(1, 0.6, 0.3, 1))
+
+	var ramp := create_tween()
+	ramp.tween_method(_ramp_mult_display, 1.0, running_mult, MULT_RAMP_TIME) \
+		.set_trans(Tween.TRANS_LINEAR)
+	await ramp.finished
+	await get_tree().create_timer(0.3).timeout
+
+
+func _animate_artisan_trigger(evt: Dictionary) -> void:
+	if _skip_requested:
+		return
+
+	var idx: int = evt["source_index"]
+	var artisan_label_text: String = evt["label"]
+	var dmult: float = evt["delta_mult"]
+	var xmult: float = evt["x_mult"]
+
+	# Show artisan rail trigger
+	if idx >= 0 and idx < 5:
+		artisan_rail.trigger_slot(idx)
 	else:
-		await get_tree().create_timer(0.25).timeout
-		# AudioManager.play("mult_ignite")
-		var scale_pulse := create_tween()
-		mult_panel.scale = Vector2(1.25, 1.25)
-		scale_pulse.tween_property(mult_panel, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_LINEAR)
-		mult_score_label.add_theme_color_override("font_color", Color(1, 0.34, 0.13, 1))
-		mult_sub_label.add_theme_color_override("font_color", Color(1, 0.6, 0.3, 1))
+		# Aggregate artisan — pulse all filled slots
+		for ai in 5:
+			artisan_rail.trigger_slot(ai)
 
-		if word_len >= 3:
-			var ramp := create_tween()
-			ramp.tween_method(_ramp_mult_display, 1.0, final_mult, MULT_RAMP_TIME) \
-				.set_trans(Tween.TRANS_LINEAR)
-			await ramp.finished
-		else:
-			mult_score_label.text = "×1.0"
-		await get_tree().create_timer(0.3).timeout
+	# Update mult display
+	var running_mult: float = evt["running_mult"]
+	mult_score_label.text = "×%.1f" % running_mult
+	var mult_pulse := create_tween()
+	mult_pulse.set_parallel(true)
+	mult_score_label.scale = Vector2(1.3, 1.3)
+	mult_pulse.tween_property(mult_score_label, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_LINEAR)
+	base_score_label.scale = Vector2(1.1, 1.1)
+	mult_pulse.tween_property(base_score_label, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_LINEAR)
 
-	# Phase C: Final resolution
+	# Floating text for artisan bonus
+	var parts: Array = []
+	if dmult > 0:
+		parts.append("+%d Mult" % dmult)
+	if xmult != 1.0:
+		parts.append("×%g" % xmult)
+	if parts.size() > 0:
+		var flabel := Label.new()
+		flabel.text = "Artisan: %s" % ", ".join(parts)
+		flabel.add_theme_font_override("font", KB_PX_FONT)
+		flabel.add_theme_font_size_override("font_size", 13)
+		flabel.add_theme_color_override("font_color", Color(0.4, 1, 0.6, 1))
+		flabel.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+		flabel.add_theme_constant_override("outline_size", 2)
+		flabel.z_index = 100
+		flabel.position = mult_panel.global_position + Vector2(0, -32)
+		add_child(flabel)
+		var ft := flabel.create_tween()
+		ft.set_parallel(true)
+		ft.tween_property(flabel, "global_position", flabel.global_position + Vector2(0, -24), 0.5)
+		ft.tween_property(flabel, "modulate:a", 0.0, 0.5)
+		ft.chain().tween_callback(flabel.queue_free)
+
+	if Engine.has_singleton("AudioManager"):
+		AudioManager.play("mult_ignite", 1.15)
+
+	await get_tree().create_timer(0.3).timeout
+
+
+func _animate_clash(evt: Dictionary, res: Dictionary) -> void:
 	var final_damage: int = int(res["damage"])
-	if _skip_anim:
+
+	if _skip_requested:
 		total_shelf.show()
 		total_damage_label.text = "= %d DMG" % final_damage
-	else:
-		total_shelf.show()
-		total_damage_label.text = "= %d DMG" % final_damage
-		var flash := create_tween()
-		total_damage_label.scale = Vector2(1.4, 1.4)
-		flash.tween_property(total_damage_label, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_LINEAR)
-		# AudioManager.play("slam_impact")
+		return
 
-		# Base + Mult pulse in sync
-		var sync_pulse := create_tween()
-		sync_pulse.set_parallel(true)
-		base_score_label.scale = Vector2(1.15, 1.15)
-		mult_score_label.scale = Vector2(1.15, 1.15)
-		sync_pulse.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
-		sync_pulse.tween_property(mult_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
+	total_shelf.show()
+	total_damage_label.text = "= %d DMG" % final_damage
+	var flash := create_tween()
+	total_damage_label.scale = Vector2(1.4, 1.4)
+	flash.tween_property(total_damage_label, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_LINEAR)
 
-		await get_tree().create_timer(0.35).timeout
+	if Engine.has_singleton("AudioManager"):
+		AudioManager.play("slam_impact")
 
-		# Projectile from banner to monster
-		await _projectile_to_monster(final_damage)
+	# Base + Mult pulse in sync
+	var sync_pulse := create_tween()
+	sync_pulse.set_parallel(true)
+	base_score_label.scale = Vector2(1.15, 1.15)
+	mult_score_label.scale = Vector2(1.15, 1.15)
+	sync_pulse.tween_property(base_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
+	sync_pulse.tween_property(mult_score_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_LINEAR)
 
-	# Smooth HP drop
+	await get_tree().create_timer(0.35).timeout
+
+	# Projectile from banner to monster
+	await _projectile_to_monster(final_damage)
+
+
+func _monster_hitstop(dmg: int) -> void:
+	if _skip_requested:
+		var hp_total: int = GameState.monster_hp_scaled()
+		var hp_remaining: int = int(GameState.current_monster.get("hp_remaining", hp_total))
+		var hp_new: int = maxi(hp_remaining - dmg, 0)
+		hp_bar.value = float(hp_new)
+		return
+
 	var hp_total: int = GameState.monster_hp_scaled()
 	var hp_remaining: int = int(GameState.current_monster.get("hp_remaining", hp_total))
-	var hp_new: int = maxi(hp_remaining - final_damage, 0)
+	var hp_new: int = maxi(hp_remaining - dmg, 0)
 	var hp_from: float = hp_bar.value
 	var hp_tween := create_tween()
 	hp_tween.tween_method(func(v: float) -> void: hp_bar.value = v, hp_from, float(hp_new), HP_DROP_TIME) \
 		.set_trans(Tween.TRANS_LINEAR)
 
-	_spawn_damage_float(final_damage)
+	_spawn_damage_float(dmg)
 	await hp_tween.finished
-
-	# Fade banner
-	if not _skip_anim:
-		var fade := create_tween()
-		fade.tween_property(scoring_banner, "modulate:a", 0.0, 0.2)
-		await fade.finished
-
-	# Phase D: Commit & cleanup
-	CombatService.commit_word(_slots)
-	_banner_reset()
 
 
 func _has_ability_modifier(cap: Dictionary) -> bool:
@@ -756,20 +885,11 @@ func _projectile_to_monster(dmg: int) -> void:
 
 	ParticleBurstFx.burst(self, target, Color(1, 0.25, 0.15), 18, {"vel_min": 90, "vel_max": 200, "lifetime": 0.5})
 
-	# On impact
-	var shake := create_tween()
-	var monster_box: Control = %MonsterDisplayArea
-	var orig: Vector2 = monster_box.position
-	for j in range(4):
-		shake.tween_callback(monster_box.set_position.bind(orig + Vector2(randi_range(-6, 6), randi_range(-4, 4))))
-		shake.tween_interval(0.05)
-	shake.tween_callback(monster_box.set_position.bind(orig))
-
-	var flash_m := create_tween()
-	flash_m.tween_property(monster_label, "modulate", Color(3, 3, 3, 1), 0.06)
-	flash_m.tween_property(monster_label, "modulate", Color(1, 1, 1, 1), 0.08)
+	ScreenShake.shake(%MonsterDisplayArea, 6.0, 0.2)
 	_squash_hit()
-	# AudioManager.play("slam_impact")
+
+	if Engine.has_singleton("AudioManager"):
+		AudioManager.play("slam_impact")
 
 	await tw.finished
 
@@ -784,7 +904,7 @@ func _set_controls_enabled(v: bool) -> void:
 
 func _gui_input(event: InputEvent) -> void:
 	if _animating and event is InputEventMouseButton and not event.pressed:
-		_skip_anim = true
+		_skip_requested = true
 
 
 func _clear_word() -> void:

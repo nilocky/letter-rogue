@@ -1,0 +1,202 @@
+- generic [active] [ref=f21e1]:
+  - main [ref=f21e4]:
+    - 'heading "Guide: Activation Sequence" [level=1] [ref=f21e5]'
+    - generic [ref=f21e6]:
+      - generic [ref=f21e9]:
+        - text: (Redirected from
+        - link "Scoring" [ref=f21e10] [cursor=pointer]:
+          - /url: /w/Scoring?redirect=no
+        - text: )
+      - link "Jump to navigation" [ref=f21e11] [cursor=pointer]:
+        - /url: "#mw-head"
+      - link "Jump to search" [ref=f21e12] [cursor=pointer]:
+        - /url: "#searchInput"
+      - generic [ref=f21e14]:
+        - generic [ref=f21e15]:
+          - figure [ref=f21e16]
+          - generic [ref=f21e19]
+          - generic [ref=f21e21]: This guide has been created by wiki members as a helpful resource, and is not official.
+          - generic [ref=f21e22]
+        - paragraph [ref=f21e24]: Activation sequence is a core mechanic of Balatro and its understanding can be crucial to strategy building and optimization.
+        - navigation "Contents" [ref=f21e25]:
+          - button "Hide the table of contents" [ref=f21e26]
+          - generic [ref=f21e27]
+          - list [ref=f21e31]
+        - generic [ref=f21e45]:
+          - heading "Hand Sequence" [level=2] [ref=f21e46]
+          - generic [ref=f21e47]
+        - paragraph [ref=f21e50]:
+          - text: "When a hand is played, effects will activate in the following orders. (Some Jokers may have different parts trigger at different stages: for example,"
+          - link [ref=f21e53] [cursor=pointer]:
+            - /url: /w/Wee_Joker
+          - link "Wee Joker" [ref=f21e55] [cursor=pointer]:
+            - /url: /w/Wee_Joker
+          - text: gain chips 'on scored' and adds chips to total 'independently').
+        - list [ref=f21e57]:
+          - listitem [ref=f21e58]
+          - listitem [ref=f21e72]
+          - listitem [ref=f21e92]
+          - listitem [ref=f21e138]
+          - listitem [ref=f21e185]
+          - listitem [ref=f21e240]
+          - listitem [ref=f21e250]
+        - paragraph [ref=f21e257]:
+          - text: See
+          - link "Activation Type" [ref=f21e258] [cursor=pointer]:
+            - /url: /w/Activation_Type
+          - text: for a full list of when different Jokers activate.
+        - generic [ref=f21e259]:
+          - heading "Strategic Card Arrangement" [level=2] [ref=f21e260]
+          - generic [ref=f21e261]
+        - generic [ref=f21e264]:
+          - heading "Additive Mult - Multiplicative Mult Order" [level=3] [ref=f21e265]
+          - generic [ref=f21e266]
+        - paragraph [ref=f21e269]:
+          - text: Almost all card arrangement problems stem from the order of additive Mult and multiplicative Mult. According to the law of distribution, the +Mult activating before the xMult gives a higher score. For example, a hand normally scoring 40 x 4 is played and a +4
+          - link "Mult" [ref=f21e270] [cursor=pointer]:
+            - /url: /w/Mult
+          - link [ref=f21e273] [cursor=pointer]:
+            - /url: /w/Joker
+          - link "Joker" [ref=f21e275] [cursor=pointer]:
+            - /url: /w/Joker
+          - text: and a X2
+          - link "Mult" [ref=f21e277] [cursor=pointer]:
+            - /url: /w/XMult
+          - link [ref=f21e280] [cursor=pointer]:
+            - /url: /w/Ramen
+          - link "Ramen" [ref=f21e282] [cursor=pointer]:
+            - /url: /w/Ramen
+          - text: "is present. If the Joker is on the left of Ramen, the hand will score 40 x ((4+4)x2) = 640 chips whereas the reversed placement will only score 40 x ((4x2)+4) = 480 chips. This concept applies to the order of cards played and in hand as well as Jokers. For a higher score, the player may arrange in the following ways:"
+        - list [ref=f21e284]:
+          - listitem [ref=f21e285]
+          - listitem [ref=f21e311]
+          - listitem [ref=f21e349]
+        - paragraph [ref=f21e362]: In case the player wanted a lower score for purposes like scaling Jokers, they may put +Mult to the right of xMult.
+        - generic [ref=f21e363]:
+          - heading "Other Arrangements" [level=3] [ref=f21e364]
+          - generic [ref=f21e365]
+        - paragraph [ref=f21e368]: Some cards with special abilities can give different outcomes when arranged differently.
+        - list [ref=f21e369]:
+          - listitem [ref=f21e370]
+      - generic [ref=f21e390]:
+        - link "Category" [ref=f21e391] [cursor=pointer]:
+          - /url: /w/Special:Categories
+        - text: ":"
+        - list [ref=f21e392]:
+          - listitem [ref=f21e393]
+  - generic:
+    - heading "Navigation menu" [level=2] [ref=f21e395]
+    - generic [ref=f21e396]:
+      - navigation "Personal tools" [ref=f21e397]:
+        - list [ref=f21e399]:
+          - listitem [ref=f21e400]
+          - listitem [ref=f21e402]
+          - listitem [ref=f21e551]
+      - navigation "associated-pages" [ref=f21e405]:
+        - list [ref=f21e406]:
+          - listitem [ref=f21e407]
+          - listitem [ref=f21e409]
+      - generic [ref=f21e411]:
+        - navigation "Views" [ref=f21e412]:
+          - list [ref=f21e413]
+        - navigation "More" [ref=f21e420] [cursor=pointer]:
+          - button "More" [ref=f21e421]
+        - search [ref=f21e424]:
+          - generic [ref=f21e427]
+    - generic [ref=f21e432]:
+      - banner [ref=f21e433]:
+        - link "Visit the main page" [ref=f21e434] [cursor=pointer]:
+          - /url: /
+      - navigation "Discord" [ref=f21e435]:
+        - list [ref=f21e437]:
+          - listitem [ref=f21e438]
+      - navigation [ref=f21e440]:
+        - heading "Navigation" [level=3] [ref=f21e441]
+        - list [ref=f21e443]:
+          - listitem [ref=f21e444]
+          - listitem [ref=f21e446]
+          - listitem [ref=f21e448]
+      - navigation [ref=f21e450]:
+        - heading "Jokers" [level=3] [ref=f21e451]
+        - list [ref=f21e453]:
+          - listitem [ref=f21e454]
+          - listitem [ref=f21e456]
+          - listitem [ref=f21e458]
+          - listitem [ref=f21e460]
+          - listitem [ref=f21e462]
+      - navigation [ref=f21e464]:
+        - heading "Consumables" [level=3] [ref=f21e465]
+        - list [ref=f21e467]:
+          - listitem [ref=f21e468]
+          - listitem [ref=f21e470]
+          - listitem [ref=f21e472]
+      - navigation [ref=f21e474]:
+        - heading "Collection" [level=3] [ref=f21e475]
+        - list [ref=f21e477]:
+          - listitem [ref=f21e478]
+          - listitem [ref=f21e480]
+          - listitem [ref=f21e482]
+          - listitem [ref=f21e484]
+          - listitem [ref=f21e486]
+          - listitem [ref=f21e488]
+      - navigation [ref=f21e490]:
+        - heading "More Balatro" [level=3] [ref=f21e491]
+        - list [ref=f21e493]:
+          - listitem [ref=f21e494]
+          - listitem [ref=f21e496]
+          - listitem [ref=f21e498]
+          - listitem [ref=f21e500]
+          - listitem [ref=f21e502]
+          - listitem [ref=f21e504]
+          - listitem [ref=f21e506]
+      - navigation [ref=f21e508]:
+        - heading "Tools" [level=3] [ref=f21e509]
+        - list [ref=f21e511]:
+          - listitem [ref=f21e512]
+          - listitem [ref=f21e514]
+          - listitem [ref=f21e516]
+          - listitem [ref=f21e518]
+          - listitem [ref=f21e520]
+          - listitem [ref=f21e522]
+          - listitem [ref=f21e524]
+  - contentinfo [ref=f21e526]:
+    - list [ref=f21e527]:
+      - listitem [ref=f21e528]: This page was last edited on 7 August 2026, at 17:28.
+      - listitem [ref=f21e529]:
+        - text: Content on this site is licensed under
+        - link "CC BY-NC-SA 3.0" [ref=f21e530] [cursor=pointer]:
+          - /url: https://creativecommons.org/licenses/by-nc-sa/3.0/
+        - text: ;
+        - link "additional terms may apply" [ref=f21e531] [cursor=pointer]:
+          - /url: https://meta.weirdgloop.org/w/Licensing
+        - text: .
+    - list:
+      - listitem [ref=f21e532]:
+        - link "Privacy policy" [ref=f21e533] [cursor=pointer]:
+          - /url: https://weirdgloop.org/privacy
+      - listitem [ref=f21e534]:
+        - link "About Balatro Wiki" [ref=f21e535] [cursor=pointer]:
+          - /url: /w/Balatro_Wiki:About
+      - listitem [ref=f21e536]:
+        - link "Disclaimers" [ref=f21e537] [cursor=pointer]:
+          - /url: /w/Balatro_Wiki:General_disclaimer
+      - listitem [ref=f21e538]:
+        - link "Terms of Use" [ref=f21e539] [cursor=pointer]:
+          - /url: https://weirdgloop.org/terms
+      - listitem [ref=f21e540]:
+        - link "Contact Weird Gloop" [ref=f21e541] [cursor=pointer]:
+          - /url: /w/Special:Contact
+      - listitem [ref=f21e542]:
+        - link "Mobile view" [ref=f21e543] [cursor=pointer]:
+          - /url: https://balatrowiki.org/w/Guide:_Activation_Sequence?mobileaction=toggle_view_mobile#Hand_Sequence
+    - list [ref=f21e544]:
+      - listitem [ref=f21e545]:
+        - link [ref=f21e546] [cursor=pointer]:
+          - /url: https://creativecommons.org/licenses/by-nc-sa/3.0/
+          - img "CC BY-NC-SA 3.0" [ref=f21e547]
+      - listitem [ref=f21e548]:
+        - link [ref=f21e549] [cursor=pointer]:
+          - /url: https://weirdgloop.org
+          - img "Hosted by Weird Gloop" [ref=f21e550]
+  - generic:
+    - list

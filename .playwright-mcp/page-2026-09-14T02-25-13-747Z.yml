@@ -1,0 +1,194 @@
+- generic [active] [ref=f20e1]:
+  - main [ref=f20e4]:
+    - heading "Wiki/Scoring" [level=1] [ref=f20e5]
+    - generic [ref=f20e6]:
+      - generic [ref=f20e9]:
+        - text: <
+        - link "Wiki" [ref=f20e11] [cursor=pointer]:
+          - /url: /w/Wiki
+      - link "Jump to navigation" [ref=f20e12] [cursor=pointer]:
+        - /url: "#mw-head"
+      - link "Jump to search" [ref=f20e13] [cursor=pointer]:
+        - /url: "#searchInput"
+      - paragraph [ref=f20e16]:
+        - text: There is currently no text in this page. You can
+        - link "search for this page title" [ref=f20e17] [cursor=pointer]:
+          - /url: /w/Special:Search/Wiki/Scoring
+        - text: in other pages, or
+        - link "search the related logs" [ref=f20e19] [cursor=pointer]:
+          - /url: https://balatrowiki.org/w/Special:Log?page=Wiki/Scoring
+        - text: ", but you do not have permission to create this page."
+  - generic:
+    - heading "Navigation menu" [level=2] [ref=f20e20]
+    - generic [ref=f20e21]:
+      - navigation "Personal tools" [ref=f20e22]:
+        - list [ref=f20e24]:
+          - listitem [ref=f20e25]:
+            - link "Create account" [ref=f20e26] [cursor=pointer]:
+              - /url: /w/Special:CreateAccount?returnto=Wiki%2FScoring
+          - listitem [ref=f20e27]:
+            - link "Log in" [ref=f20e28] [cursor=pointer]:
+              - /url: /w/Special:UserLogin?returnto=Wiki%2FScoring
+          - listitem [ref=f20e29]:
+            - button "Switch themes" [ref=f20e30]
+      - navigation "associated-pages" [ref=f20e36]:
+        - list [ref=f20e37]:
+          - listitem [ref=f20e38]:
+            - link "Page" [ref=f20e39] [cursor=pointer]:
+              - /url: /w/Wiki/Scoring?action=edit&redlink=1
+          - listitem [ref=f20e40]:
+            - link "Discussion" [ref=f20e41] [cursor=pointer]:
+              - /url: /w/Talk:Wiki/Scoring?action=edit&redlink=1
+      - generic [ref=f20e42]:
+        - navigation "More" [ref=f20e43] [cursor=pointer]:
+          - button "More" [ref=f20e44]
+        - search [ref=f20e47]:
+          - generic [ref=f20e50]:
+            - searchbox "Search Balatro Wiki" [ref=f20e53]
+            - button "Search" [ref=f20e54] [cursor=pointer]
+    - generic [ref=f20e55]:
+      - banner [ref=f20e56]:
+        - link "Visit the main page" [ref=f20e57] [cursor=pointer]:
+          - /url: /
+      - navigation "Discord" [ref=f20e58]:
+        - list [ref=f20e60]:
+          - listitem [ref=f20e61]:
+            - link "Chat on Discord" [ref=f20e62] [cursor=pointer]:
+              - /url: https://discord.gg/wDsqUuUN3W
+      - navigation [ref=f20e63]:
+        - heading "Navigation" [level=3] [ref=f20e64]
+        - list [ref=f20e66]:
+          - listitem [ref=f20e67]:
+            - link "Main page" [ref=f20e68] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f20e69]:
+            - link "Recent changes" [ref=f20e70] [cursor=pointer]:
+              - /url: /w/Special:RecentChanges
+          - listitem [ref=f20e71]:
+            - link "Random page" [ref=f20e72] [cursor=pointer]:
+              - /url: /w/Special:Random
+      - navigation [ref=f20e73]:
+        - heading "Jokers" [level=3] [ref=f20e74]
+        - list [ref=f20e76]:
+          - listitem [ref=f20e77]:
+            - link "All Jokers" [ref=f20e78] [cursor=pointer]:
+              - /url: /w/Jokers#List_of_Jokers
+          - listitem [ref=f20e79]:
+            - link "Common" [ref=f20e80] [cursor=pointer]:
+              - /url: /w/Common_Jokers
+          - listitem [ref=f20e81]:
+            - link "Uncommon" [ref=f20e82] [cursor=pointer]:
+              - /url: /w/Uncommon_Jokers
+          - listitem [ref=f20e83]:
+            - link "Rare" [ref=f20e84] [cursor=pointer]:
+              - /url: /w/Rare_Jokers
+          - listitem [ref=f20e85]:
+            - link "Legendary" [ref=f20e86] [cursor=pointer]:
+              - /url: /w/Legendary_Jokers
+      - navigation [ref=f20e87]:
+        - heading "Consumables" [level=3] [ref=f20e88]
+        - list [ref=f20e90]:
+          - listitem [ref=f20e91]:
+            - link "Tarot cards" [ref=f20e92] [cursor=pointer]:
+              - /url: /w/Tarot_cards
+          - listitem [ref=f20e93]:
+            - link "Planet cards" [ref=f20e94] [cursor=pointer]:
+              - /url: /w/Planet_cards
+          - listitem [ref=f20e95]:
+            - link "Spectral cards" [ref=f20e96] [cursor=pointer]:
+              - /url: /w/Spectral_cards
+      - navigation [ref=f20e97]:
+        - heading "Collection" [level=3] [ref=f20e98]
+        - list [ref=f20e100]:
+          - listitem [ref=f20e101]:
+            - link "Decks" [ref=f20e102] [cursor=pointer]:
+              - /url: /w/Decks
+          - listitem [ref=f20e103]:
+            - link "Vouchers" [ref=f20e104] [cursor=pointer]:
+              - /url: /w/Vouchers
+          - listitem [ref=f20e105]:
+            - link "Card modifiers" [ref=f20e106] [cursor=pointer]:
+              - /url: /w/Card_modifiers
+          - listitem [ref=f20e107]:
+            - link "Booster Packs" [ref=f20e108] [cursor=pointer]:
+              - /url: /w/Booster_Packs
+          - listitem [ref=f20e109]:
+            - link "Tags" [ref=f20e110] [cursor=pointer]:
+              - /url: /w/Tags
+          - listitem [ref=f20e111]:
+            - link "Blinds & Antes" [ref=f20e112] [cursor=pointer]:
+              - /url: /w/Blinds_and_Antes
+      - navigation [ref=f20e113]:
+        - heading "More Balatro" [level=3] [ref=f20e114]
+        - list [ref=f20e116]:
+          - listitem [ref=f20e117]:
+            - link "Stakes" [ref=f20e118] [cursor=pointer]:
+              - /url: /w/Stakes
+          - listitem [ref=f20e119]:
+            - link "Poker hands" [ref=f20e120] [cursor=pointer]:
+              - /url: /w/Poker_hands
+          - listitem [ref=f20e121]:
+            - link "The Shop" [ref=f20e122] [cursor=pointer]:
+              - /url: /w/The_Shop
+          - listitem [ref=f20e123]:
+            - link "Collection" [ref=f20e124] [cursor=pointer]:
+              - /url: /w/Collection
+          - listitem [ref=f20e125]:
+            - link "Achievements" [ref=f20e126] [cursor=pointer]:
+              - /url: /w/Achievements
+          - listitem [ref=f20e127]:
+            - link "Updates" [ref=f20e128] [cursor=pointer]:
+              - /url: /w/Updates
+          - listitem [ref=f20e129]:
+            - link "Game mechanics" [ref=f20e130] [cursor=pointer]:
+              - /url: /w/Category:Game_Mechanics
+      - navigation [ref=f20e131]:
+        - heading "Tools" [level=3] [ref=f20e132]
+        - list [ref=f20e134]:
+          - listitem [ref=f20e135]:
+            - link "What links here" [ref=f20e136] [cursor=pointer]:
+              - /url: /w/Special:WhatLinksHere/Wiki/Scoring
+          - listitem [ref=f20e137]:
+            - link "Printable version" [ref=f20e138] [cursor=pointer]:
+              - /url: javascript:print();
+          - listitem [ref=f20e139]:
+            - link "Page information" [ref=f20e140] [cursor=pointer]:
+              - /url: /w/Wiki/Scoring?action=info
+          - listitem [ref=f20e141]:
+            - link "Special pages" [ref=f20e142] [cursor=pointer]:
+              - /url: /w/Special:SpecialPages
+          - listitem [ref=f20e143]:
+            - link "View buckets" [ref=f20e144] [cursor=pointer]:
+              - /url: /w/Wiki/Scoring?action=bucket
+  - contentinfo [ref=f20e145]:
+    - list
+    - list:
+      - listitem [ref=f20e146]:
+        - link "Privacy policy" [ref=f20e147] [cursor=pointer]:
+          - /url: https://weirdgloop.org/privacy
+      - listitem [ref=f20e148]:
+        - link "About Balatro Wiki" [ref=f20e149] [cursor=pointer]:
+          - /url: /w/Balatro_Wiki:About
+      - listitem [ref=f20e150]:
+        - link "Disclaimers" [ref=f20e151] [cursor=pointer]:
+          - /url: /w/Balatro_Wiki:General_disclaimer
+      - listitem [ref=f20e152]:
+        - link "Terms of Use" [ref=f20e153] [cursor=pointer]:
+          - /url: https://weirdgloop.org/terms
+      - listitem [ref=f20e154]:
+        - link "Contact Weird Gloop" [ref=f20e155] [cursor=pointer]:
+          - /url: /w/Special:Contact
+      - listitem [ref=f20e156]:
+        - link "Mobile view" [ref=f20e157] [cursor=pointer]:
+          - /url: https://balatrowiki.org/w/Wiki/Scoring?mobileaction=toggle_view_mobile
+    - list [ref=f20e158]:
+      - listitem [ref=f20e159]:
+        - link [ref=f20e160] [cursor=pointer]:
+          - /url: https://creativecommons.org/licenses/by-nc-sa/3.0/
+          - img "CC BY-NC-SA 3.0" [ref=f20e161]
+      - listitem [ref=f20e162]:
+        - link [ref=f20e163] [cursor=pointer]:
+          - /url: https://weirdgloop.org
+          - img "Hosted by Weird Gloop" [ref=f20e164]
+  - generic:
+    - list
