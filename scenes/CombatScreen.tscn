@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
-[ext_resource type="Texture2D" uid="uid://gby12pk6ffsq" path="res://assets/textures/backgrounds/bg_combat_2.jpg" id="2_bgcombat"]
+[ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_combat_3.jpg" id="2_bgcombat"]
 [ext_resource type="Script" path="res://scripts/components/WordRackDropZone.gd" id="3_wrdropzone"]
 [ext_resource type="Script" path="res://scripts/components/PixelHPBar.gd" id="4_hpbar"]
 [ext_resource type="Script" path="res://scripts/components/ArtisanRailDisplay.gd" id="5_rail"]
