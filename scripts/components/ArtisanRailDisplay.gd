@@ -24,3 +24,30 @@ func trigger_slot(index: int) -> void:
 	if index >= 0 and index < _slots.size():
 		_slots[index].trigger_glow()
 		_slots[index].trigger_shake()
+
+
+func _can_drop_data(position: Vector2, data: Variant) -> bool:
+	if typeof(data) == TYPE_DICTIONARY:
+		var d: Dictionary = data
+		return str(d.get("type", "")) == "artisan"
+	return false
+
+
+func _drop_data(position: Vector2, data: Variant) -> void:
+	var d: Dictionary = data
+	if str(d.get("type", "")) != "artisan":
+		return
+	var from_idx := int(d.get("from_index", -1))
+	var to_idx := _slot_index_at_position(position)
+	if from_idx < 0 or to_idx < 0 or from_idx == to_idx:
+		return
+	if ArtisanRailManager.swap_slots(from_idx, to_idx):
+		refresh()
+
+
+func _slot_index_at_position(position: Vector2) -> int:
+	if _slots.is_empty():
+		return -1
+	var slot_w: float = _slots[0].size.x
+	var idx := int(floor(position.x / maxf(slot_w, 1.0)))
+	return clampi(idx, 0, _slots.size() - 1)

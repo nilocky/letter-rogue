@@ -17,6 +17,7 @@ func set_artisan(data: Dictionary) -> void:
 	name_label.show()
 	empty_placeholder.hide()
 	modulate = Color.WHITE
+	tooltip_text = "%s\n%s" % [str(data.get("name", "?")), str(data.get("description", ""))]
 
 func clear() -> void:
 	icon_rect.texture = null
@@ -25,6 +26,19 @@ func clear() -> void:
 	name_label.hide()
 	empty_placeholder.show()
 	modulate = Color(0.3, 0.3, 0.3, 0.5)
+	tooltip_text = ""
+
+func _get_drag_data(position: Vector2) -> Variant:
+	if get_slot_data().is_empty():
+		return null
+	var preview := ColorRect.new()
+	preview.custom_minimum_size = Vector2(60, 60)
+	preview.color = Color(0.3, 0.8, 0.4, 0.8)
+	set_drag_preview(preview)
+	return {"type": "artisan", "from_index": get_index()}
+
+func get_slot_data() -> Dictionary:
+	return ArtisanRailManager.get_slot(get_index())
 
 func trigger_glow() -> void:
 	var tw := create_tween()

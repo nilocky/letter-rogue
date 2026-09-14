@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
 [ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_combat_3.jpg" id="2_bgcombat"]
 [ext_resource type="Script" path="res://scripts/components/WordRackDropZone.gd" id="3_wrdropzone"]
 [ext_resource type="Script" path="res://scripts/components/PixelHPBar.gd" id="4_hpbar"]
 [ext_resource type="Script" path="res://scripts/components/ArtisanRailDisplay.gd" id="5_rail"]
+[ext_resource type="Script" path="res://scripts/components/SellDropZone.gd" id="6_sell"]
 
 [sub_resource type="StyleBoxFlat" id="ShadowStyle"]
 bg_color = Color(0, 0, 0, 0.35)
@@ -76,6 +77,23 @@ theme_type_variation = &"MetricLabel"
 theme_override_colors/font_color = Color(0.9255, 0.7882, 0.2941, 1)
 horizontal_alignment = 2
 text = "$0"
+
+[node name="GrimoireRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+theme_override_constants/separation = 4
+
+[node name="DepthInfoButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 38)
+theme_override_font_sizes/font_size = 18
+text = "?"
+
+[node name="SettingsButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 38)
+theme_override_font_sizes/font_size = 18
+text = "⚙"
 
 [node name="MonsterDisplayArea" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
 unique_name_in_owner = true
@@ -248,6 +266,23 @@ offset_right = -46.0
 custom_minimum_size = Vector2(0, 90)
 size_flags_vertical = 0
 script = ExtResource("5_rail")
+
+[node name="SellDropZone" type="Control" parent="."]
+unique_name_in_owner = true
+anchor_right = 1.0
+offset_left = 400.0
+offset_top = 575.0
+offset_right = -46.0
+offset_bottom = 665.0
+script = ExtResource("6_sell")
+
+[node name="SellLabel" type="Label" parent="SellDropZone"]
+anchor_right = 1.0
+offset_top = 22.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 0.7)
+horizontal_alignment = 2
+text = "SELL ▾"
 
 [node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
 custom_minimum_size = Vector2(448, 152)

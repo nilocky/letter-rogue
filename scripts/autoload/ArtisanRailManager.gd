@@ -7,10 +7,23 @@ func _ready() -> void:
 	rail.resize(5)
 
 
-func equip(slot: int, artisan: Dictionary) -> bool:
+func equip(slot: int, artisan: Dictionary, price_paid := 0) -> bool:
 	if slot < 0 or slot >= 5:
 		return false
-	rail[slot] = artisan
+	rail[slot] = artisan.duplicate()
+	if price_paid > 0:
+		rail[slot]["price_paid"] = price_paid
+	return true
+
+
+func swap_slots(i: int, j: int) -> bool:
+	if i < 0 or i >= 5 or j < 0 or j >= 5:
+		return false
+	if i == j:
+		return true
+	var tmp: Variant = rail[i]
+	rail[i] = rail[j]
+	rail[j] = tmp
 	return true
 
 

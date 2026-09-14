@@ -3,6 +3,7 @@ extends Control
 const KeyCapElementScene := preload("res://scenes/components/KeyCapElement.tscn")
 const WORD_RUNE_SLOT_SCENE := preload("res://scenes/components/WordRuneSlot.tscn")
 const BAG_MODAL := preload("res://scenes/components/BagModal.tscn")
+const DEPTH_INFO_POPUP := preload("res://scenes/components/DepthInfoPopup.tscn")
 const VICTORY_MODAL := preload("res://scenes/components/VictoryModal.tscn")
 const KB_FONT := preload("res://assets/fonts/Kenney Blocks.ttf")
 const KB_PX_FONT := preload("res://assets/fonts/Kenney Pixel.ttf")
@@ -49,6 +50,9 @@ const PROJECTILE_TIME := 0.35
 @onready var total_damage_label: Label = %TotalDamageLabel
 @onready var word_meta_label: Label = %WordMetaLabel
 @onready var artisan_rail: ArtisanRailDisplay = %ArtisanRail
+@onready var grimoire_row = %GrimoireRow
+@onready var depth_info_btn: Button = %DepthInfoButton
+@onready var settings_btn: Button = %SettingsButton
 
 var _slots: Array = []
 var _pending_redraw: Array = []
@@ -68,6 +72,8 @@ func _ready() -> void:
 	EventBus.round_won.connect(_on_round_won)
 	bag_button.pressed.connect(_on_bag_pressed)
 	hint_button.pressed.connect(_on_hint_pressed)
+	depth_info_btn.pressed.connect(_on_depth_info_pressed)
+	settings_btn.pressed.connect(_on_settings_pressed)
 	redraw_button.pressed.connect(_on_redraw_toggle)
 	play_button.pressed.connect(_on_play_pressed)
 	picker_cancel_button.pressed.connect(_on_picker_cancel)
@@ -117,6 +123,7 @@ func show_round() -> void:
 	_refresh_header()
 	_refresh_hand()
 	artisan_rail.refresh()
+	grimoire_row.refresh()
 
 
 func _refresh_header() -> void:
@@ -429,6 +436,15 @@ func _on_hint_pressed() -> void:
 func _update_hint_button_ui() -> void:
 	hint_button.text = "HINT (%d)" % GameState.hints_remaining
 	hint_button.disabled = (GameState.hints_remaining <= 0 or _animating)
+
+
+func _on_depth_info_pressed() -> void:
+	var popup := DEPTH_INFO_POPUP.instantiate()
+	add_child(popup)
+
+
+func _on_settings_pressed() -> void:
+	push_error("Settings menu not yet implemented")
 
 
 func _update_persistent_scoring() -> void:
