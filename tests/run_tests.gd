@@ -8,6 +8,7 @@ const TEST_SCRIPTS := [
 	"scenario_test.gd",
 	"verify_banner_layout.gd",
 	"verify_hp_bar.gd",
+	"test_scoring_trace.gd",
 ]
 
 func _init() -> void:

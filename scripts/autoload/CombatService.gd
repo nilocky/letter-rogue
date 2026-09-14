@@ -65,9 +65,11 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 	var per_tile: int = int(pack.get("score_modifier", 0)) if not pack.is_empty() else 0
 
 	# Phase 1: Tile Hops
+	var trace: Array = []
 	var letter_scores: Array = []
 	var total_base: float = 0.0
-	for s in slots:
+	for i in range(slots.size()):
+		var s: Dictionary = slots[i]
 		var cap: Dictionary = s["cap"]
 		var letter: String = str(s["letter"])
 		var is_vowel: bool = VOWELS.contains(letter)
@@ -91,7 +93,14 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 			contribution = 0.0
 		elif modifier == "consonant_lock" and is_vowel:
 			contribution = 0.0
+
+		trace.append(_trace_event("tile_hop", i, str(s["letter"]), contribution, 0.0, 1.0, total_base, 1.0, "+%d" % roundi(contribution)))
 		total_base += contribution
+
+		if not disabled and (str(cap.get("sticker", "")) == "red" or str(cap.get("condition", "")) == "lubed"):
+			trace.append(_trace_event("tile_retrigger", i, str(s["letter"]), contribution, 0.0, 1.0, total_base + contribution, 1.0, "RE-TRIGGER!"))
+			total_base += contribution
+
 		letter_scores.append(contribution)
 	EffectPipeline.trigger("on_score_calculated", [{"letter_scores": letter_scores}])
 
@@ -113,12 +122,21 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 	var form_mult: float = form_data.get("base_multiplier", 1.0)
 	var total_after_form: float = (total_base + float(form_base)) * length_mult * form_mult
 
+	var running_chips := total_base + float(form_base)
+	var running_mult := length_mult * form_mult
+	trace.append(_trace_event("form_ignite", -1, form_data.get("name", ""), float(form_base), running_mult - 1.0, 1.0, running_chips, running_mult, form_data.get("form_id", "")))
+
 	# Phase 3: Artisan Cascade
 	var artisan_result: Dictionary = ArtisanRailManager.cascade(
 		word, slots, letter_scores, form_data, pack
 	)
 	var artisan_flat: int = artisan_result.get("flat", 0)
 	var artisan_xmult: float = artisan_result.get("xmult", 1.0)
+
+	if artisan_flat > 0 or artisan_xmult != 1.0:
+		running_mult += float(artisan_flat)
+		running_mult *= artisan_xmult
+		trace.append(_trace_event("artisan_trigger", -1, "artisan", 0.0, float(artisan_flat), artisan_xmult, running_chips, running_mult, "+%d/%dx" % [artisan_flat, artisan_xmult]))
 
 	# Phase 4: Runic Blast — apply flat bonuses from abilities
 	var total_after_artisans: float = (total_after_form + float(artisan_flat)) * artisan_xmult
@@ -134,6 +152,7 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 				money += 2
 
 	var damage: int = roundi(total_after_artisans) + flat_bonus
+	trace.append(_trace_event("clash_resolve", -1, "", 0.0, 0.0, 1.0, running_chips, running_mult, "= %d DMG" % damage))
 
 	if log:
 		print("[score] word=\"%s\" form=%s len=%d" % [word, form_data.get("form_id", "none"), slots.size()])
@@ -145,9 +164,34 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 		"money": money,
 		"letter_scores": letter_scores,
 		"form_data": form_data,
-		"flat_bonus": flat_bonus
+		"flat_bonus": flat_bonus,
+		"trace": trace
 	}
 	return result
+
+
+static func _trace_event(
+	step_type: String,
+	source_index: int,
+	label: String,
+	delta_chips: float,
+	delta_mult: float,
+	x_mult: float,
+	running_chips: float,
+	running_mult: float,
+	annotation: String
+) -> Dictionary:
+	return {
+		"step_type": step_type,
+		"source_index": source_index,
+		"label": label,
+		"delta_chips": delta_chips,
+		"delta_mult": delta_mult,
+		"x_mult": x_mult,
+		"running_chips": running_chips,
+		"running_mult": running_mult,
+		"annotation": annotation
+	}
 
 
 ## Commit a word: deal damage, collect money, roll lucky/glass/blue side
