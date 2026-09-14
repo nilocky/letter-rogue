@@ -94,8 +94,8 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 		elif modifier == "consonant_lock" and is_vowel:
 			contribution = 0.0
 
-		trace.append(_trace_event("tile_hop", i, str(s["letter"]), contribution, 0.0, 1.0, total_base, 1.0, "+%d" % roundi(contribution)))
 		total_base += contribution
+		trace.append(_trace_event("tile_hop", i, str(s["letter"]), contribution, 0.0, 1.0, total_base, 1.0, "+%d" % roundi(contribution)))
 
 		if not disabled and (str(cap.get("sticker", "")) == "red" or str(cap.get("condition", "")) == "lubed"):
 			trace.append(_trace_event("tile_retrigger", i, str(s["letter"]), contribution, 0.0, 1.0, total_base + contribution, 1.0, "RE-TRIGGER!"))
