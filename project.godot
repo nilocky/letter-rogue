@@ -39,6 +39,7 @@ DebugManager="*res://scripts/autoload/DebugManager.gd"
 EffectPipeline="*res://scripts/autoload/EffectPipeline.gd"
 LootService="*res://scripts/autoload/LootService.gd"
 AudioManager="*res://scripts/autoload/AudioManager.gd"
+HintService="*res://scripts/autoload/HintService.gd"
 
 [display]
 
@@ -47,7 +48,7 @@ window/size/viewport_height=960
 window/size/window_width_override=441
 window/size/window_height_override=784
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/stretch/aspect="keep_height"
 window/handheld/orientation=1
 window/size/min_width=360
 window/size/min_height=640
