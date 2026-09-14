@@ -41,6 +41,23 @@ theme_type_variation = &"HeaderLabel"
 horizontal_alignment = 1
 text = "BAG INSPECTOR"
 
+[node name="ViewToggleRow" type="HBoxContainer" parent="Panel/VBox"]
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="ViewBagButton" type="Button" parent="Panel/VBox/ViewToggleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+text = "Bag"
+toggle_mode = true
+button_pressed = true
+
+[node name="ViewDiscardButton" type="Button" parent="Panel/VBox/ViewToggleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+text = "Discard"
+toggle_mode = true
+
 [node name="Scroll" type="ScrollContainer" parent="Panel/VBox"]
 size_flags_vertical = 3
 
