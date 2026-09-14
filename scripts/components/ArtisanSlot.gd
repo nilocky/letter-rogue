@@ -2,29 +2,23 @@ extends PanelContainer
 class_name ArtisanSlot
 
 @onready var icon_rect: TextureRect = %IconRect
-@onready var name_label: Label = %NameLabel
-@onready var empty_placeholder: Label = %EmptyPlaceholder
 
 func set_artisan(data: Dictionary) -> void:
 	if data.is_empty():
 		clear()
 		return
-	name_label.text = str(data.get("name", "?"))
 	var icon_path: String = str(data.get("icon", ""))
 	if icon_path != "":
 		icon_rect.texture = load(icon_path) as Texture2D
 	icon_rect.show()
-	name_label.show()
-	empty_placeholder.hide()
+	visible = true
 	modulate = Color.WHITE
 	tooltip_text = "%s\n%s" % [str(data.get("name", "?")), str(data.get("description", ""))]
 
 func clear() -> void:
 	icon_rect.texture = null
 	icon_rect.hide()
-	name_label.text = ""
-	name_label.hide()
-	empty_placeholder.show()
+	visible = false
 	modulate = Color(0.3, 0.3, 0.3, 0.5)
 	tooltip_text = ""
 

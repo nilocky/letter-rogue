@@ -46,8 +46,12 @@ func _drop_data(position: Vector2, data: Variant) -> void:
 
 
 func _slot_index_at_position(position: Vector2) -> int:
-	if _slots.is_empty():
+	var shown: Array = []
+	for slot in _slots:
+		if slot.visible:
+			shown.append(slot)
+	if shown.is_empty():
 		return -1
-	var slot_w: float = _slots[0].size.x
+	var slot_w: float = shown[0].size.x
 	var idx := int(floor(position.x / maxf(slot_w, 1.0)))
-	return clampi(idx, 0, _slots.size() - 1)
+	return shown[clampi(idx, 0, shown.size() - 1)].get_index()

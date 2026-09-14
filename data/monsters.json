@@ -9,7 +9,7 @@
     {"id": "golem", "name": "Golem", "hp": 25, "max_hp": 25, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "golem_loot"}
   ],
   "bosses": [
-    {"id": "vowel_witch", "name": "Vowel Witch", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "vowel_lock", "sprite": "res://assets/ui/boss_witch_1.jpg", "drop_table_id": ""},
+    {"id": "vowel_witch", "name": "Vowel Witch", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "vowel_lock", "drop_table_id": ""},
     {"id": "consonant_king", "name": "Consonant King", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "consonant_lock", "sprite": "", "drop_table_id": ""},
     {"id": "echo_phantom", "name": "Echo Phantom", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "no_repeats", "sprite": "", "drop_table_id": ""},
     {"id": "silence_wraith", "name": "Silence Wraith", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "silence", "sprite": "", "drop_table_id": ""}

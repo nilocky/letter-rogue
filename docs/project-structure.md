@@ -1,6 +1,6 @@
 # Letter Rogue — Project Structure
 
-Annotated layout of the repository as of 2026-09-13.
+Annotated layout of the repository as of 2026-09-14.
 
 ```
 letter-rogue/
@@ -25,6 +25,8 @@ letter-rogue/
 │   ├── depths.json            Depth encounter tables (Vanguard/Sentry/Boss pools)
 │   ├── secret_words.json      Rare words flagged `is_secret: true` (gameplay effect pending)
 │   └── drop_tables.json       Weighted loot tables keyed by monster `drop_table_id`
+│
+├── examples/                  # Reference/concept art (bg_*, idea_*, ss_* jpgs), packed into export
 │
 ├── scripts/
 │   ├── game_root.gd           Top-level state machine: MENU → RUN_SETUP → COMBAT → SHOP → GAME_OVER.
@@ -66,11 +68,11 @@ letter-rogue/
 │   │   ├── MainMenuScreen.gd  Title + Start Run (emits run_setup_requested)
 │   │   ├── RunSetupScreen.gd  Pack cycler (5 Switch Packs, switch icon from skin atlas) + bag selector (4 bags) with preview
 │   │   ├── CombatScreen.gd    Word builder: hand tiles (latched deep-travel) → WordRuneSlot magical rune
-│   │   │                       display strip, Artisan rail display, scoring banner (4-phase Balatro-style:
-│   │   │                       sequential letter scores → form ignition → total damage, projectile to monster,
-│   │   │                       smooth HP drop), wildcard picker, BagModal, VictoryModal.
+│   │   │                       display strip, Artisan rail display, persistent inline scoring row (BASE/MULTI
+│   │   │                       scale-punch start), projectile to monster, smooth HP drop, wildcard picker,
+│   │   │                       BagModal, VictoryModal.
 │   │   │                       Tap-to-skip animation, drag-drop reorder via WordRackDropZone.
-│   │   │                       Word metadata subtitle (WORD · POS · "def" · Vn/Cn).
+│   │   │                       Word metadata subtitle (WORD · POS · "def" · Vn/Cn). DepthPanel header text.
 │   │   ├── ShopScreen.gd      Tile buy/sell/reroll grids, run upgrade column, Workshop Blueprint section,
 │   │   │                       confirmation dialogs
 │   │   ├── GameOverScreen.gd  Shows reached round + money, restart button
@@ -93,10 +95,10 @@ letter-rogue/
 │       │                        color transitions (green→yellow→red) and top highlight line.
 │       ├── ScreenShake.gd     Static class: tween-based screen shake utility.
 │       │                        `shake(node, magnitude, duration)` — jitter + restore
-│       ├── ArtisanSlot.gd     Artisan rail slot widget (80×80): icon, name, empty placeholder,
+│       ├── ArtisanSlot.gd     Artisan rail slot widget (40×40): icon-only, borderless, hidden when empty,
 │       │                        glow/shake trigger animations
 │       ├── ArtisanRailDisplay.gd 5-slot HBoxContainer: refresh() from ArtisanRailManager,
-│       │                        trigger_slot(index) for glow+shake
+│       │                        trigger_slot(index) for glow+shake, drop-to-swap maps position to visible-slot index
 │       ├── SceneTransition.gd Static Node: two-phase screen transition via CanvasLayer 128 + ShaderMaterial.
 │       │                        5 shader styles (bayer dither, pixelate, diamond grid, scanline, radial wipe).
 │       │                        No-flash guarantee, stutter protection via 1-frame await.
@@ -110,10 +112,11 @@ letter-rogue/
 │   ├── MainMenuScreen.tscn    Background (bg_main_menu_2.jpg) + SettingsButton + StartButton +
 │   │                           AchievementsButton + CollectionButton. Hover scale+tint effects.
 │   ├── RunSetupScreen.tscn    Pack cards, bag buttons grid, bag preview, Start/Back
-│   ├── CombatScreen.tscn      TopBar (monster/HP/turns/bag/money) + MidZone (word strip) +
-│   │                           BottomZone (Redraw/Play buttons) + HandTileContainer (absolute child of
-│   │                           root) + WildcardPopup overlay + ScoringBannerOverlay (offset_top=540) +
-│   │                           ArtisanRailDisplay (offset_top=575, 5-slot rail)
+│   ├── CombatScreen.tscn      TopStatusBar (DepthPanel + DepthInfo + GrimoireRow + Settings) + ArtisanRow
+│   │                           (ArtisanRail + SellDropZone + MoneyLabel) + MonsterDisplayArea (HP bar + sprite +
+│   │                           turns) + PersistentScoringRow (BASE/MULTI inline scoring) + WordShelf
+│   │                           (wraps WordRackContainer) + ActionZone (Hint/Redraw/Play/Deck) +
+│   │                           HandTileContainer (absolute child of root) + WildcardPopup overlay
 │   ├── ShopScreen.tscn        InventoryGrid + BagGrid + UpgradeBox + money/reroll/fight buttons
 │   ├── GameOverScreen.tscn    BodyLabel + RestartButton
 │   ├── UISandbox.tscn         UI gallery: safe-area overlays, touch-target grid, mouse-filter demo boxes
@@ -129,8 +132,8 @@ letter-rogue/
 │       │                         LegendContainer, MarkFrame, PowerLabel as movable unit, rigid 2px plunge on press),
 │       │                         LetterLabel, PowerLabel. embedded_mode flag: combat-embedded vs shop-standalone.
 │       ├── WordRuneSlot.tscn    Rune slot: LetterLabel, PowerLabel (BadgeLabel variant). Draggable PanelContainer.
-│       ├── ArtisanSlot.tscn     Artisan rail slot: IconRect (64×64), NameLabel, EmptyPlaceholder
-│       ├── ArtisanRailDisplay.tscn 5-slot HBoxContainer, positioned below scoring banner
+│       ├── ArtisanSlot.tscn     Artisan rail slot: IconRect (28×28), borderless, root hidden when empty
+│       ├── ArtisanRailDisplay.tscn 5-slot HBoxContainer (dead scene — live node is CombatScreen ArtisanRow/ArtisanRail)
 │       ├── BagModal.tscn        Overlay + Panel + scrollable LetterGrid + VowelRatio + CloseButton
 │       └── VictoryModal.tscn    Overlay + Panel + Title + Receipt + TotalLabel + ContinueButton
 │

@@ -50,10 +50,10 @@
 
 ### Components & Modals
 - [x] `KeyCapElement` — reusable tile widget: letter, rarity bg, ability label, finish/sticker/condition badges, position index, drag-drop support, selection state, used state, latched state with 5px deep-travel animation
-- [x] `WordRuneSlot` — magical rune display slot: cyan letter label, amber power badge, obsidian/cyan StyleBoxFlat panel, tap-to-dismiss
+- [x] `WordRuneSlot` — magical rune display slot: amber letter label, amber power badge, walnut/amber StyleBoxFlat panel, tap-to-dismiss
 - [x] `BagModal` — bag inspector: per-letter frequency counts, vowel/consonant ratio
 - [x] `VictoryModal` — itemized reward receipt with counting-up total animation, loot drops display, Continue button
-- [x] `ScoringBannerOverlay` — Balatro-style scoring HUD with sequential per-tile hop animation, multiplier ramp, total damage reveal, projectile to monster
+- [x] `ScoringBannerOverlay` → `PersistentScoringRow` — Balatro-style scoring HUD relocated inline into `TopZone_Red` (BASE/MULTI panels, scale-punch start animation instead of banner fade), `TotalDamageShelf` reveals total damage
 
 ### Combat Mechanics
 - [x] Turn budget system (default 3 turns/round)
@@ -104,7 +104,7 @@ Design doc: `docs/superpowers/specs/2026-09-14-scoring-trace-animation-overhaul-
 - [x] **T1 ScoringTrace pipeline** — `CombatService.calculate_word()` emits trace events for all 4 phases (tile_hop, tile_retrigger, form_ignite, artisan_trigger, clash_resolve); `_trace_event()` static helper with 9-field schema
 - [x] **T2 AudioManager autoload** — minimal SFX player with `.ogg`/`.wav` caching, no-op on missing files; wired into CombatScreen animation steps
 - [x] **T3 ScreenShake utility** — `scripts/components/ScreenShake.gd` static `shake(node, magnitude, duration)` tween-based jitter
-- [x] **T4 Artisan rail visual display** — `ArtisanSlot.gd`/`.tscn` (80×80 slot with glow/shake animations), `ArtisanRailDisplay.gd`/`.tscn` (5-slot HBoxContainer), wired into CombatScreen
+- [x] **T4 Artisan rail visual display** — `ArtisanSlot.gd`/`.tscn` (40×40px icon-only slot, borderless, hidden when empty, glow/shake animations), `ArtisanRailDisplay.gd` (5-slot HBoxContainer, drop-to-swap maps to visible-slot index), wired into CombatScreen `TopZone_Red/ArtisanRow`
 - [x] **T5 CombatScreen animation overhaul** — trace-driven animation with per-step methods (`_animate_tile_hop`, `_animate_tile_retrigger`, `_animate_form_ignite`, `_animate_artisan_trigger`, `_animate_clash`), `_monster_hitstop()` with HP drain, simplified projectile, audio/rail wiring, skip-on-click
 - [x] **Test coverage** — `tests/test_scoring_trace.gd` verifies trace schema, all 4 phases, final annotation
 - [x] **Scoring banner positioning** — offset_top=540 to clear word strip; verified at 540×960 viewport
@@ -126,7 +126,23 @@ Design doc: `docs/superpowers/specs/2026-09-14-scoring-trace-animation-overhaul-
 - [x] **SFX Audio Manager** — AudioManager autoload (`res://scripts/autoload/AudioManager.gd`) with cached stream playback, ogg/wav fallback, no-op on missing
 - [x] **Particle effects** — tile score bursts, damage impact, victory celebration (existing ParticleBurst system already covers these)
 - [x] **Redraw animation polish** — smooth in/out tweens for swapped tiles
-- [x] **Scoring banner positioning** — offset_top=540 to avoid overlapping word strip; verified at 540×960 viewport
+- [x] **Scoring banner positioning** — offset_top=540 to clear word strip; verified at 540×960 viewport
+- [x] **Web export + deploy** — `./tools/deploy-web.ps1` after final commit
+
+### V3.6 Milestone — HUD Reflow & Artisan Rail Icon-Only (2026-09-14)
+
+- [x] **Persistent inline scoring row** — replaced floating `ScoringBannerOverlay` with `%PersistentScoringRow` inside `TopZone_Red` (PersistBasePanel + PersistMultPanel + `×` separator); `_score_start()` scale-punch (0.95→1.0 TRANS_BACK) replaces banner fade; `%TotalDamageShelf` + `%WordMetaLabel` moved under the row
+- [x] **Top status bar reflow** — added `DepthPanel` ("DEPTH 1-1"), DepthInfoButton, spacer pair around GrimoireRow; TurnRoundLabel + HP bar moved into MonsterDisplayArea; MonsterSprite shrunk 192→128
+- [x] **Artisan rail relocated to TopZone_Red** — `ArtisanRow` (HBox, min 40px) with `%ArtisanRail` (size_flags_horizontal=3) + `SellDropZone` + `MoneyLabel`; removed old absolute-positioned rail at offset_top=575
+- [x] **WordShelf panel** — `%WordShelf` PanelContainer (WordShelfStyle brown StyleBoxFlat) wraps `%WordRackContainer` in MidZone_Blue
+- [x] **Action row resize** — Hint/Redraw/Play/Deck buttons all 100×60 (was 120/148/148), DeckButton moved into ActionZone_Orange
+- [x] **WordRuneSlot brown/amber theme** — rune slot restyled from cyan/obsidian to amber/walnut (`Color(0.26,0.16,0.09)` bg, amber border/text)
+- [x] **Artisan slot icon-only 40×40** — removed border, NameLabel, and EmptyPlaceholder; empty slots `visible=false`; only purchased artisans show; `_slot_index_at_position()` maps drop to visible-slot index; `verify_banner_layout.gd` updated to `%PersistentScoringRow`
+- [x] **Data cleanup** — removed stale `sprite` ref from vowel_witch boss; Golem sprite asset updated
+- [x] **examples/ reference art added** — concept/reference jpgs (bg_*, idea_*, ss_*) packed into export
+- [x] **Web export + deploy** — `./tools/deploy-web.ps1` (21 files → T:\letter-rogue)
+
+### Polish & Juice (remaining)
 - [ ] **Shop upgrade pricing display** — ensure upgrade cost button updates dynamically after purchase
 - [ ] **HP bar styling** — add gradient/color transitions for damage
 

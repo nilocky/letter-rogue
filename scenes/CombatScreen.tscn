@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
 [ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_combat_3.jpg" id="2_bgcombat"]
@@ -14,7 +14,21 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_banner"]
+[sub_resource type="StyleBoxFlat" id="WordShelfStyle"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.42, 0.25, 0.14, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.62, 0.4, 0.22, 1)
 
 [node name="CombatScreen" type="Control"]
 anchors_preset = 15
@@ -54,55 +68,91 @@ custom_minimum_size = Vector2(448, 285)
 theme_override_constants/separation = 8
 
 [node name="TopStatusBar" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
-custom_minimum_size = Vector2(0, 36)
-theme_override_constants/separation = 16
+custom_minimum_size = Vector2(0, 32)
+theme_override_constants/separation = 8
 
-[node name="DeckButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 38)
-theme_override_font_sizes/font_size = 16
-text = "DECK (0/0)"
-
-[node name="TurnRoundLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="DepthPanel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
 unique_name_in_owner = true
 theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(1, 0.9, 0.62, 1)
-size_flags_horizontal = 3
-horizontal_alignment = 1
-text = "TURNS: 3"
+vertical_alignment = 1
+text = "DEPTH 1-1"
 
-[node name="MoneyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="DepthInfoButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
 unique_name_in_owner = true
-theme_type_variation = &"MetricLabel"
-theme_override_colors/font_color = Color(0.9255, 0.7882, 0.2941, 1)
-horizontal_alignment = 2
-text = "$0"
+custom_minimum_size = Vector2(36, 38)
+theme_override_font_sizes/font_size = 16
+text = "?"
+
+[node name="TopSpacerLeft" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+size_flags_horizontal = 3
 
 [node name="GrimoireRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 36)
 theme_override_constants/separation = 4
 
-[node name="DepthInfoButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 38)
-theme_override_font_sizes/font_size = 18
-text = "?"
+[node name="TopSpacerRight" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+size_flags_horizontal = 3
 
 [node name="SettingsButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 38)
-theme_override_font_sizes/font_size = 18
+custom_minimum_size = Vector2(36, 38)
+theme_override_font_sizes/font_size = 16
 text = "⚙"
+
+[node name="ArtisanRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
+custom_minimum_size = Vector2(0, 40)
+theme_override_constants/separation = 8
+
+[node name="ArtisanRail" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+size_flags_horizontal = 3
+script = ExtResource("5_rail")
+
+[node name="SellDropZone" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+script = ExtResource("6_sell")
+
+[node name="SellLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow/SellDropZone"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 0.7)
+horizontal_alignment = 2
+vertical_alignment = 1
+text = "SELL ▾"
+
+[node name="MoneyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.9255, 0.7882, 0.2941, 1)
+vertical_alignment = 1
+text = "$0"
 
 [node name="MonsterDisplayArea" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
 unique_name_in_owner = true
 alignment = 1
 theme_override_constants/separation = 4
 
+[node name="HpLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+horizontal_alignment = 1
+
+[node name="MonsterHPBar" type="TextureProgressBar" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 24)
+size_flags_horizontal = 4
+value = 100
+script = ExtResource("4_hpbar")
+
 [node name="MonsterSprite" type="TextureRect" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(192, 192)
+custom_minimum_size = Vector2(128, 128)
 size_flags_horizontal = 4
 stretch_mode = 5
 
@@ -118,17 +168,13 @@ theme_type_variation = &"HeaderLabel"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="MonsterHPBar" type="TextureProgressBar" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 24)
-size_flags_horizontal = 4
-value = 100
-script = ExtResource("4_hpbar")
-
-[node name="HpLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+[node name="TurnRoundLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
 unique_name_in_owner = true
 theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1, 0.9, 0.62, 1)
 horizontal_alignment = 1
+text = "TURNS: 3"
 
 [node name="BossModifierContainer" type="HFlowContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
 alignment = 1
@@ -137,71 +183,34 @@ theme_override_constants/h_separation = 8
 [node name="PersistentScoringRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
 unique_name_in_owner = true
 alignment = 1
-theme_override_constants/separation = 12
-
-[node name="PersistBaseLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
-unique_name_in_owner = true
-theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
-text = "BASE 0"
-
-[node name="PersistMultLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
-unique_name_in_owner = true
-theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
-text = "×1.0"
-
-[node name="ScoringBannerOverlay" type="PanelContainer" parent="."]
-unique_name_in_owner = true
-visible = false
-anchor_right = 1.0
-offset_left = 46.0
-offset_top = 540.0
-offset_right = -46.0
-grow_horizontal = 2
-grow_vertical = 1
-mouse_filter = 2
-custom_minimum_size = Vector2(0, 64)
-z_index = 5
-theme_override_styles/panel = SubResource("StyleBoxEmpty_banner")
-
-[node name="BannerVBox" type="VBoxContainer" parent="ScoringBannerOverlay"]
-unique_name_in_owner = true
 theme_override_constants/separation = 8
 
-[node name="CellsHBox" type="HBoxContainer" parent="ScoringBannerOverlay/BannerVBox"]
-unique_name_in_owner = true
-alignment = 1
-theme_override_constants/separation = 8
-
-[node name="BasePanel" type="PanelContainer" parent="ScoringBannerOverlay/BannerVBox/CellsHBox"]
+[node name="PersistBasePanel" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 0)
 theme_type_variation = &"PixelPanel"
 
-[node name="BaseVBox" type="VBoxContainer" parent="ScoringBannerOverlay/BannerVBox/CellsHBox/BasePanel"]
+[node name="PersistBaseVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistBasePanel"]
 alignment = 1
 theme_override_constants/separation = 2
 
-[node name="BaseSubLabel" type="Label" parent="ScoringBannerOverlay/BannerVBox/CellsHBox/BasePanel/BaseVBox"]
+[node name="PersistBaseSubLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistBasePanel/PersistBaseVBox"]
 unique_name_in_owner = true
 theme_type_variation = &"MicroLabel"
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
 horizontal_alignment = 1
-text = "BASE POWER"
+text = "BASE"
 
-[node name="BaseScoreLabel" type="Label" parent="ScoringBannerOverlay/BannerVBox/CellsHBox/BasePanel/BaseVBox"]
+[node name="PersistBaseLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistBasePanel/PersistBaseVBox"]
 unique_name_in_owner = true
 theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
 horizontal_alignment = 1
 text = "0"
 
-[node name="MultiplyLabel" type="Label" parent="ScoringBannerOverlay/BannerVBox/CellsHBox"]
+[node name="PersistMultiplyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
 unique_name_in_owner = true
 theme_type_variation = &"BodyLabel"
 theme_override_font_sizes/font_size = 22
@@ -209,38 +218,39 @@ theme_override_colors/font_color = Color(0.8, 0.82, 0.86, 1)
 vertical_alignment = 1
 text = "×"
 
-[node name="MultPanel" type="PanelContainer" parent="ScoringBannerOverlay/BannerVBox/CellsHBox"]
+[node name="PersistMultPanel" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 0)
 theme_type_variation = &"PixelPanel"
 
-[node name="MultVBox" type="VBoxContainer" parent="ScoringBannerOverlay/BannerVBox/CellsHBox/MultPanel"]
+[node name="PersistMultVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistMultPanel"]
 alignment = 1
 theme_override_constants/separation = 2
 
-[node name="MultSubLabel" type="Label" parent="ScoringBannerOverlay/BannerVBox/CellsHBox/MultPanel/MultVBox"]
+[node name="PersistMultSubLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistMultPanel/PersistMultVBox"]
 unique_name_in_owner = true
 theme_type_variation = &"MicroLabel"
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
 horizontal_alignment = 1
-text = "MULT"
+text = "MULTI"
 
-[node name="MultScoreLabel" type="Label" parent="ScoringBannerOverlay/BannerVBox/CellsHBox/MultPanel/MultVBox"]
+[node name="PersistMultLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistMultPanel/PersistMultVBox"]
 unique_name_in_owner = true
 theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
 horizontal_alignment = 1
 text = "×1.0"
 
-[node name="TotalDamageShelf" type="PanelContainer" parent="ScoringBannerOverlay/BannerVBox"]
+[node name="TotalDamageShelf" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 28)
 visible = false
+size_flags_horizontal = 4
 theme_type_variation = &"PixelPanel"
 
-[node name="TotalDamageLabel" type="Label" parent="ScoringBannerOverlay/BannerVBox/TotalDamageShelf"]
+[node name="TotalDamageLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TotalDamageShelf"]
 unique_name_in_owner = true
 theme_type_variation = &"MetricLabel"
 theme_override_font_sizes/font_size = 30
@@ -248,41 +258,13 @@ theme_override_colors/font_color = Color(0.93, 0.79, 0.29, 1)
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="WordMetaLabel" type="Label" parent="ScoringBannerOverlay/BannerVBox"]
+[node name="WordMetaLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
 unique_name_in_owner = true
 visible = false
 theme_type_variation = &"MetricLabel"
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 text = ""
-
-[node name="ArtisanRail" type="HBoxContainer" parent="."]
-unique_name_in_owner = true
-anchor_top = 0.0
-anchor_right = 1.0
-offset_left = 46.0
-offset_top = 575.0
-offset_right = -46.0
-custom_minimum_size = Vector2(0, 90)
-size_flags_vertical = 0
-script = ExtResource("5_rail")
-
-[node name="SellDropZone" type="Control" parent="."]
-unique_name_in_owner = true
-anchor_right = 1.0
-offset_left = 400.0
-offset_top = 575.0
-offset_right = -46.0
-offset_bottom = 665.0
-script = ExtResource("6_sell")
-
-[node name="SellLabel" type="Label" parent="SellDropZone"]
-anchor_right = 1.0
-offset_top = 22.0
-offset_bottom = 44.0
-theme_override_colors/font_color = Color(1, 0.4, 0.4, 0.7)
-horizontal_alignment = 2
-text = "SELL ▾"
 
 [node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
 custom_minimum_size = Vector2(448, 152)
@@ -300,7 +282,13 @@ horizontal_alignment = 1
 autowrap_mode = 3
 text = "Tap tiles to spell a word"
 
-[node name="WordRackContainer" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
+[node name="WordShelf" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 84)
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("WordShelfStyle")
+
+[node name="WordRackContainer" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/WordShelf"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 62)
 alignment = 1
@@ -308,7 +296,7 @@ theme_override_constants/separation = 8
 script = ExtResource("3_wrdropzone")
 
 [node name="BottomZone_Green" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
-custom_minimum_size = Vector2(448, 292)
+custom_minimum_size = Vector2(448, 120)
 size_flags_vertical = 3
 alignment = 1
 theme_override_constants/separation = 8
@@ -322,29 +310,36 @@ text = "Hand empty"
 
 [node name="ActionZone_Orange" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
 custom_minimum_size = Vector2(448, 68)
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
 [node name="HintButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 60)
+custom_minimum_size = Vector2(100, 60)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
 text = "HINT (3)"
 
 [node name="RedrawButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(148, 60)
+custom_minimum_size = Vector2(100, 60)
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 text = "REDRAW (0)"
 
 [node name="PlayButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(148, 60)
+custom_minimum_size = Vector2(100, 60)
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 disabled = true
 text = "PLAY"
+
+[node name="DeckButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 60)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "DECK (0/0)"
 
 [node name="HandTileContainer" type="CenterContainer" parent="."]
 unique_name_in_owner = true

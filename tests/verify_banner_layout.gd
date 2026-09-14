@@ -29,7 +29,7 @@ func _check_viewport(vp: Vector2i) -> bool:
 	var hand: Control = screen.get_node("%HandTileContainer")
 	var redraw_btn: Control = screen.get_node("%RedrawButton")
 	var play_btn: Control = screen.get_node("%PlayButton")
-	var banner: Control = screen.get_node("%ScoringBannerOverlay")
+	var banner: Control = screen.get_node("%PersistentScoringRow")
 	var shelf: Control = screen.get_node("%TotalDamageShelf")
 
 	var ok := true

@@ -14,7 +14,6 @@ const TILE_LAND_TIME := 0.18
 const BETWEEN_TILE_PAUSE := 0.2
 const MULT_RAMP_TIME := 0.35
 const HP_DROP_TIME := 0.4
-const BANNER_FADE_TIME := 0.25
 const PROJECTILE_TIME := 0.35
 
 @onready var monster_label: Label = %MonsterNameLabel
@@ -25,8 +24,6 @@ const PROJECTILE_TIME := 0.35
 @onready var money_label: Label = %MoneyLabel
 @onready var bag_button: Button = %DeckButton
 @onready var hint_button: Button = %HintButton
-@onready var persist_base_label: Label = %PersistBaseLabel
-@onready var persist_mult_label: Label = %PersistMultLabel
 @onready var word_strip = %WordRackContainer
 @onready var hint_label: Label = %HintLabel
 @onready var hand_container = %HandTileContainer
@@ -36,16 +33,11 @@ const PROJECTILE_TIME := 0.35
 @onready var picker_grid: GridContainer = %PickerGrid
 @onready var picker_cancel_button: Button = %PickerCancelButton
 @onready var hand_empty_warning: Label = %HandEmptyWarning
-@onready var scoring_banner: PanelContainer = %ScoringBannerOverlay
-@onready var banner_vbox: VBoxContainer = %BannerVBox
-@onready var cells_hbox: HBoxContainer = %CellsHBox
-@onready var base_panel: PanelContainer = %BasePanel
-@onready var base_score_label: Label = %BaseScoreLabel
-@onready var base_sub_label: Label = %BaseSubLabel
-@onready var multiply_label: Label = %MultiplyLabel
-@onready var mult_panel: PanelContainer = %MultPanel
-@onready var mult_score_label: Label = %MultScoreLabel
-@onready var mult_sub_label: Label = %MultSubLabel
+@onready var base_panel: PanelContainer = %PersistBasePanel
+@onready var base_score_label: Label = %PersistBaseLabel
+@onready var mult_panel: PanelContainer = %PersistMultPanel
+@onready var mult_score_label: Label = %PersistMultLabel
+@onready var mult_sub_label: Label = %PersistMultSubLabel
 @onready var total_shelf: PanelContainer = %TotalDamageShelf
 @onready var total_damage_label: Label = %TotalDamageLabel
 @onready var word_meta_label: Label = %WordMetaLabel
@@ -53,6 +45,7 @@ const PROJECTILE_TIME := 0.35
 @onready var grimoire_row = %GrimoireRow
 @onready var depth_info_btn: Button = %DepthInfoButton
 @onready var settings_btn: Button = %SettingsButton
+@onready var depth_panel: Label = %DepthPanel
 
 var _slots: Array = []
 var _pending_redraw: Array = []
@@ -127,6 +120,7 @@ func show_round() -> void:
 
 
 func _refresh_header() -> void:
+	depth_panel.text = "DEPTH %d-%d" % [GameState.depth_stage + 1, GameState.round_number]
 	var monster: Dictionary = GameState.current_monster
 	if monster.is_empty():
 		return
@@ -451,9 +445,9 @@ func _update_persistent_scoring() -> void:
 	var base_sum := 0.0
 	for s in _slots:
 		base_sum += float(CombatService.letter_base_score(str(s["letter"])))
-	persist_base_label.text = "BASE %d" % roundi(base_sum)
+	base_score_label.text = "%d" % roundi(base_sum)
 	var mult := WordService.length_multiplier(_slots.size())
-	persist_mult_label.text = "×%.1f" % mult
+	mult_score_label.text = "×%.1f" % mult
 
 
 func _do_redraw() -> void:
@@ -517,7 +511,7 @@ func _play_score_animation() -> void:
 		if c is WordRuneSlot:
 			tiles.append(c)
 
-	_banner_show()
+	_score_start()
 	if not _skip_requested:
 		await get_tree().create_timer(0.2).timeout
 
@@ -553,15 +547,9 @@ func _play_score_animation() -> void:
 	var final_damage: int = int(res["damage"])
 	await _monster_hitstop(final_damage)
 
-	# Fade banner
-	if not _skip_requested:
-		var fade := create_tween()
-		fade.tween_property(scoring_banner, "modulate:a", 0.0, 0.2)
-		await fade.finished
-
 	# Commit & cleanup
 	CombatService.commit_word(_slots)
-	_banner_reset()
+	_score_reset()
 
 
 func _animate_tile_hop(evt: Dictionary, tiles: Array, res: Dictionary) -> void:
@@ -875,14 +863,12 @@ func _fmt_pts(pts: float) -> String:
 	return "+%.1f" % pts
 
 
-func _banner_show() -> void:
-	scoring_banner.show()
-	scoring_banner.modulate.a = 0.0
-	scoring_banner.scale = Vector2(0.9, 0.9)
+func _score_start() -> void:
+	var row: Control = %PersistentScoringRow
+	row.scale = Vector2(0.95, 0.95)
 	var tw := create_tween()
-	tw.tween_property(scoring_banner, "modulate:a", 1.0, BANNER_FADE_TIME)
-	tw.tween_property(scoring_banner, "scale", Vector2.ONE, BANNER_FADE_TIME) \
-		.set_trans(Tween.TRANS_LINEAR)
+	tw.tween_property(row, "scale", Vector2.ONE, 0.15) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	total_shelf.hide()
 	base_score_label.text = "0"
 	base_score_label.scale = Vector2(1, 1)
@@ -893,10 +879,7 @@ func _banner_show() -> void:
 	mult_panel.scale = Vector2(1, 1)
 
 
-func _banner_reset() -> void:
-	scoring_banner.hide()
-	scoring_banner.modulate.a = 1.0
-	scoring_banner.scale = Vector2(1, 1)
+func _score_reset() -> void:
 	base_score_label.text = "0"
 	base_score_label.scale = Vector2(1, 1)
 	mult_score_label.text = "×1.0"
