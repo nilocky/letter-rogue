@@ -47,8 +47,10 @@ letter-rogue/
 │   │   ├── WordFormService.gd Word Form detection (Trio/Quartet/Mirror/Double-Tap/Consonant Core),
 │   │   │                       per-form base+mult, grimoire level tracking
 │   │   ├── ArtisanRailManager.gd 5-slot Artisan rail, equip/unequip, left-to-right cascade trigger eval
-│   │   ├── CombatService.gd   Round setup, word validation, 4-phase scoring pipeline, damage application,
-│   │   │                       win/lose, EffectPipeline hooks, unified _current_modifier()
+│   │   ├── CombatService.gd   Round setup, word validation, 4-phase scoring pipeline (trace-driven),
+│   │   │                       damage application, win/lose, EffectPipeline hooks, unified _current_modifier()
+│   │   ├── AudioManager.gd    Minimal SFX player: cached stream playback, .ogg/.wav fallback,
+│   │   │                       no-op on missing files
 │   │   ├── DepthService.gd    3-stage encounter generation (Vanguard/Sentry/Boss), stage pools
 │   │   ├── ConsumableService.gd  Apply tarot/spectral/grimoire effects, bag mutations
 │   │   ├── DebugManager.gd    Debug hotkeys (F1 overlay, F12 screenshot), scene routing, state injection
@@ -89,6 +91,12 @@ letter-rogue/
 │       │                        Used for score bursts, button presses, projectile impact, victory confetti.
 │       ├── PixelHPBar.gd      TextureProgressBar subclass: custom _draw() segmented retro HP bar with
 │       │                        color transitions (green→yellow→red) and top highlight line.
+│       ├── ScreenShake.gd     Static class: tween-based screen shake utility.
+│       │                        `shake(node, magnitude, duration)` — jitter + restore
+│       ├── ArtisanSlot.gd     Artisan rail slot widget (80×80): icon, name, empty placeholder,
+│       │                        glow/shake trigger animations
+│       ├── ArtisanRailDisplay.gd 5-slot HBoxContainer: refresh() from ArtisanRailManager,
+│       │                        trigger_slot(index) for glow+shake
 │       ├── SceneTransition.gd Static Node: two-phase screen transition via CanvasLayer 128 + ShaderMaterial.
 │       │                        5 shader styles (bayer dither, pixelate, diamond grid, scanline, radial wipe).
 │       │                        No-flash guarantee, stutter protection via 1-frame await.
@@ -104,7 +112,8 @@ letter-rogue/
 │   ├── RunSetupScreen.tscn    Pack cards, bag buttons grid, bag preview, Start/Back
 │   ├── CombatScreen.tscn      TopBar (monster/HP/turns/bag/money) + MidZone (word strip) +
 │   │                           BottomZone (Redraw/Play buttons) + HandTileContainer (absolute child of
-│   │                           root) + WildcardPopup overlay + WordMetaLabel in scoring banner
+│   │                           root) + WildcardPopup overlay + ScoringBannerOverlay (offset_top=540) +
+│   │                           ArtisanRailDisplay (offset_top=575, 5-slot rail)
 │   ├── ShopScreen.tscn        InventoryGrid + BagGrid + UpgradeBox + money/reroll/fight buttons
 │   ├── GameOverScreen.tscn    BodyLabel + RestartButton
 │   ├── UISandbox.tscn         UI gallery: safe-area overlays, touch-target grid, mouse-filter demo boxes
@@ -120,6 +129,8 @@ letter-rogue/
 │       │                         LegendContainer, MarkFrame, PowerLabel as movable unit, rigid 2px plunge on press),
 │       │                         LetterLabel, PowerLabel. embedded_mode flag: combat-embedded vs shop-standalone.
 │       ├── WordRuneSlot.tscn    Rune slot: LetterLabel, PowerLabel (BadgeLabel variant). Draggable PanelContainer.
+│       ├── ArtisanSlot.tscn     Artisan rail slot: IconRect (64×64), NameLabel, EmptyPlaceholder
+│       ├── ArtisanRailDisplay.tscn 5-slot HBoxContainer, positioned below scoring banner
 │       ├── BagModal.tscn        Overlay + Panel + scrollable LetterGrid + VowelRatio + CloseButton
 │       └── VictoryModal.tscn    Overlay + Panel + Title + Receipt + TotalLabel + ContinueButton
 │
@@ -150,7 +161,8 @@ letter-rogue/
 │   ├── test_scoring_pipeline.gd     V3: 4-phase pipeline (CAT=7, LEVEL=80)
 │   ├── test_artisan_rail.gd   V3: artisan cascade (Caps Lock flat, Rotary Knob xmult)
 │   ├── test_switch_packs.gd   V3: conditional passive evaluation
-│   └── test_consumables_depths.gd   V3: consumables apply + depth encounter gen
+│   ├── test_consumables_depths.gd   V3: consumables apply + depth encounter gen
+│   └── test_scoring_trace.gd   V3.5: trace schema verification (4 phases, 9-field events, annotation match)
 │
 ├── tools/
 │   ├── build_words.py         One-off Python generator: wordlist → data/words.json (POS+def enriched)
@@ -182,7 +194,7 @@ letter-rogue/
 
 ## Data Flow Notes
 
-- **Autoload order matters:** `EventBus → GameState → PackService → KeyCapService → KeyCapSkinService → ShopService → WordService → WordFormService → ArtisanRailManager → CombatService → DepthService → ConsumableService → ResolutionManager → DebugManager → EffectPipeline → LootService`. Services reference each other via autoload names at call time, not in `_ready()` cross-dependencies.
+- **Autoload order matters:** `EventBus → GameState → PackService → KeyCapService → KeyCapSkinService → ShopService → WordService → WordFormService → ArtisanRailManager → CombatService → AudioManager → DepthService → ConsumableService → ResolutionManager → DebugManager → EffectPipeline → LootService`. Services reference each other via autoload names at call time, not in `_ready()` cross-dependencies.
 
 - **Scoring flow — 4-phase pipeline:** `CombatService.calculate_word()` runs Phase 1 Tile Hops (per-tile letter score + abilities/finishes/stickers/conditions + pack passives → `letter_scores`), Phase 2 Word Form Ignition (`(Σ + form_base) × length_mult × form_mult`), Phase 3 Artisan Cascade (`(total_after_form + artisan_flat) × artisan_xmult`, from `ArtisanRailManager.cascade()`), Phase 4 Runic Blast (`roundi(total) + flat_bonus`). Returns `letter_scores`, `form_data`, `flat_bonus` driving the banner animation. `WordService` supplies only `is_word()` and `length_multiplier()`.
 

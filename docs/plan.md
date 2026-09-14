@@ -97,6 +97,19 @@ Design doc: `docs/superpowers/specs/2026-09-13-letter-rogue-v3-balatro-bag-optim
 - [x] **Unify keycap press physics** — mouse-down press must use same cap_pressed sprite + 5px offset as latched state
 - [x] **Fix keycap release jitter** — don't pop up on release, let CombatScreen decide latched state seamlessly
 
+### V3.5 Milestone — Scoring Trace & Animation Overhaul (2026-09-14)
+
+Design doc: `docs/superpowers/specs/2026-09-14-scoring-trace-animation-overhaul-design.md`
+
+- [x] **T1 ScoringTrace pipeline** — `CombatService.calculate_word()` emits trace events for all 4 phases (tile_hop, tile_retrigger, form_ignite, artisan_trigger, clash_resolve); `_trace_event()` static helper with 9-field schema
+- [x] **T2 AudioManager autoload** — minimal SFX player with `.ogg`/`.wav` caching, no-op on missing files; wired into CombatScreen animation steps
+- [x] **T3 ScreenShake utility** — `scripts/components/ScreenShake.gd` static `shake(node, magnitude, duration)` tween-based jitter
+- [x] **T4 Artisan rail visual display** — `ArtisanSlot.gd`/`.tscn` (80×80 slot with glow/shake animations), `ArtisanRailDisplay.gd`/`.tscn` (5-slot HBoxContainer), wired into CombatScreen
+- [x] **T5 CombatScreen animation overhaul** — trace-driven animation with per-step methods (`_animate_tile_hop`, `_animate_tile_retrigger`, `_animate_form_ignite`, `_animate_artisan_trigger`, `_animate_clash`), `_monster_hitstop()` with HP drain, simplified projectile, audio/rail wiring, skip-on-click
+- [x] **Test coverage** — `tests/test_scoring_trace.gd` verifies trace schema, all 4 phases, final annotation
+- [x] **Scoring banner positioning** — offset_top=540 to clear word strip; verified at 540×960 viewport
+- [x] **Web export + deploy** — `./tools/deploy-web.ps1` after final commit
+
 ### Polish & Juice
 - [x] **KeyCap 3-layer sandwich (SwitchBase + CapLayer + CapTexture/OverlayTexture)** — Mount Cherry MX switch housing beneath every keycap, driven by `GameState.active_pack_id`. CapLayer wraps textures as movable unit, plunges 6px onto fixed SwitchBase.
 - [x] **Shift hand tiles down onto stone slab** — HandTileContainer Y anchor moved to 745–830px, tiles rest directly on stone altar surface. MidZone_Blue min height 210.
@@ -110,10 +123,10 @@ Design doc: `docs/superpowers/specs/2026-09-13-letter-rogue-v3-balatro-bag-optim
 - [x] **ParticleBurst system** — `ParticleBurst.gd` static class, CPUParticles2D one-shot bursts, cached 6×6 pixel texture, used for score bursts, button presses, projectile impact, victory confetti
 - [x] **PixelHPBar** — custom `_draw()` segmented retro HP bar with color transitions (green→yellow→red) and top highlight line
 - [x] **MainMenuScreen overhaul** — added Achievements/Collection/Settings buttons, hover scale+tint effects, particle burst on press, new bg_main_menu_2.jpg background
-- [ ] **SFX Audio Manager** — hook audio calls (commented-out `AudioManager.play()` calls in CombatScreen) with a simple autoload AudioManager that plays from `res://assets/audio/`
-- [ ] **Particle effects** — add particle emitters for tile score bursts, damage impact, victory celebration
-- [ ] **Redraw animation polish** — ensure smooth in/out tweens for swapped tiles
-- [ ] **Scoring banner positioning** — verify banner fits all viewport sizes without overflow
+- [x] **SFX Audio Manager** — AudioManager autoload (`res://scripts/autoload/AudioManager.gd`) with cached stream playback, ogg/wav fallback, no-op on missing
+- [x] **Particle effects** — tile score bursts, damage impact, victory celebration (existing ParticleBurst system already covers these)
+- [x] **Redraw animation polish** — smooth in/out tweens for swapped tiles
+- [x] **Scoring banner positioning** — offset_top=540 to avoid overlapping word strip; verified at 540×960 viewport
 - [ ] **Shop upgrade pricing display** — ensure upgrade cost button updates dynamically after purchase
 - [ ] **HP bar styling** — add gradient/color transitions for damage
 
@@ -130,7 +143,6 @@ Design doc: `docs/superpowers/specs/2026-09-13-letter-rogue-v3-balatro-bag-optim
 - [ ] **More boss variations** — additional boss modifiers beyond the current 4
 - [ ] **More shop items** — additional upgrades, consumables, special tiles
 - [ ] **Additional Switch Packs** — more pack variety
-- [ ] **Artisan rail UI in CombatScreen** — ArtisanSlot.tscn component (ArtisanRailManager service complete; UI display pending)
 - [ ] **Altar Rune socket** — communal tile persisting across turns (deferred from M1)
 - [ ] **Pack unlock progression** — stake/difficulty system (Balatro-style)
 - [ ] **Endless mode** — continue past boss rounds with escalating difficulty

@@ -53,7 +53,7 @@ Web constraints:
 
 ### Service-based with Event Bus
 
-**Autoloads (16 singletons, registered in `project.godot`):**
+**Autoloads (17 singletons, registered in `project.godot`):**
 
 | Singleton | Responsibility |
 |---|---|
@@ -73,8 +73,9 @@ Web constraints:
 | `DebugManager` | Debug-only hotkeys (F1 overlay toggle, F12 screenshot), scene routing, state injection, time-scale |
 | `EffectPipeline` | Hook registry: caps register `{hook, apply}` callbacks triggered on combat lifecycle events |
 | `LootService` | Rolls loot drops from monster's `drop_table_id` on defeat |
+| `AudioManager` | Minimal SFX player: cached stream playback from `res://assets/audio/`, `.ogg`/`.wav` fallback, no-op on missing files |
 
-**Autoload order matters:** `EventBus`, `GameState`, `PackService`, `KeyCapService`, `KeyCapSkinService`, `ShopService`, `WordService`, `WordFormService`, `ArtisanRailManager`, `CombatService`, `DepthService`, `ConsumableService`, `ResolutionManager`, `DebugManager`, `EffectPipeline`, `LootService`.
+**Autoload order matters:** `EventBus`, `GameState`, `PackService`, `KeyCapService`, `KeyCapSkinService`, `ShopService`, `WordService`, `WordFormService`, `ArtisanRailManager`, `CombatService`, `DepthService`, `ConsumableService`, `ResolutionManager`, `DebugManager`, `EffectPipeline`, `LootService`, `AudioManager`.
 
 ### Screens
 
@@ -98,15 +99,19 @@ MENU → RUN_SETUP → COMBAT ←→ SHOP → GAME_OVER
 
 ### Scoring Animation (CombatScreen)
 
-Balatro-style sequential animation aligned to the 4-phase scoring pipeline:
-1. **Banner entrance** (0.25s fade + scale)
-2. **Phase A: Sequential letter hop** — each tile hops up (0.15s), lands with bounce (0.18s), floating score label fades up, 0.2s pause between tiles. Running total accumulates into the BASE label.
-3. **Phase B: Word Form ignition + multiplier ramp** — Word Form base damage lands into the BASE label first (scale punch), then the mult panel pulses and ramps from 1.0 to `length_mult × form_mult` over 0.35s (words ≥3 only)
-4. **Phase C: Artisan cascade + final resolution** — total damage label (`int(res["damage"])`, full pipeline result) appears with scale pulse, projectile flies from banner to monster (0.35s), HP bar drops smoothly (0.4s), damage float text, banner fades out (0.25s)
-5. **Word metadata:** before multiplier ignition, a `%WordMetaLabel` shows `WORD · POS · "def" · Vn/Cn` (MicroLabel, hidden by default)
-6. **Phase D: Commit** — `CombatService.commit_word()` called
+Balatro-style sequential animation driven by trace events from `CombatService.calculate_word().trace`. Each trace event carries `{step_type, source_index, label, delta_chips, delta_mult, x_mult, running_chips, running_mult, annotation}` and drives one animation step:
 
-Player can click during animation to skip remaining animation.
+1. **Banner entrance** (0.25s fade + scale) — all nodes hidden, then fade in
+2. **tile_hop events** — each tile hops up (0.15s), lands (0.18s), floating `+N` label fades up, `ParticleBurst` at tile position, BASE label updates to running_chips with scale punch. Audio: `AudioManager.play("score_chip")`. 0.2s pause between tiles.
+3. **tile_retrigger events** (red sticker / lubed condition) — tile pulses scale 1.3→1.0, floating "RE-TRIGGER!" text, BASE updates again
+4. **form_ignite event** — Word Form base damage lands into BASE label (scale punch, floating "+N [FormName]"), mult panel pulses, multiplier ramps from ×1.0 to running_mult over 0.35s. Audio: `AudioManager.play("mult_ignite")`.
+5. **artisan_trigger event** — `ArtisanRailDisplay.trigger_slot()` fires for each triggered artisan, floating text shows artisan bonus (+N Mult / ×N), mult display updates with pulse. Audio: `AudioManager.play("mult_ignite", 1.15)`.
+6. **clash_resolve event** — total damage label appears (`= N DMG`) with scale pulse, BASE+MULT labels pulse in sync. Projectile label flies from banner to monster (0.35s), `ParticleBurst` at impact, `ScreenShake.shake()`, `_squash_hit()`. Audio: `AudioManager.play("slam_impact")`.
+7. **Word metadata:** after trace iteration, `%WordMetaLabel` shows `WORD · POS · "def" · Vn/Cn`
+8. **Hitstop:** HP bar drops smoothly (0.4s), damage float text (`-N`)
+9. **Banner fade** (0.25s), then `CombatService.commit_word()`
+
+Player can click during animation to skip remaining steps (sets `_skip_requested = true`).
 
 ## Core Loop
 
@@ -484,7 +489,7 @@ All JSON under `data/`, ships inside exported pck:
 - Secret words from `data/secret_words.json` flagged in metadata; gameplay effects pending
 - Word Forms are detected, not selected — pattern identification is automatic (like poker hands)
 - Artisan cascade is strictly left-to-right — rail position orders trigger resolution
-- Altar Rune socket and dual-stage audio hooks deferred (stubs exist); AudioManager is out of scope
+- Altar Rune socket deferred; AudioManager built (autoload with cached stream playback)
 
 ## KeyCap 3-Layer Mechanical Sandwich Architecture
 
