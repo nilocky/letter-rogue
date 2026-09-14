@@ -116,36 +116,12 @@ horizontal_alignment = 1
 alignment = 1
 theme_override_constants/h_separation = 8
 
-[node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
-custom_minimum_size = Vector2(448, 152)
-alignment = 2
-theme_override_constants/separation = 4
-
-[node name="HintLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
-unique_name_in_owner = true
-theme_type_variation = &"BodyLabel"
-theme_override_font_sizes/font_size = 22
-theme_override_colors/font_color = Color(0.45, 0.95, 1, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.4, 0.55, 1)
-theme_override_constants/outline_size = 4
-horizontal_alignment = 1
-autowrap_mode = 3
-text = "Tap tiles to spell a word"
-
-[node name="WordRackContainer" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 62)
-alignment = 1
-theme_override_constants/separation = 8
-script = ExtResource("3_wrdropzone")
-
 [node name="ScoringBannerOverlay" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 visible = false
-anchor_top = 0.0
 anchor_right = 1.0
 offset_left = 46.0
-offset_top = 490.0
+offset_top = 540.0
 offset_right = -46.0
 grow_horizontal = 2
 grow_vertical = 1
@@ -253,6 +229,29 @@ offset_right = -46.0
 custom_minimum_size = Vector2(0, 90)
 size_flags_vertical = 0
 script = ExtResource("5_rail")
+
+[node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
+custom_minimum_size = Vector2(448, 152)
+alignment = 2
+theme_override_constants/separation = 4
+
+[node name="HintLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
+unique_name_in_owner = true
+theme_type_variation = &"BodyLabel"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.45, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.4, 0.55, 1)
+theme_override_constants/outline_size = 4
+horizontal_alignment = 1
+autowrap_mode = 3
+text = "Tap tiles to spell a word"
+
+[node name="WordRackContainer" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 62)
+alignment = 1
+theme_override_constants/separation = 8
+script = ExtResource("3_wrdropzone")
 
 [node name="BottomZone_Green" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
 custom_minimum_size = Vector2(448, 292)
