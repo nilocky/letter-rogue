@@ -11,6 +11,7 @@ const REWARD_BASE := 5
 func start_round() -> void:
 	GameState.turns_left = GameState.round_turn_budget()
 	GameState.redraws_left = GameState.round_redraw_budget()
+	GameState.hints_remaining = GameState.round_hint_budget()
 	# Apply pack redraw penalties
 	var pack: Dictionary = PackService.pack_by_id(GameState.active_pack_id)
 	if not pack.is_empty():
@@ -233,6 +234,14 @@ func commit_word(slots: Array) -> void:
 
 	_apply_monster_damage(int(res["damage"]) + lucky_extra_damage, money_gain)
 
+
+
+func letter_base_score(letter: String) -> int:
+	if COMMON_LETTERS.contains(letter):
+		return 1
+	if UNCOMMON_LETTERS.contains(letter):
+		return 2
+	return 4  # V K X J Q Z
 
 
 func _letter_base_score(letter: String) -> int:

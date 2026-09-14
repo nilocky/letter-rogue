@@ -22,7 +22,10 @@ const PROJECTILE_TIME := 0.35
 @onready var hp_label: Label = %HpLabel
 @onready var turns_label: Label = %TurnRoundLabel
 @onready var money_label: Label = %MoneyLabel
-@onready var bag_button: Button = %BagButton
+@onready var bag_button: Button = %DeckButton
+@onready var hint_button: Button = %HintButton
+@onready var persist_base_label: Label = %PersistBaseLabel
+@onready var persist_mult_label: Label = %PersistMultLabel
 @onready var word_strip = %WordRackContainer
 @onready var hint_label: Label = %HintLabel
 @onready var hand_container = %HandTileContainer
@@ -64,6 +67,7 @@ func _ready() -> void:
 	EventBus.monster_damaged.connect(_on_monster_damaged)
 	EventBus.round_won.connect(_on_round_won)
 	bag_button.pressed.connect(_on_bag_pressed)
+	hint_button.pressed.connect(_on_hint_pressed)
 	redraw_button.pressed.connect(_on_redraw_toggle)
 	play_button.pressed.connect(_on_play_pressed)
 	picker_cancel_button.pressed.connect(_on_picker_cancel)
@@ -133,7 +137,8 @@ func _refresh_header() -> void:
 	turns_label.text = "R%d \u2022 TURNS: %d" % [GameState.round_number, GameState.turns_left]
 	money_label.text = "$%d" % GameState.money
 	var bag_total: int = GameState.bag.size() + GameState.hand.size()
-	bag_button.text = "BAG (%d/%d)" % [GameState.bag.size(), bag_total]
+	bag_button.text = "DECK (%d/%d)" % [GameState.bag.size(), bag_total]
+	_update_hint_button_ui()
 
 
 func _on_hand_drawn(hand: Array) -> void:
@@ -182,34 +187,35 @@ func _refresh_hand() -> void:
 	var row_sep := func(count: int) -> int:
 		return 3 if count >= 5 else 6
 
-	if total <= 5:
-		var row := HBoxContainer.new()
-		row.alignment = BoxContainer.ALIGNMENT_CENTER
-		row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		row.add_theme_constant_override("separation", row_sep.call(total))
-		hand_container.add_child(row)
-		for i in range(total):
-			var el := _instantiate_tile(GameState.hand[i], i, tile_size, font_size, row)
-			_hand_elements.append(el)
-	else:
-		var top_count := int(ceil(total / 2.0))
-		var vbox := VBoxContainer.new()
-		vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-		vbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		vbox.add_theme_constant_override("separation", v_sep)
-		hand_container.add_child(vbox)
-		var row1 := HBoxContainer.new()
-		row1.alignment = BoxContainer.ALIGNMENT_CENTER
-		row1.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		row1.add_theme_constant_override("separation", row_sep.call(top_count))
-		vbox.add_child(row1)
+	var max_per_row := 5
+	var top_count := mini(total, max_per_row)
+	var bottom_count := maxi(0, total - max_per_row)
+
+	var vbox := VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	vbox.add_theme_constant_override("separation", v_sep)
+	hand_container.add_child(vbox)
+
+	var row1 := HBoxContainer.new()
+	row1.alignment = BoxContainer.ALIGNMENT_CENTER
+	row1.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	row1.add_theme_constant_override("separation", row_sep.call(mini(top_count, 5)))
+	vbox.add_child(row1)
+
+	for i in range(top_count):
+		var el := _instantiate_tile(GameState.hand[i], i, tile_size, font_size, row1)
+		_hand_elements.append(el)
+
+	if bottom_count > 0:
 		var row2 := HBoxContainer.new()
 		row2.alignment = BoxContainer.ALIGNMENT_CENTER
 		row2.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		row2.add_theme_constant_override("separation", row_sep.call(total - top_count))
+		row2.add_theme_constant_override("separation", row_sep.call(5))
 		vbox.add_child(row2)
-		for i in range(total):
-			var el := _instantiate_tile(GameState.hand[i], i, tile_size, font_size, row1 if i < top_count else row2)
+		for i in range(bottom_count):
+			var hand_idx := top_count + i
+			var el := _instantiate_tile(GameState.hand[hand_idx], hand_idx, tile_size, font_size, row2)
 			_hand_elements.append(el)
 	_refresh_hand_states()
 
@@ -324,6 +330,7 @@ func _refresh_word() -> void:
 
 func _update_word_ui() -> void:
 	_refresh_hand_states()
+	_update_persistent_scoring()
 	var word := ""
 	for s in _slots:
 		word += str(s["letter"])
@@ -401,6 +408,36 @@ func _on_bag_pressed() -> void:
 	var modal: Control = BAG_MODAL.instantiate()
 	add_child(modal)
 	modal.open()
+
+
+func _on_hint_pressed() -> void:
+	if _animating or GameState.hints_remaining <= 0:
+		return
+	var letters: Array[String] = []
+	for cap: Dictionary in GameState.hand:
+		if not bool(cap.get("is_symbol", false)):
+			letters.append(str(cap.get("letter", "?")))
+	var word := HintService.find_basic_word(letters)
+	if word == "":
+		hint_label.text = "No hints available"
+		return
+	GameState.hints_remaining -= 1
+	_update_hint_button_ui()
+	hint_label.text = "HINT: Try %s" % word
+
+
+func _update_hint_button_ui() -> void:
+	hint_button.text = "HINT (%d)" % GameState.hints_remaining
+	hint_button.disabled = (GameState.hints_remaining <= 0 or _animating)
+
+
+func _update_persistent_scoring() -> void:
+	var base_sum := 0.0
+	for s in _slots:
+		base_sum += float(CombatService.letter_base_score(str(s["letter"])))
+	persist_base_label.text = "BASE %d" % roundi(base_sum)
+	var mult := WordService.length_multiplier(_slots.size())
+	persist_mult_label.text = "×%.1f" % mult
 
 
 func _do_redraw() -> void:

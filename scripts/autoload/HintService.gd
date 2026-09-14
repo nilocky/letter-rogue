@@ -29,7 +29,7 @@ func _combinations(items: Array, k: int) -> Array[Array]:
 		return [[]]
 	if items.is_empty():
 		return []
-	var first := items[0]
+	var first: Variant = items[0]
 	var rest := items.slice(1)
 	var with_first := _combinations(rest, k - 1)
 	for c in with_first:
@@ -44,7 +44,7 @@ func _permutations(items: Array) -> Array[Array]:
 		return [items.duplicate()]
 	var result: Array[Array] = []
 	for i in range(items.size()):
-		var item := items[i]
+		var item: Variant = items[i]
 		var left := items.slice(0, i)
 		var right := items.slice(i + 1)
 		for p in _permutations(left + right):

@@ -56,11 +56,11 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 36)
 theme_override_constants/separation = 16
 
-[node name="BagButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="DeckButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 38)
 theme_override_font_sizes/font_size = 16
-text = "BAG (0/0)"
+text = "DECK (0/0)"
 
 [node name="TurnRoundLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
 unique_name_in_owner = true
@@ -115,6 +115,25 @@ horizontal_alignment = 1
 [node name="BossModifierContainer" type="HFlowContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
 alignment = 1
 theme_override_constants/h_separation = 8
+
+[node name="PersistentScoringRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
+unique_name_in_owner = true
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="PersistBaseLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
+text = "BASE 0"
+
+[node name="PersistMultLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
+unique_name_in_owner = true
+theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
+text = "×1.0"
 
 [node name="ScoringBannerOverlay" type="PanelContainer" parent="."]
 unique_name_in_owner = true
@@ -270,16 +289,23 @@ text = "Hand empty"
 custom_minimum_size = Vector2(448, 68)
 theme_override_constants/separation = 16
 
+[node name="HintButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 60)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "HINT (3)"
+
 [node name="RedrawButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 60)
+custom_minimum_size = Vector2(148, 60)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 22
 text = "REDRAW (0)"
 
 [node name="PlayButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 60)
+custom_minimum_size = Vector2(148, 60)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 22
 disabled = true
