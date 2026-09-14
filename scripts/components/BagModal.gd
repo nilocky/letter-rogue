@@ -45,7 +45,7 @@ func _populate() -> void:
 	for child in letter_grid.get_children():
 		child.queue_free()
 
-	var source: Array[Dictionary] = []
+	var source: Array = []
 	if _current_view == View.BAG:
 		source = GameState.bag
 	else:
