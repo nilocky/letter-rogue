@@ -469,12 +469,10 @@ func _play_score_animation() -> void:
 		await get_tree().create_timer(0.2).timeout
 
 	# Drive animation from trace events
-	var last_hop_index: int = -1
 	for evt in trace:
 		var step: String = evt["step_type"]
 
 		if step == "tile_hop":
-			last_hop_index = evt["source_index"]
 			await _animate_tile_hop(evt, tiles, res)
 		elif step == "tile_retrigger":
 			await _animate_tile_retrigger(evt, tiles)
@@ -685,9 +683,6 @@ func _animate_clash(evt: Dictionary, res: Dictionary) -> void:
 	var flash := create_tween()
 	total_damage_label.scale = Vector2(1.4, 1.4)
 	flash.tween_property(total_damage_label, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_LINEAR)
-
-	if Engine.has_singleton("AudioManager"):
-		AudioManager.play("slam_impact")
 
 	# Base + Mult pulse in sync
 	var sync_pulse := create_tween()
