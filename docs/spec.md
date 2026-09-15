@@ -12,7 +12,7 @@ Delivered as a single Godot **Web (HTML5) export**, self-hosted via Docker, and 
 
 - **Engine:** Godot 4.7.x (GDScript typed)
 - **Rendering:** 2D, Container-based responsive UI
-- **Resolution:** 540x960 logical viewport, 9:16 aspect ratio, `canvas_items` stretch mode, `keep` aspect
+- **Resolution:** 540x960 logical viewport, 9:16 aspect ratio, `canvas_items` stretch mode, `keep_height` aspect
 - **Window overrides:** Desktop 441x784 (82% screen height cap, 9:16 preservation via ResolutionManager)
 - **Orientation:** Locked portrait (handheld/orientation=1)
 - **Input:** `Emulate Touch From Mouse` enabled
@@ -47,35 +47,37 @@ One Godot **Web export** is the single artifact; every client loads that same bu
 Web constraints:
 - All game data ships inside the exported pck (`res://data/*.json`). No runtime file access, no external fetches.
 - UI is 100% Container/anchor based — reflows for any viewport.
-- Exclude filter: `addons/godot_mcp/*` never ships.
+- Exclude filter: all `addons/*` (godot_mcp, at-icons, dialogue_manager) never ship, plus docs/examples/backups/tests/tools/* and `.wav`/`.zip`.
 
 ## Architecture
 
 ### Service-based with Event Bus
 
-**Autoloads (17 singletons, registered in `project.godot`):**
+**Autoloads (19 singletons, registered in `project.godot`):**
 
 | Singleton | Responsibility |
 |---|---|
 | `EventBus` | Signal definitions only — no logic |
-| `GameState` | Runtime state: money, round, bag, discard pile, hand, current monster, turn/redraw budgets, upgrades, active pack/bag ids, word form levels, artisan rail, active blueprints, skip tags, depth stage |
+| `GameState` | Runtime state: money, round, bag, discard pile, hand, current monster, turn/redraw/hint budgets, upgrades, active pack/bag ids, word form levels, artisan rail, active blueprints, skip tags, depth stage, active grimoires, unlocked key slots |
 | `PackService` | Active Switch Pack modifier lookups + conditional passive evaluation (`evaluate_conditionals`) |
 | `KeyCapService` | Play-and-refill draw from bag (used tiles → discard, unused stay), vowel safeguard, discard reshuffle, resolve ability effects, starter bag loaders |
 | `KeyCapSkinService` | Atlas-based skin system for keycap textures |
 | `ShopService` | Shop inventory generation, buy/sell/reroll, persistent run upgrade purchases, Blueprint purchases, Grab Bag generation |
 | `WordService` | Dictionary loading (`data/words.json`), word validation, word length multiplier, `get_word_meta()` for POS/definition/letter counts |
-| `WordFormService` | Word Form pattern detection (Trio/Quartet/Mirror/Double-Tap/Consonant Core), per-form base damage & multiplier, grimoire level tracking |
-| `ArtisanRailManager` | 5-slot Artisan rail state, equip/unequip, left-to-right cascade trigger evaluation |
 | `CombatService` | Round setup, per-turn word validation & 4-phase scoring, damage application, win/lose from turn budget. Hooks into `EffectPipeline` for cap effect lifecycle. |
-| `DepthService` | 8-stage encounter generation (Vanguard/Sentry/Boss Gate/Catacombs/Fungal Depths/Crystal Caverns/Void Threshold/Abyssal Crown), milestone modifiers, stage pools |
+| `ArtisanRailManager` | 5-slot Artisan rail state, equip/unequip, left-to-right cascade trigger evaluation |
+| `WordFormService` | Word Form pattern detection (Trio/Quartet/Mirror/Double-Tap/Consonant Core), per-form base damage & multiplier, grimoire level tracking |
+| `DepthService` | 8-stage encounter generation (Vanguard/Sentry/Boss Gate/Catacombs/Fungal Depths/Crystal Caverns/Void Threshold/Abyssal Crown), milestone modifiers, stage pools, depth-6 banned letter |
 | `ConsumableService` | Apply tarot/spectral/grimoire effects, bag mutations |
 | `ResolutionManager` | Cross-platform desktop window sizing (82% height cap, 9:16 aspect preservation) and mobile fullscreen |
+| `MCPRuntimeProbe` | Godot MCP runtime probe (`res://addons/godot_mcp/`), dev-only, never ships in Web export |
 | `DebugManager` | Debug-only hotkeys (F1 overlay toggle, F12 screenshot), scene routing, state injection, time-scale |
 | `EffectPipeline` | Hook registry: caps register `{hook, apply}` callbacks triggered on combat lifecycle events |
 | `LootService` | Rolls loot drops from monster's `drop_table_id` on defeat |
-| `AudioManager` | Minimal SFX player: cached stream playback from `res://assets/audio/`, `.ogg`/`.wav` fallback, no-op on missing files |
+| `AudioManager` | Minimal SFX player: cached stream playback from `res://assets/audio/`, `.ogg`/`.wav` fallback, no-op on missing files. **No audio assets shipped yet** — all plays no-op. |
+| `HintService` | Tier 1 brute-force word finder: `find_basic_word(letters)` enumerates combinations/permutations (length 3..hand size) and returns the first valid dictionary word |
 
-**Autoload order matters:** `EventBus`, `GameState`, `PackService`, `KeyCapService`, `KeyCapSkinService`, `ShopService`, `WordService`, `WordFormService`, `ArtisanRailManager`, `CombatService`, `DepthService`, `ConsumableService`, `ResolutionManager`, `DebugManager`, `EffectPipeline`, `LootService`, `AudioManager`.
+**Autoload order matters** (registration order in `project.godot`): `EventBus`, `GameState`, `PackService`, `KeyCapService`, `KeyCapSkinService`, `ShopService`, `WordService`, `CombatService`, `ArtisanRailManager`, `WordFormService`, `DepthService`, `ConsumableService`, `ResolutionManager`, `MCPRuntimeProbe`, `DebugManager`, `EffectPipeline`, `LootService`, `AudioManager`, `HintService`. Services reference each other via autoload names at call time, not in `_ready()` cross-dependencies.
 
 ### Screens
 
@@ -83,7 +85,7 @@ Web constraints:
 |---|---|---|
 | `MainMenuScreen` | Title + Start/Achievements/Collection/Settings buttons, hover scale+tint effects, particle burst on press |
 | `RunSetupScreen` | Switch Pack (5) + Starter Bag (4) selection |
-| `CombatScreen` | Word builder: hand tiles with deep-travel latched state, WordRuneSlot magical rune display strip, Artisan rail display, damage preview, persistent scoring row (BASE/MULTI inline HUD), BagModal, VictoryModal, ParticleBurst score bursts, PixelHPBar monster HP |
+| `CombatScreen` | Word builder: hand tiles with deep-travel latched state, WordRuneSlot magical rune display strip, Artisan rail display + SellDropZone, persistent scoring row (BASE/MULTI inline HUD), HINT + DECK action buttons, BagModal (bag + discard tabs), VictoryModal, ParticleBurst score bursts, PixelHPBar monster HP, DepthInfoPopup |
 | `ShopScreen` | Buyable tiles grid, sell/reroll, upgrade column, Workshop Blueprints |
 | `GameOverScreen` | Round reached + money display, restart |
 
@@ -142,6 +144,26 @@ MainMenu → RunSetup → Combat → (win) → VictoryModal → Shop → Combat 
 - Default redraw tokens per round: **3**. Shop raises cap.
 - Marked tiles animate out, replacements animate in.
 
+### HINT (HintService Tier 1)
+
+CombatScreen action row has a `%HintButton` (100×60, "HINT (N)"). Pressing it consumes one hint (`GameState.hints_remaining`, budget = `round_hint_budget()` = 3 + `upgrade_hints`) and asks `HintService.find_basic_word(hand_letters)` for a valid word suggestion. Tier 1 is brute-force: enumerate all combinations (length 3..hand size) then permutations, return the first that `WordService.is_word()`. No anagram map yet. Button disabled at 0 hints. Higher tiers (`hint_quality` = 2/3) are deferred.
+
+### DECK (Bag / Discard Inspector)
+
+`%DeckButton` (100×60) opens the BagModal, which now has two views: **In Bag** (live `GameState.bag` letter inventory) and **Discarded** (`GameState.discard_pile` — tiles consumed this run, awaiting bag reshuffle). Tabs switch between the two piles.
+
+### Grimoire Row
+
+The top status bar holds a `GrimoireRow` (HBox) rendering every `GameState.active_grimoires` entry as a 40×40 `GrimoireIcon` (first letter, tooltip = name + description). Each icon is draggable; dropping it on the row reorders `active_grimoires` (used for Word Form leveling priority). Grimoires are permanent upgrades and **cannot be sold** via the Sell Drop Zone.
+
+### Sell Drop Zone
+
+`SellDropZone` (inside `ArtisanRow`) accepts artisan keycap drags. Dropping an artisan refunds **half its purchase price** (`roundi(price_paid × 0.5)`) into `GameState.money`, unequips it from the rail, and shows a floating `+$N` label. Grimoire drops are rejected with a toast ("Cannot sell permanent upgrades").
+
+### Depth Info Popup
+
+`%DepthInfoButton` ("?") opens a modal (`DepthInfoPopup` scene, runtime-instantiated) showing `Depth %s / Round %d`, the current depth milestone modifier name + description (and the void-banned letter at depth 6), plus the monster pool for that stage (`DepthService.get_stage_pool`). Pool rows show name, HP, and modifier.
+
 ## Data Model
 
 ### KeyCap (Tile)
@@ -187,16 +209,22 @@ redraws_left: int             (reset to round_redraw_budget each round)
 upgrade_draw: int             (bag-size upgrade bonus)
 upgrade_turns: int            (per-round turn bonus)
 upgrade_redraws: int          (per-round redraw bonus)
-next_draw_bonus: int          (one-time extra draw, e.g. Blue sticker)
+upgrade_hints: int            (per-round hint bonus, via future shop items)
+next_draw_bonus: int          (one-time extra draw, e.g. Blue sticker; reserved, unused)
 altar_rune: Dictionary        (communal tile socket, persists across turns)
 word_form_levels: Dictionary  ({form_id: level}, raised by Grimoires)
 artisan_rail: Array           (5 slots, null or artisan Dictionary)
 active_blueprints: Dictionary ({blueprint_id: true})
+active_grimoires: Array       (purchased Lexicon Grimoire items, reorderable via GrimoireRow drag)
+unlocked_key_slots: int       (reserved fixed-keyboard slot unlock, =8 of 10; dormant — adaptive hand layout renders min(draw_size(), 10))
+hint_quality: int             (1 = Tier 1 brute-force; tiers 2/3 deferred)
+hints_remaining: int          (reset to round_hint_budget each round)
 skip_tags: Array              (accumulated Firmware Tags)
 depth_stage: int              (0=vanguard, 1=sentry, 2=boss_gate, 3=catacombs, 4=fungal_depths, 5=crystal_caverns, 6=void_threshold, 7=abyssal_crown)
 
 round_turn_budget()   = BASE_TURNS(3) + upgrade_turns
 round_redraw_budget() = BASE_REDRAWS(3) + upgrade_redraws
+round_hint_budget()   = BASE_HINTS(3) + upgrade_hints
 draw_size()           = pack_base + upgrade_draw + next_draw_bonus (min 3)
 monster_hp_scaled()   = round(base_hp * (1.0 + (round - 1) * 0.15))
 round_reward()        = 5 + round_number * 2
@@ -363,6 +391,8 @@ Five thematic Switch Packs replace the old Cherry MX packs. Each carries conditi
 | Consonant Heavy | T N S R V K X J Q Z (10) | 0 |
 | Minimalist | E T A O I R (6) | 15 |
 
+Starting money = **10 base** (`GameState.money := 10`) + `pack.start_money` (all current packs: 0) + bag `start_money` (`KeyCapService.starter_bag_money(id)`).
+
 ## Shop
 
 ### Tile Inventory
@@ -508,7 +538,7 @@ All JSON under `data/`, ships inside exported pck:
 - Secret words from `data/secret_words.json` flagged in metadata; gameplay effects pending
 - Word Forms are detected, not selected — pattern identification is automatic (like poker hands)
 - Artisan cascade is strictly left-to-right — rail position orders trigger resolution
-- Altar Rune socket deferred; AudioManager built (autoload with cached stream playback)
+- Altar Rune socket deferred; AudioManager built (autoload with cached stream playback) — no `assets/audio/` files shipped yet, so all plays no-op
 
 ## KeyCap 3-Layer Mechanical Sandwich Architecture
 
@@ -553,6 +583,8 @@ Pixel analysis of the combat background's stone altar white-mask marked the exac
 | 6–10 | Two rows (split ceil(n/2) top / floor(n/2) bottom) | 48×54px | 20 | 8px horizontal / 6px vertical |
 
 At max 10 tiles (2 rows × 54px + 6px gap = 114px), the keyboard block is vertically centered in the 110px container with the switch housings extending below each cap skirt. Max 5 keys per row = 5×48 + 4×8 = 272px ≤ 324px container width, centered with ~26px side bezels. Each row `HBoxContainer` uses `alignment = ALIGNMENT_CENTER` + `SIZE_SHRINK_CENTER`; rows sit inside a `VBoxContainer` with 6px separation.
+
+> **Design divergence:** the 2026-09-14 design doc proposed a fixed 2×5 grid keyboard with padlock-locked unlockable slots. The shipped implementation instead uses a **dynamic adaptive layout** (`CombatScreen._refresh_hand()`, tile size 62×58, font 30): a VBox (3px sep for ≥5 tiles, 6px below) with an HBox of up to 5 tiles on row 1 and the remainder on row 2, centered inside `%HandTileContainer` (324×130). `GameState.unlocked_key_slots`/`hint_quality`/`upgrade_hints` fields exist but are dormant — no slot-lock rendering or purchase path reads them yet. If the fixed-2×5 spec is wanted, it's an open build task.
 
 Bottom action buttons (REDRAW / PLAY) sit below the slab on the stone floor at Y≈845–900px.
 

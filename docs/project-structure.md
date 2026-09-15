@@ -1,15 +1,17 @@
 # Letter Rogue — Project Structure
 
-Annotated layout of the repository as of 2026-09-14.
+Annotated layout of the repository as of 2026-09-16.
 
 ```
 letter-rogue/
 │
 ├── project.godot              Godot project config: 540x960 viewport, 441x784 window override,
-│                               canvas_items stretch, portrait locked, 16 autoloads, custom theme
+│                               canvas_items stretch, portrait locked, 19 autoloads, custom theme
 │
 ├── AGENTS.md                  Agent instructions (Godot MCP, Outline wiki, code conventions)
 ├── README.md
+├── shell.html                 Custom Web export HTML shell (export_presets custom_html_shell)
+├── @icons picker.html         Dev tool: icon asset browser (not shipped, excluded from export)
 │
 ├── data/                      # Gameplay data as JSON, ships in exported pck
 │   ├── words.json             Word dictionary (~370k words, 3+ letters, POS+def enriched)
@@ -22,7 +24,8 @@ letter-rogue/
 │   ├── consumables.json       Toolkit (tarot) + Cursed Hardware (spectral) + Grimoire definitions
 │   ├── blueprints.json        Workshop Blueprint definitions
 │   ├── firmware_tags.json     Firmware Tag definitions
-│   ├── depths.json            Depth encounter tables (Vanguard/Sentry/Boss pools)
+│   ├── depths.json            Depth encounter tables (8 stages: Vanguard/Sentry/Boss
+│   │                           Gate/Catacombs/Fungal/Crystal/Void/Abyssal pools)
 │   ├── secret_words.json      Rare words flagged `is_secret: true` (gameplay effect pending)
 │   └── drop_tables.json       Weighted loot tables keyed by monster `drop_table_id`
 │
@@ -33,11 +36,13 @@ letter-rogue/
 │   │                           Instantiates/destroys screen scenes via SceneTransition.
 │   │                           F1 debug shortcut.
 │   │
-│   ├── autoload/              # Singletons (registered in project.godot)
+│   ├── autoload/              # Singletons (registered in project.godot, in this order)
 │   │   ├── EventBus.gd        Signal definitions: navigation, combat, shop, upgrades, bag/draw,
 │   │   │                       scoring pipeline, artisan rail, depth/shop
-│   │   ├── GameState.gd       Runtime state: money, round, bag, discard_pile, hand, monster, budgets,
-│   │   │                       upgrades, word_form_levels, artisan_rail, active_blueprints, skip_tags, depth_stage
+│   │   ├── GameState.gd       Runtime state: money, round, bag, discard_pile, hand, monster,
+│   │   │                       turn/redraw/hint budgets, upgrades, word_form_levels, artisan_rail,
+│   │   │                       active_blueprints, active_grimoires, unlocked_key_slots, skip_tags,
+│   │   │                       depth_stage
 │   │   ├── PackService.gd     Active Switch Pack modifier lookups + evaluate_conditionals() passives
 │   │   ├── KeyCapService.gd   Play-and-refill draw from bag, vowel safeguard, discard reshuffle,
 │   │   │                       resolve_ability, starter bag loaders
@@ -46,33 +51,43 @@ letter-rogue/
 │   │   ├── ShopService.gd     Tile buy/sell/reroll, 3 run upgrades (Bigger Bag, Extra Turn, Extra Redraw),
 │   │   │                       Blueprint purchases, Grab Bag generation
 │   │   ├── WordService.gd     Dictionary load/lookup, word length multiplier, get_word_meta()
-│   │   ├── WordFormService.gd Word Form detection (Trio/Quartet/Mirror/Double-Tap/Consonant Core),
-│   │   │                       per-form base+mult, grimoire level tracking
-│   │   ├── ArtisanRailManager.gd 5-slot Artisan rail, equip/unequip, left-to-right cascade trigger eval
 │   │   ├── CombatService.gd   Round setup, word validation, 4-phase scoring pipeline (trace-driven),
 │   │   │                       damage application, win/lose, EffectPipeline hooks, unified _current_modifier()
-│   │   ├── AudioManager.gd    Minimal SFX player: cached stream playback, .ogg/.wav fallback,
-│   │   │                       no-op on missing files
-│   │   ├── DepthService.gd    3-stage encounter generation (Vanguard/Sentry/Boss), stage pools
+│   │   ├── ArtisanRailManager.gd 5-slot Artisan rail, equip/unequip, left-to-right cascade trigger eval
+│   │   ├── WordFormService.gd Word Form detection (Trio/Quartet/Mirror/Double-Tap/Consonant Core),
+│   │   │                       per-form base+mult, grimoire level tracking
+│   │   ├── DepthService.gd    8-stage encounter generation (Vanguard/Sentry/Boss Gate/Catacombs/
+│   │   │                       Fungal Depths/Crystal Caverns/Void Threshold/Abyssal Crown),
+│   │   │                       milestone modifiers, stage pools, depth-6 banned letter
 │   │   ├── ConsumableService.gd  Apply tarot/spectral/grimoire effects, bag mutations
+│   │   ├── ResolutionManager.gd  (registered autoload from scripts/services/) Cross-platform window
+│   │   │                       sizing: 82% desktop height cap, 9:16 aspect, mobile fullscreen
+│   │   ├── MCPRuntimeProbe.gd (*uid://bsg12huaf1u5i — from addons/godot_mcp/, dev-only, excluded
+│   │   │                       from Web export)
 │   │   ├── DebugManager.gd    Debug hotkeys (F1 overlay, F12 screenshot), scene routing, state injection
 │   │   ├── EffectPipeline.gd  Hook registry: 11 combat lifecycle events (on_draw..on_turn_end,
 │   │   │                       on_word_form_evaluated, on_artisan_triggered, on_shop_opened, on_bag_mutated)
-│   │   └── LootService.gd     Rolls loot drops from monster drop_table_id on defeat
+│   │   ├── LootService.gd     Rolls loot drops from monster drop_table_id on defeat
+│   │   ├── AudioManager.gd    Minimal SFX player: cached stream playback, .ogg/.wav fallback,
+│   │   │                       no-op on missing files (no assets/audio/* shipped yet)
+│   │   └── HintService.gd     Tier 1 brute-force word finder (find_basic_word, combos→perms);
+│   │                           drives the CombatScreen HINT button
 │   │
 │   ├── services/
-│   │   └── ResolutionManager.gd  Cross-platform window sizing: 82% desktop height cap, 9:16 aspect,
-│   │                               mobile fullscreen
+│   │   └── ResolutionManager.gd  Registered autoload (home of ResolutionManager). Cross-platform
+│   │                               window sizing: 82% desktop height cap, 9:16 aspect, mobile fullscreen
 │   │
 │   ├── screens/               # One script per screen, wired to .tscn via %UniqueName
 │   │   ├── MainMenuScreen.gd  Title + Start Run (emits run_setup_requested)
 │   │   ├── RunSetupScreen.gd  Pack cycler (5 Switch Packs, switch icon from skin atlas) + bag selector (4 bags) with preview
 │   │   ├── CombatScreen.gd    Word builder: hand tiles (latched deep-travel) → WordRuneSlot magical rune
-│   │   │                       display strip, Artisan rail display, persistent inline scoring row (BASE/MULTI
-│   │   │                       scale-punch start), projectile to monster, smooth HP drop, wildcard picker,
-│   │   │                       BagModal, VictoryModal.
+│   │   │                       display strip, Artisan rail display + SellDropZone, GrimoireRow, persistent
+│   │   │                       inline scoring row (BASE/MULTI scale-punch start), projectile to monster,
+│   │   │                       smooth HP drop, wildcard picker, HINT + DECK action buttons,
+│   │   │                       BagModal (bag/discard tabs), DepthInfoPopup, VictoryModal.
 │   │   │                       Tap-to-skip animation, drag-drop reorder via WordRackDropZone.
 │   │   │                       Word metadata subtitle (WORD · POS · "def" · Vn/Cn). DepthPanel header text.
+│   │   │                       HintService wired via _hint_pressed().
 │   │   ├── ShopScreen.gd      Tile buy/sell/reroll grids, run upgrade column, Workshop Blueprint section,
 │   │   │                       confirmation dialogs
 │   │   ├── GameOverScreen.gd  Shows reached round + money, restart button
@@ -102,9 +117,18 @@ letter-rogue/
 │       ├── SceneTransition.gd Static Node: two-phase screen transition via CanvasLayer 128 + ShaderMaterial.
 │       │                        5 shader styles (bayer dither, pixelate, diamond grid, scanline, radial wipe).
 │       │                        No-flash guarantee, stutter protection via 1-frame await.
-│       ├── BagModal.gd        Bag inspector overlay: per-letter frequency counts, vowel/consonant ratio
+│       ├── BagModal.gd        Bag inspector overlay: per-letter frequency counts, vowel/consonant ratio;
+│       │                        two tabs — In Bag + Discarded (GameState.discard_pile)
 │       ├── VictoryModal.gd    Itemized reward receipt with counting-up total animation, loot drops display,
 │       │                        particle burst confetti, Continue button
+│       ├── GrimoireIcon.gd    Grimoire row tile (40×40): first-letter label + name/desc tooltip, drag payload
+│       │                        {type:"grimoire", from_index, data}
+│       ├── GrimoireRow.gd     HBox: refresh() rebuilds icons from GameState.active_grimoires; accepts grimoire
+│       │                        drops and reorders via _child_index_at_pos()
+│       ├── SellDropZone.gd    Artisan drag target: 50% refund + floating +$N; grimoires rejected ("Cannot sell
+│       │                        permanent upgrades")
+│       ├── DepthInfoPopup.gd  Depth modal: depth/round, milestone modifier + description, depth-6 banned letter,
+│       │                        stage monster pool rows (name, HP, modifier)
 │       └── OverlayHint.gd     Reusable labeled translucent rect for UI sandbox annotations
 │
 ├── scenes/
@@ -134,7 +158,8 @@ letter-rogue/
 │       ├── WordRuneSlot.tscn    Rune slot: LetterLabel, PowerLabel (BadgeLabel variant). Draggable PanelContainer.
 │       ├── ArtisanSlot.tscn     Artisan rail slot: IconRect (28×28), borderless, root hidden when empty
 │       ├── ArtisanRailDisplay.tscn 5-slot HBoxContainer (dead scene — live node is CombatScreen ArtisanRow/ArtisanRail)
-│       ├── BagModal.tscn        Overlay + Panel + scrollable LetterGrid + VowelRatio + CloseButton
+│       ├── BagModal.tscn        Overlay + Panel + scrollable LetterGrid (bag/discard tabs) + VowelRatio + CloseButton
+│       ├── DepthInfoPopup.tscn  Depth info modal (runtime-instantiated by CombatScreen)
 │       └── VictoryModal.tscn    Overlay + Panel + Title + Receipt + TotalLabel + ContinueButton
 │
 ├── ui/
@@ -150,10 +175,11 @@ letter-rogue/
 │   │                            diamond_grid, scanline_shutter, radial_wipe)
 │   └── textures/
 │       └── backgrounds/       bg_main_menu.jpg, bg_main_menu_low.jpg, bg_main_menu_2.jpg,
-│                              bg_combat_2.jpg, bg_combat_2_keyboard_safe.jpg (safe-area mask reference)
+│                              bg_combat_2.jpg, bg_combat_2_keyboard_safe.jpg (safe-area mask reference),
+│                              bg_combat_3.jpg (current combat background)
 │
 ├── tests/                     # Test suite
-│   ├── run_tests.gd           Test runner (shells out to godot per suite)
+│   ├── run_tests.gd           Test runner (shells out to godot per suite; 16 suites wired, all passing)
 │   ├── lexicon_test.gd        WordService.get_word_meta assertions
 │   ├── word_test.gd           is_word, length_multiplier, word_count
 │   ├── monster_modifier_test.gd  silence/vowel_lock/consonant_lock/no_repeats modifier rules
@@ -165,7 +191,11 @@ letter-rogue/
 │   ├── test_artisan_rail.gd   V3: artisan cascade (Caps Lock flat, Rotary Knob xmult)
 │   ├── test_switch_packs.gd   V3: conditional passive evaluation
 │   ├── test_consumables_depths.gd   V3: consumables apply + depth encounter gen
-│   └── test_scoring_trace.gd   V3.5: trace schema verification (4 phases, 9-field events, annotation match)
+│   ├── test_scoring_trace.gd   V3.5: trace schema verification (4 phases, 9-field events, annotation match)
+│   ├── verify_banner_layout.gd  V3.6: %PersistentScoringRow layout across viewports
+│   ├── verify_hp_bar.gd       PixelHPBar segment/color assertions
+│   ├── verify_main_menu.gd    MainMenuScreen scene loads + node refs resolve
+│   └── test_hint_service.gd   HintService Tier 1: find_basic_word finds a valid word ("CAT")
 │
 ├── tools/
 │   ├── build_words.py         One-off Python generator: wordlist → data/words.json (POS+def enriched)
@@ -189,15 +219,18 @@ letter-rogue/
 │   └── archive/               Superseded historical docs (dated spec, plan, structure, superpowers/)
 │
 ├── addons/
-│   └── godot_mcp/             Godot MCP plugin (dev only, excluded from Web export)
+│   ├── godot_mcp/             Godot MCP plugin (enabled; dev-only, excluded from Web export)
+│   ├── at-icons/              Icon browser addon (installed, unused by game code; dev-only)
+│   └── dialogue_manager/      Dialogue editor addon (installed, unused by game code; dev-only)
 │
-├── export_presets.cfg         Web export preset (canvas_items, emulate touch, exclude MCP)
+├── export_presets.cfg         Web export preset (canvas_items, emulate touch, keep_height,
+│                               exclude addons/*,docs/*,tests/*,tools/*,*.wav,*.zip; PWA enabled)
 └── .gitignore
 ```
 
 ## Data Flow Notes
 
-- **Autoload order matters:** `EventBus → GameState → PackService → KeyCapService → KeyCapSkinService → ShopService → WordService → WordFormService → ArtisanRailManager → CombatService → AudioManager → DepthService → ConsumableService → ResolutionManager → DebugManager → EffectPipeline → LootService`. Services reference each other via autoload names at call time, not in `_ready()` cross-dependencies.
+- **Autoload order matters (19):** `EventBus → GameState → PackService → KeyCapService → KeyCapSkinService → ShopService → WordService → CombatService → ArtisanRailManager → WordFormService → DepthService → ConsumableService → ResolutionManager → MCPRuntimeProbe → DebugManager → EffectPipeline → LootService → AudioManager → HintService`. Services reference each other via autoload names at call time, not in `_ready()` cross-dependencies.
 
 - **Scoring flow — 4-phase pipeline:** `CombatService.calculate_word()` runs Phase 1 Tile Hops (per-tile letter score + abilities/finishes/stickers/conditions + pack passives → `letter_scores`), Phase 2 Word Form Ignition (`(Σ + form_base) × length_mult × form_mult`), Phase 3 Artisan Cascade (`(total_after_form + artisan_flat) × artisan_xmult`, from `ArtisanRailManager.cascade()`), Phase 4 Runic Blast (`roundi(total) + flat_bonus`). Returns `letter_scores`, `form_data`, `flat_bonus` driving the banner animation. `WordService` supplies only `is_word()` and `length_multiplier()`.
 

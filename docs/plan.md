@@ -11,7 +11,7 @@
 - [x] LootService autoload (drop table rolls from monster drop_table_id)
 - [x] WordFormService autoload (Word Form detection + grimoire level tracking)
 - [x] ArtisanRailManager autoload (5-slot Artisan rail, cascade dispatch)
-- [x] DepthService autoload (3-stage encounter generation)
+- [x] DepthService autoload (8-stage encounter generation: Vanguard/Sentry/Boss Gate/Catacombs/Fungal Depths/Crystal Caverns/Void Threshold/Abyssal Crown)
 - [x] ConsumableService autoload (tarot/spectral/grimoire effects, bag mutations)
 - [x] GameRoot state machine: MENU → RUN_SETUP → COMBAT → SHOP → GAME_OVER
 - [x] GameRoot routing hooks: route_to(), inject_state(), trigger_mechanic(), jump_boss_round()
@@ -43,8 +43,8 @@
 
 ### Screens
 - [x] `MainMenuScreen` — title + Start Run button (simplified, no pack list)
-- [x] `RunSetupScreen` — pack cycler (5 Cherry MX) + bag selector (4 starter bags) with preview
-- [x] `CombatScreen` — word builder: hand tiles, word strip (drag-drop reorder), hint label, scoring banner, wildcard letter picker popup
+- [x] `RunSetupScreen` — Switch Pack cycler (5 Switch Packs) + bag selector (4 starter bags) with preview
+- [x] `CombatScreen` — word builder: hand tiles, word strip (drag-drop reorder), hint label, HINT + DECK action buttons, wildcard letter picker popup
 - [x] `ShopScreen` — buy/sell/reroll tiles, run upgrade column
 - [x] `GameOverScreen` — round reached + money
 
@@ -152,14 +152,30 @@ Design doc: `docs/superpowers/specs/2026-09-14-scoring-trace-animation-overhaul-
 - [x] **UI Updates** — DepthInfoPopup shows depth name, modifier, and banned letter; CombatScreen depth panel shows depth name
 - [x] **Web export + deploy** — `./tools/deploy-web.ps1` (21 files → T:\letter-rogue)
 
+### CombatScreen UI Refresh & New Systems (2026-09-16)
+
+Design doc: `docs/superpowers/specs/2026-09-14-combatscreen-ui-refresh-design.md`
+
+- [x] **HintService Tier 1 + HINT action** — `HintService` autoload (brute-force combination/permutation word finder); `%HintButton` (100×60, "HINT (N)") consumes from `round_hint_budget()` = 3 + `upgrade_hints`, disabled at 0
+- [x] **DECK button + BagModal bag/discard tabs** — `%DeckButton` opens BagModal with two views: In Bag (`GameState.bag`) + Discarded (`GameState.discard_pile`)
+- [x] **GrimoireRow + active_grimoires** — top status bar row renders 40×40 `GrimoireIcon` per `GameState.active_grimoires`; drag-to-reorder reindexes the array; grimoires permanent (unsellable)
+- [x] **SellDropZone** — artisan drag refunds `roundi(price_paid × 0.5)` + floating `+$N`; grimoire drops rejected with toast
+- [x] **DepthInfoPopup** — depth name/round, milestone modifier + description, depth-6 banned letter, stage monster pool (`DepthService.get_stage_pool`)
+- [x] **bg_combat_3.jpg** — new combat background (CombatScreen `Background` TextureRect)
+- [x] **Fixed 100×60 action row** — HINT / REDRAW / PLAY / DECK buttons uniform size; DeckButton moved into ActionZone_Orange
+- [x] **Fix GrimoireRow script attach** — `%GrimoireRow` in CombatScreen.tscn was a bare HBoxContainer (missing `scripts/components/GrimoireRow.gd`); attached ext_resource + `script =`, verified scene loads with 56 nodes
+- [ ] **Fixed 2×5 unlockable keyboard — NOT built (design divergence)** — design proposed a fixed 2×5 grid with padlock slots; shipped code uses a dynamic adaptive 2-row layout (`_refresh_hand`, ≤5 tiles/row). `GameState.unlocked_key_slots`/`hint_quality`/`upgrade_hints` fields are dormant — no locking/purchase path reads them. Build when slot-lock progression is specced.
+
 ### Polish & Juice (remaining)
 - [ ] **Shop upgrade pricing display** — ensure upgrade cost button updates dynamically after purchase
 - [ ] **HP bar styling** — add gradient/color transitions for damage
 
 ### Testing & Quality
-- [x] Test suite: run_tests.gd runner + 4 test suites (lexicon, word, monster_modifier, scenario)
-- [x] V3 tests: test_bag_expansion, test_play_refill, test_word_form_detection, test_scoring_pipeline, test_artisan_rail, test_switch_packs, test_consumables_depths
-- [x] All 11 test suites passing
+- [x] Test suite: run_tests.gd runner + 16 suites, all wired and passing headless
+- [x] Core suites: lexicon_test, word_test, monster_modifier_test, scenario_test
+- [x] V3 suites: test_bag_expansion, test_play_refill, test_word_form_detection, test_scoring_pipeline, test_artisan_rail, test_switch_packs, test_consumables_depths
+- [x] V3.5+ suites: test_scoring_trace, verify_banner_layout, verify_hp_bar, test_hint_service, verify_main_menu
+- [x] All 16 test suites passing
 - [ ] **Edge cases** — empty bag, empty hand, zero turns left boundary, wildcard with no letters in picker
 - [ ] **Bag overflow** — bag larger than hand draw size (already handled via `mini()`)
 

@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://critq6hqgfuyu" path="res://scripts/components/PixelHPBar.gd" id="4_hpbar"]
 [ext_resource type="Script" uid="uid://d3btr4k4mmniv" path="res://scripts/components/ArtisanRailDisplay.gd" id="5_rail"]
 [ext_resource type="Script" uid="uid://q87osr4thomf" path="res://scripts/components/SellDropZone.gd" id="6_sell"]
+[ext_resource type="Script" uid="uid://bdls25y3vwefg" path="res://scripts/components/GrimoireRow.gd" id="7_grimrow"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mwsax"]
 bg_color = Color(0, 0, 0, 0.49019608)
@@ -101,6 +102,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="GrimoireRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar" unique_id=923820751]
+script = ExtResource("7_grimrow")
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2

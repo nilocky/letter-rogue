@@ -37,7 +37,7 @@
 2. **Strict Boundary Rules**:
    - **NEVER** attempt to read user home directories (`~/.config/opencode`, `~/.bashrc`, etc.) or OS temp folders (`/tmp`). All configuration, tokens, and endpoints are already injected into the MCP server environment.
    - **NEVER** ask for external directory permissions to inspect configuration files. If an MCP call fails, report the error directly instead of searching the filesystem for credentials.
-   - Always prefer MCP tool calls over manual CLI file searches for Outline wiki documentation and Godot runtime inspection.
+   - Always prefer MCP tool calls (except gdmcp skill that use .gdmcp/bin/gdmcp.exe) over manual CLI file searches for Outline wiki documentation and Godot runtime inspection.
 
 
 ## OS & Terminal Constraints
