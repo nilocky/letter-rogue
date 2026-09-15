@@ -78,7 +78,12 @@ func _fight_or_boss_depths() -> void:
 	if entry.is_empty():
 		_fight_or_boss()
 		return
-	entry["hp_remaining"] = _scaled_hp(entry, GameState.round_number)
+	var hp: int = _scaled_hp(entry, GameState.round_number)
+	# Abyssal modifier: +25% HP each cycle at depth 7+
+	if stage >= 7:
+		var cycles: int = (stage - 7) + 1
+		hp = int(round(float(hp) * pow(1.25, cycles - 1)))
+	entry["hp_remaining"] = hp
 	GameState.current_monster = entry
 	current_state = State.COMBAT
 	await _show(COMBAT_SCENE)
@@ -157,11 +162,11 @@ func _show(scene: PackedScene) -> void:
 	_transitioning = true
 	var old := current_screen
 	if old:
-		await SCENE_TRANSITION.play_out(old)
+		#await SCENE_TRANSITION.play_out(old)
 		old.queue_free()
 	current_screen = scene.instantiate()
 	add_child(current_screen)
-	await SCENE_TRANSITION.play_in(current_screen)
+	#await SCENE_TRANSITION.play_in(current_screen)
 	_transitioning = false
 
 

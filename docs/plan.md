@@ -142,6 +142,16 @@ Design doc: `docs/superpowers/specs/2026-09-14-scoring-trace-animation-overhaul-
 - [x] **examples/ reference art added** — concept/reference jpgs (bg_*, idea_*, ss_*) packed into export
 - [x] **Web export + deploy** — `./tools/deploy-web.ps1` (21 files → T:\letter-rogue)
 
+### V3.7 Milestone — Dungeon Depths Expansion (2026-09-15)
+
+- [x] **8 Depth Stages** — Extended from 3 to 8 depths: Vanguard → Sentry → Boss Gate → Catacombs → Fungal Depths → Crystal Caverns → Void Threshold → Abyssal Crown
+- [x] **Milestone Modifiers** — 4 unique depth modifiers: Curse (depth 3), Spore Cloud (depth 4), Reflection (depth 5), Void Corruption (depth 6), Abyssal Power (depth 7+)
+- [x] **New Monster Pools** — 15 new monsters across 5 new depth pools with unique modifiers (cursed, spore_cloud, reflective, void_touch, abyssal)
+- [x] **Unique Milestone Loot** — 5 new drop tables (catacombs_loot, fungal_depths_loot, crystal_caverns_loot, void_threshold_loot, abyssal_crown_loot) with exclusive rewards
+- [x] **Endless Mode** — Depth 7+ loops Abyssal Crown with +25% HP scaling per cycle
+- [x] **UI Updates** — DepthInfoPopup shows depth name, modifier, and banned letter; CombatScreen depth panel shows depth name
+- [x] **Web export + deploy** — `./tools/deploy-web.ps1` (21 files → T:\letter-rogue)
+
 ### Polish & Juice (remaining)
 - [ ] **Shop upgrade pricing display** — ensure upgrade cost button updates dynamically after purchase
 - [ ] **HP bar styling** — add gradient/color transitions for damage
@@ -156,12 +166,12 @@ Design doc: `docs/superpowers/specs/2026-09-14-scoring-trace-animation-overhaul-
 ## Upcoming Backlog
 
 ### Content Expansion
-- [ ] **More boss variations** — additional boss modifiers beyond the current 4
+- [ ] **More boss variations** — additional boss modifiers beyond the current 7
 - [ ] **More shop items** — additional upgrades, consumables, special tiles
 - [ ] **Additional Switch Packs** — more pack variety
 - [ ] **Altar Rune socket** — communal tile persisting across turns (deferred from M1)
 - [ ] **Pack unlock progression** — stake/difficulty system (Balatro-style)
-- [ ] **Endless mode** — continue past boss rounds with escalating difficulty
+- [x] **Endless mode** — continue past boss rounds with escalating difficulty (implemented at Depth 7+ Abyssal Crown)
 - [ ] **Achievements** — track milestones, word stats, longest word
 
 ### Mobile & Deployment

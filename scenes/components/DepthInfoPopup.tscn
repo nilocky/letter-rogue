@@ -46,6 +46,13 @@ unique_name_in_owner = true
 theme_type_variation = &"MetricLabel"
 horizontal_alignment = 1
 
+[node name="ModifierLabel" type="Label" parent="Panel/VBox"]
+unique_name_in_owner = true
+theme_type_variation = &"BodyLabel"
+horizontal_alignment = 1
+autowrap_mode = 1
+visible = false
+
 [node name="Scroll" type="ScrollContainer" parent="Panel/VBox"]
 size_flags_vertical = 3
 

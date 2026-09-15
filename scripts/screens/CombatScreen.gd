@@ -20,7 +20,6 @@ const PROJECTILE_TIME := 0.35
 @onready var monster_sprite: TextureRect = %MonsterSprite
 @onready var hp_bar: TextureProgressBar = %MonsterHPBar
 @onready var hp_label: Label = %HpLabel
-@onready var turns_label: Label = %TurnRoundLabel
 @onready var money_label: Label = %MoneyLabel
 @onready var bag_button: Button = %DeckButton
 @onready var hint_button: Button = %HintButton
@@ -71,8 +70,12 @@ func _ready() -> void:
 	play_button.pressed.connect(_on_play_pressed)
 	picker_cancel_button.pressed.connect(_on_picker_cancel)
 	word_strip.item_dropped.connect(_on_rune_dropped)
-	_setup_hand_container_geometry()
-	_start_idle_anim()
+	#_start_idle_anim()
+#	monster_sprite.resized.connect(_set_sprite_pivot)
+
+
+#func _set_sprite_pivot() -> void:
+#	monster_sprite.pivot_offset = Vector2(monster_sprite.size.x * 0.5, monster_sprite.size.y)
 
 
 func _flash_hp_bar() -> void:
@@ -102,14 +105,7 @@ func _squash_hit() -> void:
 		.set_trans(Tween.TRANS_LINEAR)
 	tw.tween_property(monster_sprite, "scale", Vector2.ONE, 0.12) \
 		.set_trans(Tween.TRANS_LINEAR)
-	tw.tween_callback(_start_idle_anim)
-
-
-func _setup_hand_container_geometry() -> void:
-	hand_container.custom_minimum_size = Vector2(324, 130)
-	hand_container.size = Vector2(324, 130)
-	hand_container.position = Vector2(106, 680)
-	hand_container.mouse_filter = Control.MOUSE_FILTER_PASS
+	#tw.tween_callback(_start_idle_anim)
 
 
 func show_round() -> void:
@@ -120,11 +116,12 @@ func show_round() -> void:
 
 
 func _refresh_header() -> void:
-	depth_panel.text = "DEPTH %d-%d" % [GameState.depth_stage + 1, GameState.round_number]
+	depth_panel.text = "DEPTH\n%s %d-%d" % [DepthService.get_depth_name(GameState.depth_stage), GameState.depth_stage + 1, GameState.round_number]
 	var monster: Dictionary = GameState.current_monster
 	if monster.is_empty():
 		return
 	monster_label.text = str(monster.get("name", "?"))
+	monster_label.custom_minimum_size = Vector2(448, 10)
 	var sprite_path: String = str(monster.get("sprite", ""))
 	var sprite_tex: Texture2D = null
 	if sprite_path != "":
@@ -135,7 +132,6 @@ func _refresh_header() -> void:
 	hp_bar.max_value = total
 	hp_bar.value = maxi(remaining, 0)
 	hp_label.text = "HP %d/%d" % [maxi(remaining, 0), total]
-	turns_label.text = "R%d \u2022 TURNS: %d" % [GameState.round_number, GameState.turns_left]
 	money_label.text = "$%d" % GameState.money
 	var bag_total: int = GameState.bag.size() + GameState.hand.size()
 	bag_button.text = "DECK (%d/%d)" % [GameState.bag.size(), bag_total]

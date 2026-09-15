@@ -6,12 +6,27 @@
     {"id": "slime", "name": "Slime", "hp": 8, "max_hp": 8, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_slime_1.png", "drop_table_id": "slime_loot"},
     {"id": "orc", "name": "Orc", "hp": 18, "max_hp": 18, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_orc_1.png", "drop_table_id": "orc_loot"},
     {"id": "enraged_orcs", "name": "Raging Orcs", "hp": 18, "max_hp": 18, "is_boss": false, "modifier": "enraged", "sprite": "res://assets/ui/monster_sq_192_orc_1.png", "drop_table_id": "orc_loot"},
-    {"id": "golem", "name": "Golem", "hp": 25, "max_hp": 25, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "golem_loot"}
+    {"id": "golem", "name": "Golem", "hp": 25, "max_hp": 25, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "golem_loot"},
+    {"id": "cursed_wraith", "name": "Cursed Wraith", "hp": 22, "max_hp": 22, "is_boss": false, "modifier": "cursed", "sprite": "res://assets/ui/monster_sq_192_skeleton_2.png", "drop_table_id": "catacombs_loot"},
+    {"id": "lich_fragment", "name": "Lich Fragment", "hp": 28, "max_hp": 28, "is_boss": false, "modifier": "cursed", "sprite": "res://assets/ui/monster_sq_192_skeleton_2.png", "drop_table_id": "catacombs_loot"},
+    {"id": "banshee", "name": "Banshee", "hp": 25, "max_hp": 25, "is_boss": false, "modifier": "silence", "sprite": "res://assets/ui/monster_sq_192_skeleton_2.png", "drop_table_id": "catacombs_loot"},
+    {"id": "spore_drone", "name": "Spore Drone", "hp": 20, "max_hp": 20, "is_boss": false, "modifier": "spore_cloud", "sprite": "res://assets/ui/monster_sq_192_slime_1.png", "drop_table_id": "fungal_depths_loot"},
+    {"id": "myconid_elder", "name": "Myconid Elder", "hp": 35, "max_hp": 35, "is_boss": false, "modifier": "spore_cloud", "sprite": "res://assets/ui/monster_sq_192_slime_1.png", "drop_table_id": "fungal_depths_loot"},
+    {"id": "fungal_shambler", "name": "Fungal Shambler", "hp": 40, "max_hp": 40, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_slime_1.png", "drop_table_id": "fungal_depths_loot"},
+    {"id": "crystal_golem", "name": "Crystal Golem", "hp": 45, "max_hp": 45, "is_boss": false, "modifier": "reflective", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "crystal_caverns_loot"},
+    {"id": "living_geode", "name": "Living Geode", "hp": 38, "max_hp": 38, "is_boss": false, "modifier": "reflective", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "crystal_caverns_loot"},
+    {"id": "prism_warden", "name": "Prism Warden", "hp": 42, "max_hp": 42, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "crystal_caverns_loot"},
+    {"id": "void_stalker", "name": "Void Stalker", "hp": 50, "max_hp": 50, "is_boss": false, "modifier": "void_touch", "sprite": "res://assets/ui/monster_sq_192_orc_1.png", "drop_table_id": "void_threshold_loot"},
+    {"id": "eldritch_horror", "name": "Eldritch Horror", "hp": 55, "max_hp": 55, "is_boss": false, "modifier": "void_touch", "sprite": "res://assets/ui/monster_sq_192_orc_1.png", "drop_table_id": "void_threshold_loot"},
+    {"id": "void_herald", "name": "Void Herald", "hp": 60, "max_hp": 60, "is_boss": false, "modifier": "", "sprite": "res://assets/ui/monster_sq_192_orc_1.png", "drop_table_id": "void_threshold_loot"}
   ],
   "bosses": [
-    {"id": "vowel_witch", "name": "Vowel Witch", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "vowel_lock", "drop_table_id": ""},
-    {"id": "consonant_king", "name": "Consonant King", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "consonant_lock", "sprite": "", "drop_table_id": ""},
+    {"id": "vowel_witch", "name": "Vowel Witch", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "vowel_lock", "sprite": "res://assets/ui/monster_sq_192_golbin_1.png", "drop_table_id": ""},
+    {"id": "consonant_king", "name": "Consonant King", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "consonant_lock", "sprite": "res://assets/ui/monster_sq_192_orc_1.png", "drop_table_id": ""},
     {"id": "echo_phantom", "name": "Echo Phantom", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "no_repeats", "sprite": "", "drop_table_id": ""},
-    {"id": "silence_wraith", "name": "Silence Wraith", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "silence", "sprite": "", "drop_table_id": ""}
+    {"id": "silence_wraith", "name": "Silence Wraith", "hp": 30, "max_hp": 30, "is_boss": true, "modifier": "silence", "sprite": "", "drop_table_id": ""},
+    {"id": "abyssal_avatar", "name": "Abyssal Avatar", "hp": 80, "max_hp": 80, "is_boss": true, "modifier": "abyssal", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "abyssal_crown_loot"},
+    {"id": "abyssal_tyrant", "name": "Abyssal Tyrant", "hp": 85, "max_hp": 85, "is_boss": true, "modifier": "abyssal", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "abyssal_crown_loot"},
+    {"id": "abyssal_sovereign", "name": "Abyssal Sovereign", "hp": 90, "max_hp": 90, "is_boss": true, "modifier": "abyssal", "sprite": "res://assets/ui/monster_sq_192_golem_3.png", "drop_table_id": "abyssal_crown_loot"}
   ]
 }

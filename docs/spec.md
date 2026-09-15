@@ -67,7 +67,7 @@ Web constraints:
 | `WordFormService` | Word Form pattern detection (Trio/Quartet/Mirror/Double-Tap/Consonant Core), per-form base damage & multiplier, grimoire level tracking |
 | `ArtisanRailManager` | 5-slot Artisan rail state, equip/unequip, left-to-right cascade trigger evaluation |
 | `CombatService` | Round setup, per-turn word validation & 4-phase scoring, damage application, win/lose from turn budget. Hooks into `EffectPipeline` for cap effect lifecycle. |
-| `DepthService` | 3-stage encounter generation (Vanguard/Sentry/Boss), stage pools |
+| `DepthService` | 8-stage encounter generation (Vanguard/Sentry/Boss Gate/Catacombs/Fungal Depths/Crystal Caverns/Void Threshold/Abyssal Crown), milestone modifiers, stage pools |
 | `ConsumableService` | Apply tarot/spectral/grimoire effects, bag mutations |
 | `ResolutionManager` | Cross-platform desktop window sizing (82% height cap, 9:16 aspect preservation) and mobile fullscreen |
 | `DebugManager` | Debug-only hotkeys (F1 overlay toggle, F12 screenshot), scene routing, state injection, time-scale |
@@ -193,7 +193,7 @@ word_form_levels: Dictionary  ({form_id: level}, raised by Grimoires)
 artisan_rail: Array           (5 slots, null or artisan Dictionary)
 active_blueprints: Dictionary ({blueprint_id: true})
 skip_tags: Array              (accumulated Firmware Tags)
-depth_stage: int              (0=vanguard, 1=sentry, 2=boss)
+depth_stage: int              (0=vanguard, 1=sentry, 2=boss_gate, 3=catacombs, 4=fungal_depths, 5=crystal_caverns, 6=void_threshold, 7=abyssal_crown)
 
 round_turn_budget()   = BASE_TURNS(3) + upgrade_turns
 round_redraw_budget() = BASE_REDRAWS(3) + upgrade_redraws
@@ -330,6 +330,18 @@ Every 3rd round a boss appears with extra HP and a modifier:
 | `no_repeats` | Same letter cannot appear twice in one word |
 | `silence` | Abilities, finishes, stickers, conditions disabled |
 
+## Depth Modifiers (Milestone Modifiers)
+
+Active at specific depths, applying to all encounters in that depth:
+
+| Depth | Modifier | Effect |
+|---|---|---|
+| 3 (Catacombs) | `cursed` | 25% chance/turn: random tile in hand becomes Cursed (0 score, cannot be redrawn) |
+| 4 (Fungal Depths) | `spore_cloud` | Vowels worth -1 score; Consonants worth +1 score (swaps each round) |
+| 5 (Crystal Caverns) | `reflective` | Mirror words (palindromes) gain +50% damage |
+| 6 (Void Threshold) | `void_touch` | One random letter banned per encounter |
+| 7+ (Abyssal Crown) | `abyssal` | Boss gains +25% HP each cycle, all modifiers active |
+
 ## Switch Packs
 
 Five thematic Switch Packs replace the old Cherry MX packs. Each carries conditional passives evaluated via `PackService.evaluate_conditionals()`:
@@ -433,15 +445,20 @@ All consumable bag mutations emit `on_bag_mutated` through EffectPipeline.
 
 ## Depths Progression
 
-Three-stage encounter scaling (replaces flat round scaling):
+Eight-stage encounter scaling with milestone modifiers and unique rewards:
 
-| Stage | Pool | Notes |
-|---|---|---|
-| 0 | Vanguard | Entry encounters |
-| 1 | Sentry | Mid-depth encounters |
-| 2+ | Bosses | Boss monsters with modifiers |
+| Stage | Depth Name | Pool | Milestone Modifier | Unique Rewards |
+|---|---|---|---|---|
+| 0 | VANGUARD | Vanguard | — | — |
+| 1 | SENTRY | Sentry | — | — |
+| 2 | BOSS GATE | Bosses | — | — |
+| 3 | CATACOMBS | Catacombs | **Curse** — 25% chance/turn: random tile becomes Cursed (0 score, no redraw) | Cursed artifacts, Grimoire fragments |
+| 4 | FUNGAL DEPTHS | Fungal Depths | **Spore Cloud** — Vowels -1 / Consonants +1 (swaps each round) | Spore-infused tiles, Consumables |
+| 5 | CRYSTAL CAVERNS | Crystal Caverns | **Reflection** — Mirror words (palindromes) +50% damage | Crystal finishes, Mirror artisans, Blueprint |
+| 6 | VOID THRESHOLD | Void Threshold | **Void Corruption** — One random letter banned per encounter | Void-touched wildcards, Spectral consumables |
+| 7+ | ABYSSAL CROWN | Abyssal Crown | **Abyssal Power** — Boss +25% HP/cycle, all modifiers | Unique blueprints, Cosmetic keycaps |
 
-`DepthService.generate_encounter(stage)` picks from the stage pool. Every 3rd round is a boss round and advances `depth_stage`. Firmware Tags (e.g. Free Grab Bag, Bonus Turns, Double Interest) can be earned by skipping encounters — stored in `GameState.skip_tags`.
+`DepthService.generate_encounter(stage)` picks from the stage pool. Every 3rd round is a boss round and advances `depth_stage`. Milestone rewards granted at depths 3, 5, 7 via `LootService` with dedicated drop tables. Firmware Tags (e.g. Free Grab Bag, Bonus Turns, Double Interest) can be earned by skipping encounters — stored in `GameState.skip_tags`. Endless mode at depth 7+ loops `abyssal_crown` pool with escalating HP.
 
 ## Victory & Economy
 

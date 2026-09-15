@@ -1,18 +1,19 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://camsskho5lbkc"]
 
-[ext_resource type="Script" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
-[ext_resource type="Texture2D" path="res://assets/textures/backgrounds/bg_combat_3.jpg" id="2_bgcombat"]
-[ext_resource type="Script" path="res://scripts/components/WordRackDropZone.gd" id="3_wrdropzone"]
-[ext_resource type="Script" path="res://scripts/components/PixelHPBar.gd" id="4_hpbar"]
-[ext_resource type="Script" path="res://scripts/components/ArtisanRailDisplay.gd" id="5_rail"]
-[ext_resource type="Script" path="res://scripts/components/SellDropZone.gd" id="6_sell"]
+[ext_resource type="Script" uid="uid://le3qgm84c2d0" path="res://scripts/screens/CombatScreen.gd" id="1_abcdef"]
+[ext_resource type="Texture2D" uid="uid://dm2p588lsunur" path="res://assets/textures/backgrounds/bg_combat_3.jpg" id="2_bgcombat"]
+[ext_resource type="Script" uid="uid://cemcaajt456s4" path="res://scripts/components/WordRackDropZone.gd" id="3_wrdropzone"]
+[ext_resource type="Script" uid="uid://critq6hqgfuyu" path="res://scripts/components/PixelHPBar.gd" id="4_hpbar"]
+[ext_resource type="Script" uid="uid://d3btr4k4mmniv" path="res://scripts/components/ArtisanRailDisplay.gd" id="5_rail"]
+[ext_resource type="Script" uid="uid://q87osr4thomf" path="res://scripts/components/SellDropZone.gd" id="6_sell"]
 
-[sub_resource type="StyleBoxFlat" id="ShadowStyle"]
-bg_color = Color(0, 0, 0, 0.35)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mwsax"]
+bg_color = Color(0, 0, 0, 0.49019608)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
 
 [sub_resource type="StyleBoxFlat" id="WordShelfStyle"]
 content_margin_left = 12.0
@@ -20,17 +21,18 @@ content_margin_top = 8.0
 content_margin_right = 12.0
 content_margin_bottom = 8.0
 bg_color = Color(0.42, 0.25, 0.14, 0.9)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.62, 0.4, 0.22, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
-[node name="CombatScreen" type="Control"]
+[node name="CombatScreen" type="Control" unique_id=1969151614]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,346 +40,415 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_abcdef")
 
-[node name="Background" type="TextureRect" parent="."]
-anchors_preset = 15
+[node name="Background" type="TextureRect" parent="." unique_id=1214752346]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-expand_mode = 1
-stretch_mode = 6
 mouse_filter = 2
 texture = ExtResource("2_bgcombat")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="CombatRootMargin" type="MarginContainer" parent="."]
+[node name="CombatRootMargin" type="MarginContainer" parent="." unique_id=1222160855]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 46
-theme_override_constants/margin_top = 79
+theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 46
-theme_override_constants/margin_bottom = 60
+theme_override_constants/margin_bottom = 20
 
-[node name="CombatVerticalStack" type="VBoxContainer" parent="CombatRootMargin"]
+[node name="CombatVerticalStack" type="VBoxContainer" parent="CombatRootMargin" unique_id=953773029]
+layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="TopZone_Red" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
+[node name="TopZone_Red" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack" unique_id=995872795]
 custom_minimum_size = Vector2(448, 285)
+layout_mode = 2
+size_flags_vertical = 7
+size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 8
 
-[node name="TopStatusBar" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
+[node name="TopStatusBar" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red" unique_id=496212123]
 custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="DepthPanel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="DepthPanel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar" unique_id=1369215109]
 unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(1, 0.9, 0.62, 1)
+theme_override_font_sizes/font_size = 18
+text = "DEPTH 
+1-1"
 vertical_alignment = 1
-text = "DEPTH 1-1"
 
-[node name="DepthInfoButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="DepthInfoButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar" unique_id=157189611]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(36, 38)
+layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "?"
 
-[node name="TopSpacerLeft" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="TopSpacerLeft" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar" unique_id=1350268115]
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GrimoireRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="GrimoireRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar" unique_id=923820751]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="TopSpacerRight" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="TopSpacerRight" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar" unique_id=1812006600]
+layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SettingsButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar"]
+[node name="SettingsButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TopStatusBar" unique_id=2099974673]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(36, 38)
+layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "⚙"
 
-[node name="ArtisanRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
+[node name="ArtisanRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red" unique_id=1912001483]
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ArtisanRail" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow"]
+[node name="ArtisanRail" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow" unique_id=556259026]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("5_rail")
 
-[node name="SellDropZone" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow"]
+[node name="SellDropZone" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow" unique_id=1488243793]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 script = ExtResource("6_sell")
 
-[node name="SellLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow/SellDropZone"]
+[node name="SellLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow/SellDropZone" unique_id=40270909]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme_override_colors/font_color = Color(1, 0.4, 0.4, 0.7)
+text = "SELL ▾"
 horizontal_alignment = 2
 vertical_alignment = 1
-text = "SELL ▾"
 
-[node name="MoneyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow"]
+[node name="MoneyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/ArtisanRow" unique_id=313630601]
 unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.9255, 0.7882, 0.2941, 1)
-vertical_alignment = 1
+theme_override_font_sizes/font_size = 20
 text = "$0"
+vertical_alignment = 1
 
-[node name="MonsterDisplayArea" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
+[node name="MonsterDisplayArea" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red" unique_id=369104449]
 unique_name_in_owner = true
-alignment = 1
+layout_mode = 2
 theme_override_constants/separation = 4
+alignment = 1
 
-[node name="HpLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+[node name="HpLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea" unique_id=421251269]
 unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"MetricLabel"
 horizontal_alignment = 1
 
-[node name="MonsterHPBar" type="TextureProgressBar" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+[node name="MonsterSpriteArea" type="Control" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea" unique_id=803420782]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="MonsterHPBar" type="TextureProgressBar" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea/MonsterSpriteArea" unique_id=646609588]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 24)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = -23.0
+offset_right = 150.0
+offset_bottom = 1.0
+grow_horizontal = 2
 size_flags_horizontal = 4
-value = 100
+value = 100.0
 script = ExtResource("4_hpbar")
 
-[node name="MonsterSprite" type="TextureRect" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+[node name="MonsterShadow" type="Panel" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea/MonsterSpriteArea" unique_id=596768874]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(128, 128)
-size_flags_horizontal = 4
+custom_minimum_size = Vector2(120, 24)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -60.0
+offset_top = 168.0
+offset_right = 60.0
+offset_bottom = 192.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_mwsax")
+
+[node name="MonsterSprite" type="TextureRect" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea/MonsterSpriteArea" unique_id=735623649]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+offset_bottom = 185.0
+grow_horizontal = 2
+grow_vertical = 0
 stretch_mode = 5
 
-[node name="MonsterShadow" type="Panel" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
+[node name="MonsterNameLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea" unique_id=836991044]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 16)
-size_flags_horizontal = 4
-theme_override_styles/panel = SubResource("ShadowStyle")
-
-[node name="MonsterNameLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
-unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="TurnRoundLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
-unique_name_in_owner = true
-theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(1, 0.9, 0.62, 1)
-horizontal_alignment = 1
-text = "TURNS: 3"
-
-[node name="BossModifierContainer" type="HFlowContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea"]
-alignment = 1
+[node name="BossModifierContainer" type="HFlowContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/MonsterDisplayArea" unique_id=1225219570]
+layout_mode = 2
 theme_override_constants/h_separation = 8
-
-[node name="PersistentScoringRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
-unique_name_in_owner = true
 alignment = 1
+
+[node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack" unique_id=433152461]
+custom_minimum_size = Vector2(448, 152)
+layout_mode = 2
+
+[node name="PersistentScoringRow" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue" unique_id=1609516349]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_constants/separation = 8
+alignment = 1
 
-[node name="PersistBasePanel" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
+[node name="PersistBasePanel" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow" unique_id=1724349091]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
 theme_type_variation = &"PixelPanel"
 
-[node name="PersistBaseVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistBasePanel"]
-alignment = 1
+[node name="PersistBaseVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow/PersistBasePanel" unique_id=374056638]
+layout_mode = 2
 theme_override_constants/separation = 2
+alignment = 1
 
-[node name="PersistBaseSubLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistBasePanel/PersistBaseVBox"]
+[node name="PersistBaseSubLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow/PersistBasePanel/PersistBaseVBox" unique_id=20130476]
 unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"MicroLabel"
-theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
 text = "BASE"
-
-[node name="PersistBaseLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistBasePanel/PersistBaseVBox"]
-unique_name_in_owner = true
-theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
 horizontal_alignment = 1
+
+[node name="PersistBaseLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow/PersistBasePanel/PersistBaseVBox" unique_id=282213000]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MetricLabel"
+theme_override_colors/font_color = Color(0.39, 0.69, 0.93, 1)
+theme_override_font_sizes/font_size = 28
 text = "0"
+horizontal_alignment = 1
 
-[node name="PersistMultiplyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
+[node name="PersistMultiplyLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow" unique_id=1356688448]
 unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"BodyLabel"
-theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.8, 0.82, 0.86, 1)
-vertical_alignment = 1
+theme_override_font_sizes/font_size = 22
 text = "×"
+vertical_alignment = 1
 
-[node name="PersistMultPanel" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow"]
+[node name="PersistMultPanel" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow" unique_id=1602983130]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
 theme_type_variation = &"PixelPanel"
 
-[node name="PersistMultVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistMultPanel"]
-alignment = 1
+[node name="PersistMultVBox" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow/PersistMultPanel" unique_id=268990498]
+layout_mode = 2
 theme_override_constants/separation = 2
+alignment = 1
 
-[node name="PersistMultSubLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistMultPanel/PersistMultVBox"]
+[node name="PersistMultSubLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow/PersistMultPanel/PersistMultVBox" unique_id=375100506]
 unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"MicroLabel"
-theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
 text = "MULTI"
-
-[node name="PersistMultLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/PersistentScoringRow/PersistMultPanel/PersistMultVBox"]
-unique_name_in_owner = true
-theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
 horizontal_alignment = 1
-text = "×1.0"
 
-[node name="TotalDamageShelf" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
+[node name="PersistMultLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/PersistentScoringRow/PersistMultPanel/PersistMultVBox" unique_id=816180631]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MetricLabel"
+theme_override_colors/font_color = Color(0.96, 0.68, 0.33, 1)
+theme_override_font_sizes/font_size = 28
+text = "×1.0"
+horizontal_alignment = 1
+
+[node name="TotalDamageShelf" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue" unique_id=513441003]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 28)
-visible = false
+layout_mode = 2
 size_flags_horizontal = 4
 theme_type_variation = &"PixelPanel"
 
-[node name="TotalDamageLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red/TotalDamageShelf"]
+[node name="TotalDamageLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/TotalDamageShelf" unique_id=1052408231]
 unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(0.93, 0.79, 0.29, 1)
+theme_override_font_sizes/font_size = 30
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="WordMetaLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/TopZone_Red"]
+[node name="HintLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue" unique_id=1069130844]
 unique_name_in_owner = true
-visible = false
-theme_type_variation = &"MetricLabel"
-theme_override_font_sizes/font_size = 16
-horizontal_alignment = 1
-text = ""
-
-[node name="MidZone_Blue" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
-custom_minimum_size = Vector2(448, 152)
-alignment = 2
-theme_override_constants/separation = 4
-
-[node name="HintLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
-unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"BodyLabel"
-theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.45, 0.95, 1, 1)
 theme_override_colors/font_outline_color = Color(0.02, 0.4, 0.55, 1)
 theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 26
+text = "Tap tiles to spell a word"
 horizontal_alignment = 1
 autowrap_mode = 3
-text = "Tap tiles to spell a word"
 
-[node name="WordShelf" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue"]
+[node name="WordMetaLabel" type="Label" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue" unique_id=791227219]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 84)
+layout_mode = 2
+theme_type_variation = &"MetricLabel"
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1
+
+[node name="WordShelf" type="PanelContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue" unique_id=1132038601]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("WordShelfStyle")
 
-[node name="WordRackContainer" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/WordShelf"]
+[node name="WordRackContainer" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack/MidZone_Blue/WordShelf" unique_id=2145432448]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 62)
-alignment = 1
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
 theme_override_constants/separation = 8
+alignment = 1
 script = ExtResource("3_wrdropzone")
 
-[node name="BottomZone_Green" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
+[node name="BottomZone_Green" type="VBoxContainer" parent="CombatRootMargin/CombatVerticalStack" unique_id=429496669]
 custom_minimum_size = Vector2(448, 120)
+layout_mode = 2
 size_flags_vertical = 3
-alignment = 1
 theme_override_constants/separation = 8
+alignment = 1
 
-[node name="HandEmptyWarning" type="Label" parent="CombatRootMargin/CombatVerticalStack/BottomZone_Green"]
+[node name="HandTileContainer" type="CenterContainer" parent="CombatRootMargin/CombatVerticalStack/BottomZone_Green" unique_id=1577448425]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(324, 130)
+layout_mode = 2
+
+[node name="HandEmptyWarning" type="Label" parent="CombatRootMargin/CombatVerticalStack/BottomZone_Green" unique_id=1773733737]
+unique_name_in_owner = true
+layout_mode = 2
 theme_type_variation = &"BodyLabel"
+theme_override_font_sizes/font_size = 48
+text = "Hand empty"
 horizontal_alignment = 1
 autowrap_mode = 3
-text = "Hand empty"
 
-[node name="ActionZone_Orange" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack"]
+[node name="ActionZone_Orange" type="HBoxContainer" parent="CombatRootMargin/CombatVerticalStack" unique_id=1759606197]
 custom_minimum_size = Vector2(448, 68)
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="HintButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
+[node name="HintButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange" unique_id=1991181611]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 26
 text = "HINT (3)"
 
-[node name="RedrawButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
+[node name="RedrawButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange" unique_id=1821810722]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 26
 text = "REDRAW (0)"
 
-[node name="PlayButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
+[node name="PlayButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange" unique_id=120322146]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 26
 disabled = true
 text = "PLAY"
 
-[node name="DeckButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange"]
+[node name="DeckButton" type="Button" parent="CombatRootMargin/CombatVerticalStack/ActionZone_Orange" unique_id=183777479]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 26
 text = "DECK (0/0)"
 
-[node name="HandTileContainer" type="CenterContainer" parent="."]
+[node name="WildcardPopup" type="PopupPanel" parent="." unique_id=1420024293]
 unique_name_in_owner = true
-position = Vector2(106, 690)
-size = Vector2(324, 130)
-custom_minimum_size = Vector2(324, 130)
-mouse_filter = 1
+oversampling_override = 1.0
+size = Vector2i(456, 552)
 
-[node name="WildcardPopup" type="PopupPanel" parent="."]
-unique_name_in_owner = true
-offset_left = 40.0
-offset_top = 40.0
-offset_right = 500.0
-offset_bottom = 560.0
-
-[node name="Margin" type="MarginContainer" parent="WildcardPopup"]
+[node name="Margin" type="MarginContainer" parent="WildcardPopup" unique_id=1052233588]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 452.0
+offset_bottom = 548.0
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
-[node name="VBox" type="VBoxContainer" parent="WildcardPopup/Margin"]
+[node name="VBox" type="VBoxContainer" parent="WildcardPopup/Margin" unique_id=939041403]
+layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Scroll" type="ScrollContainer" parent="WildcardPopup/Margin/VBox"]
+[node name="Scroll" type="ScrollContainer" parent="WildcardPopup/Margin/VBox" unique_id=607614312]
 custom_minimum_size = Vector2(400, 420)
+layout_mode = 2
 
-[node name="PickerGrid" type="GridContainer" parent="WildcardPopup/Margin/VBox/Scroll"]
+[node name="PickerGrid" type="GridContainer" parent="WildcardPopup/Margin/VBox/Scroll" unique_id=773049358]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
-columns = 6
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
+columns = 6
 
-[node name="PickerCancelButton" type="Button" parent="WildcardPopup/Margin/VBox"]
+[node name="PickerCancelButton" type="Button" parent="WildcardPopup/Margin/VBox" unique_id=2095353272]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
 text = "Cancel"

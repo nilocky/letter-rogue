@@ -1,8 +1,8 @@
-[gd_resource type="Theme" load_steps=6 format=3]
+[gd_resource type="Theme" format=3 uid="uid://dud3dhgncsv5l"]
 
-[ext_resource type="FontFile" uid="uid://obxbtq4a4566" path="res://assets/fonts/monogram.ttf" id="1_mono"]
-[ext_resource type="FontFile" uid="uid://j7xvbouxwbf5" path="res://assets/fonts/m5x7.ttf" id="2_m57"]
-[ext_resource type="FontFile" uid="uid://doyyuryme11xx" path="res://assets/fonts/Kenney Pixel.ttf" id="3_px"]
+[ext_resource type="FontFile" uid="uid://obxbtq4a4566" path="res://backups/fonts/monogram.ttf" id="1_mono"]
+[ext_resource type="FontFile" uid="uid://j7xvbouxwbf5" path="res://backups/fonts/m5x7.ttf" id="2_m57"]
+[ext_resource type="FontFile" uid="uid://doyyuryme11xx" path="res://backups/fonts/Kenney Pixel.ttf" id="3_px"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pixel"]
 content_margin_left = 8.0
@@ -15,38 +15,34 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.03, 0.02, 0.05, 1)
-corner_radius_top_left = 0
-corner_radius_top_right = 0
-corner_radius_bottom_right = 0
-corner_radius_bottom_left = 0
 
 [resource]
 default_font = ExtResource("3_px")
 default_font_size = 16
-HeaderLabel/base_type = &"Label"
-HeaderLabel/fonts/font = ExtResource("3_px")
-HeaderLabel/font_sizes/font_size = 26
-HeaderLabel/colors/font_color = Color(1, 0.9, 0.62, 1)
-MetricLabel/base_type = &"Label"
-MetricLabel/fonts/font = ExtResource("3_px")
-MetricLabel/font_sizes/font_size = 22
-MetricLabel/colors/font_color = Color(0.9, 0.95, 1, 1)
-KeyCapFaceLabel/base_type = &"Label"
-KeyCapFaceLabel/fonts/font = ExtResource("1_mono")
-KeyCapFaceLabel/font_sizes/font_size = 26
-KeyCapFaceLabel/colors/font_color = Color(1, 1, 1, 1)
+BadgeLabel/base_type = &"Label"
+BadgeLabel/colors/font_color = Color(1, 1, 1, 1)
+BadgeLabel/font_sizes/font_size = 15
+BadgeLabel/fonts/font = ExtResource("2_m57")
 BodyLabel/base_type = &"Label"
-BodyLabel/fonts/font = ExtResource("2_m57")
-BodyLabel/font_sizes/font_size = 16
 BodyLabel/colors/font_color = Color(0.86, 0.88, 0.92, 1)
 BodyLabel/constants/line_spacing = 3
-BadgeLabel/base_type = &"Label"
-BadgeLabel/fonts/font = ExtResource("2_m57")
-BadgeLabel/font_sizes/font_size = 15
-BadgeLabel/colors/font_color = Color(1, 1, 1, 1)
+BodyLabel/font_sizes/font_size = 16
+BodyLabel/fonts/font = ExtResource("2_m57")
+HeaderLabel/base_type = &"Label"
+HeaderLabel/colors/font_color = Color(1, 0.9, 0.62, 1)
+HeaderLabel/font_sizes/font_size = 26
+HeaderLabel/fonts/font = ExtResource("3_px")
+KeyCapFaceLabel/base_type = &"Label"
+KeyCapFaceLabel/colors/font_color = Color(1, 1, 1, 1)
+KeyCapFaceLabel/font_sizes/font_size = 26
+KeyCapFaceLabel/fonts/font = ExtResource("1_mono")
+MetricLabel/base_type = &"Label"
+MetricLabel/colors/font_color = Color(0.9, 0.95, 1, 1)
+MetricLabel/font_sizes/font_size = 22
+MetricLabel/fonts/font = ExtResource("3_px")
 MicroLabel/base_type = &"Label"
-MicroLabel/fonts/font = ExtResource("2_m57")
-MicroLabel/font_sizes/font_size = 13
 MicroLabel/colors/font_color = Color(0.72, 0.74, 0.8, 1)
+MicroLabel/font_sizes/font_size = 13
+MicroLabel/fonts/font = ExtResource("2_m57")
 PixelPanel/base_type = &"PanelContainer"
 PixelPanel/styles/panel = SubResource("StyleBoxFlat_pixel")

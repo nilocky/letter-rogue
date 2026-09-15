@@ -18,6 +18,37 @@
     ]},
     {"id": "slime_loot", "entries": [
       {"type": "money", "weight": 7, "value": 3, "label": "Goo"}
+    ]},
+    {"id": "catacombs_loot", "entries": [
+      {"type": "money", "weight": 5, "value": 15, "label": "Cursed Gold"},
+      {"type": "cap", "weight": 3, "rarity": "rare", "label": "Cursed Keycap"},
+      {"type": "consumable", "weight": 2, "item_id": "trio_codex", "label": "Trio Codex"},
+      {"type": "consumable", "weight": 1, "item_id": "mirror_tome", "label": "Mirror Tome"}
+    ]},
+    {"id": "fungal_depths_loot", "entries": [
+      {"type": "money", "weight": 5, "value": 12, "label": "Spore Essence"},
+      {"type": "cap", "weight": 4, "rarity": "rare", "label": "Spore-Infused Keycap"},
+      {"type": "consumable", "weight": 2, "item_id": "lube_pen", "label": "Lube Pen"},
+      {"type": "consumable", "weight": 1, "item_id": "laser_engraver", "label": "Laser Engraver"}
+    ]},
+    {"id": "crystal_caverns_loot", "entries": [
+      {"type": "money", "weight": 4, "value": 20, "label": "Crystal Shards"},
+      {"type": "cap", "weight": 3, "rarity": "epic", "label": "Polychrome Keycap"},
+      {"type": "consumable", "weight": 2, "item_id": "quartet_scroll", "label": "Quartet Scroll"},
+      {"type": "blueprint", "weight": 1, "item_id": "anti_ghosting_matrix", "label": "Anti-Ghosting Matrix"}
+    ]},
+    {"id": "void_threshold_loot", "entries": [
+      {"type": "money", "weight": 4, "value": 25, "label": "Void Residue"},
+      {"type": "cap", "weight": 3, "rarity": "legendary", "label": "Void-Touched Wildcard"},
+      {"type": "consumable", "weight": 2, "item_id": "ghost_wire", "label": "Ghost Wire"},
+      {"type": "consumable", "weight": 1, "item_id": "double_tap_tome", "label": "Double-Tap Tome"}
+    ]},
+    {"id": "abyssal_crown_loot", "entries": [
+      {"type": "money", "weight": 3, "value": 50, "label": "Abyssal Hoard"},
+      {"type": "cap", "weight": 2, "rarity": "legendary", "label": "Abyssal Keycap"},
+      {"type": "blueprint", "weight": 2, "item_id": "silicone_dampener", "label": "Silicone Dampener"},
+      {"type": "blueprint", "weight": 1, "item_id": "group_buy_pass", "label": "Group-Buy Pass"},
+      {"type": "consumable", "weight": 1, "item_id": "mirror_tome", "label": "Mirror Tome"}
     ]}
   ]
 }

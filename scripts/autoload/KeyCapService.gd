@@ -73,12 +73,16 @@ func hand_size() -> int:
 ## Replace the tiles at `indices` with new random tiles from the bag.
 ## Costs 1 redraw token per redraw action (any number of tiles). Returns
 ## false (no change) on invalid indices or no tokens left.
+## Cursed tiles cannot be redrawn.
 func redraw_tiles(indices: Array) -> bool:
 	if indices.is_empty():
 		return false
 	var idx := indices.duplicate()
 	for i in idx:
 		if typeof(i) != TYPE_INT or i < 0 or i >= GameState.hand.size():
+			return false
+		# Cursed tiles cannot be redrawn
+		if str(GameState.hand[i].get("condition", "")) == "cursed":
 			return false
 	if GameState.redraws_left < 1:
 		return false

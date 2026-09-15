@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>$GODOT_PROJECT_NAME</title>
+    $GODOT_HEAD_INCLUDE
+    <style>
+        body {
+            margin: 0;
+            background-color: #111;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        #landing-screen {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        #progress-bar {
+            width: 260px;
+            height: 14px;
+            background-color: #333;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+        #progress-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #478cbf;
+            transition: width 0.1s;
+        }
+    </style>
+</head>
+<body>
+    <div id="landing-screen">
+        <img id="logo" src="$GODOT_SPLASH" alt="Game Logo" style="max-height: 120px;" />
+        <div id="progress-bar">
+            <div id="progress-fill"></div>
+        </div>
+        <div id="status">Loading...</div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script src="$GODOT_URL"></script>
+    <script>
+        const engine = new Engine($GODOT_CONFIG);
+        const landing = document.getElementById('landing-screen');
+        const fill = document.getElementById('progress-fill');
+        const status = document.getElementById('status');
+
+        engine.startGame({
+            onProgress: (current, total) => {
+                if (total > 0) {
+                    const percent = Math.floor((current / total) * 100);
+                    fill.style.width = percent + '%';
+                    status.textContent = 'Loading: ' + percent + '%';
+                }
+            }
+        }).then(() => {
+            landing.style.display = 'none';
+        }).catch((err) => {
+            status.textContent = 'Error: ' + err.message;
+        });
+    </script>
+</body>
+</html>

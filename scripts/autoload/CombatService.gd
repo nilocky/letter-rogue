@@ -8,6 +8,22 @@ const VOWELS := "AEIOU"
 const REWARD_BASE := 5
 
 
+func _get_depth_modifier() -> Dictionary:
+	return DepthService.get_depth_modifier(GameState.depth_stage)
+
+
+func get_depth_void_banned_letter() -> String:
+	var monster: Dictionary = GameState.current_monster
+	return str(monster.get("void_banned_letter", ""))
+
+
+func _apply_void_touch() -> void:
+	if GameState.depth_stage == 6:
+		var letters: Array = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("", false)
+		var banned: String = letters[randi() % letters.size()]
+		GameState.current_monster["void_banned_letter"] = banned
+
+
 func start_round() -> void:
 	GameState.turns_left = GameState.round_turn_budget()
 	GameState.redraws_left = GameState.round_redraw_budget()
@@ -23,8 +39,20 @@ func start_round() -> void:
 	GameState.current_monster["hp_remaining"] = GameState.monster_hp_scaled()
 	GameState.hand.clear()
 	GameState.discard_pile.clear()
+	
+	# Apply depth modifier: void_touch banned letter
+	_apply_void_touch()
+	
 	EventBus.turn_started.emit(GameState.turns_left, GameState.redraws_left)
 	KeyCapService.draw_hand()
+	
+	# Apply depth modifier: cursed (25% chance per tile in hand becomes cursed)
+	var depth_mod := _get_depth_modifier()
+	if depth_mod.get("name", "") == "Curse":
+		for cap in GameState.hand:
+			if randf() < 0.25 and not bool(cap.get("is_symbol", false)):
+				cap["condition"] = "cursed"
+	
 	EffectPipeline.trigger("on_draw", [GameState.hand])
 
 
@@ -50,6 +78,10 @@ func validate_word(slots: Array) -> Dictionary:
 			if seen.has(letter):
 				return {"ok": false, "reason": "repeat_letter"}
 			seen[letter] = true
+	# Depth modifier: void_touch - banned letter cannot be used
+	var void_banned: String = get_depth_void_banned_letter()
+	if void_banned != "" and void_banned in letters:
+		return {"ok": false, "reason": "void_banned_letter"}
 	EffectPipeline.trigger("on_word_validated", [word, true])
 	return {"ok": true, "word": word}
 
@@ -64,6 +96,14 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 	var disabled: bool = modifier == "silence"
 	var pack := PackService.pack_by_id(GameState.active_pack_id)
 	var per_tile: int = int(pack.get("score_modifier", 0)) if not pack.is_empty() else 0
+	
+	# Depth modifiers
+	var depth_mod: Dictionary = _get_depth_modifier()
+	var void_banned: String = get_depth_void_banned_letter()
+	var spore_cloud_active: bool = depth_mod.get("name", "") == "Spore Cloud"
+	var reflective_active: bool = depth_mod.get("name", "") == "Reflection"
+	# Spore cloud swaps each round (odd/even rounds)
+	var spore_vowel_penalty: bool = spore_cloud_active and (GameState.round_number % 2 == 1)
 
 	# Phase 1: Tile Hops
 	var trace: Array = []
@@ -75,8 +115,13 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 		var letter: String = str(s["letter"])
 		var is_vowel: bool = VOWELS.contains(letter)
 		var contribution := 0.0
-		if not bool(cap.get("is_symbol", false)):
+		
+		# Void Touch: banned letter contributes 0
+		if void_banned != "" and letter == void_banned:
+			contribution = 0.0
+		elif not bool(cap.get("is_symbol", false)):
 			contribution = float(_letter_base_score(str(cap["letter"])))
+		
 		if not disabled:
 			contribution += float(per_tile)
 			var ability := KeyCapService.resolve_ability(cap)
@@ -90,6 +135,18 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 				contribution *= 2.0
 			if str(cap.get("condition", "")) == "glass":
 				contribution *= 2.0
+		
+		# Cursed condition: 0 score
+		if str(cap.get("condition", "")) == "cursed":
+			contribution = 0.0
+		
+		# Spore Cloud: vowels -1, consonants +1 (swaps each round)
+		if spore_cloud_active:
+			if (is_vowel and spore_vowel_penalty) or (not is_vowel and not spore_vowel_penalty):
+				contribution -= 1.0
+			else:
+				contribution += 1.0
+		
 		if modifier == "vowel_lock" and not is_vowel:
 			contribution = 0.0
 		elif modifier == "consonant_lock" and is_vowel:
@@ -126,6 +183,11 @@ func calculate_word(slots: Array, log: bool = false) -> Dictionary:
 	var running_chips := total_base + float(form_base)
 	var running_mult := length_mult * form_mult
 	trace.append(_trace_event("form_ignite", -1, form_data.get("name", ""), float(form_base), running_mult - 1.0, 1.0, running_chips, running_mult, form_data.get("form_id", "")))
+
+	# Depth Modifier: Reflection - Mirror words (palindromes) gain +50% damage
+	if reflective_active and form_data.get("form_id", "") == "mirror":
+		running_mult *= 1.5
+		trace.append(_trace_event("form_ignite", -1, "Reflection", 0.0, 0.5, 1.0, running_chips, running_mult, "Mirror Word ×1.5"))
 
 	# Phase 3: Artisan Cascade
 	var artisan_result: Dictionary = ArtisanRailManager.cascade(

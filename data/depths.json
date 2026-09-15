@@ -10,5 +10,30 @@
   "bosses": [
     {"id": "vowel_witch", "name": "Vowel Witch", "hp": 30, "modifier": "vowel_lock", "is_boss": true},
     {"id": "consonant_king", "name": "Consonant King", "hp": 30, "modifier": "consonant_lock", "is_boss": true}
+  ],
+  "catacombs": [
+    {"id": "catacombs_wraith", "name": "Cursed Wraith", "hp": 22, "modifier": "cursed", "is_boss": false},
+    {"id": "catacombs_lich", "name": "Lich Fragment", "hp": 28, "modifier": "cursed", "is_boss": false},
+    {"id": "catacombs_banshee", "name": "Banshee", "hp": 25, "modifier": "silence", "is_boss": false}
+  ],
+  "fungal_depths": [
+    {"id": "fungal_spore_drone", "name": "Spore Drone", "hp": 20, "modifier": "spore_cloud", "is_boss": false},
+    {"id": "fungal_myconid", "name": "Myconid Elder", "hp": 35, "modifier": "spore_cloud", "is_boss": false},
+    {"id": "fungal_shambler", "name": "Fungal Shambler", "hp": 40, "modifier": "", "is_boss": false}
+  ],
+  "crystal_caverns": [
+    {"id": "crystal_golet", "name": "Crystal Golem", "hp": 45, "modifier": "reflective", "is_boss": false},
+    {"id": "crystal_geode", "name": "Living Geode", "hp": 38, "modifier": "reflective", "is_boss": false},
+    {"id": "crystal_prism", "name": "Prism Warden", "hp": 42, "modifier": "", "is_boss": false}
+  ],
+  "void_threshold": [
+    {"id": "void_stalker", "name": "Void Stalker", "hp": 50, "modifier": "void_touch", "is_boss": false},
+    {"id": "void_horror", "name": "Eldritch Horror", "hp": 55, "modifier": "void_touch", "is_boss": false},
+    {"id": "void_herald", "name": "Void Herald", "hp": 60, "modifier": "", "is_boss": false}
+  ],
+  "abyssal_crown": [
+    {"id": "abyssal_avatar", "name": "Abyssal Avatar", "hp": 80, "modifier": "abyssal", "is_boss": true},
+    {"id": "abyssal_tyrant", "name": "Abyssal Tyrant", "hp": 85, "modifier": "abyssal", "is_boss": true},
+    {"id": "abyssal_sovereign", "name": "Abyssal Sovereign", "hp": 90, "modifier": "abyssal", "is_boss": true}
   ]
 }
